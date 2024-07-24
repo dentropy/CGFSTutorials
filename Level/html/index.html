@@ -1,0 +1,141 @@
+<html>
+<head>
+    <script src="/level/PackagedBrowserLevel.js"></script>
+    <script>
+        console.log("MAKE SURE TO HOST USING A SERVER")
+        console.log("python3 -m http.server")
+        // Function to be executed after 1 second
+        let db = null
+        let db2 = null
+        let db3 = null
+        let db4 = null
+        let db5 = null
+
+        async function runFunction() {
+            console.log("Loading up BrowserLevel")
+            // valueEncoding can be 'json', 'utf8', 'buffer', 'hex', or 'binary'
+            // Defaults to 'utf8'
+            db = new PackagedBrowserLevel.BrowserLevel('example', { valueEncoding: 'json' })
+
+            // put example
+            await db.put('a', 1)
+            await db.put('b', 1)
+
+            // get example
+            let a = await db.get('a')
+            console.log(``)
+            console.log(`a = ${a}`)
+
+            // Delete Example
+            await db.del('a')
+            try {
+                let b = await db.get("b")
+            } catch (error) {
+                console.log(``)
+                console.log("Getting a value that does not exist produces an error")
+                console.log(error)
+            }
+
+            // batch type can be 'put' or 'del'
+            await db.batch(
+                [
+                    { type: 'put', key: 'a', value: 1 },
+                    { type: 'put', key: 'b', value: 2 },
+                    { type: 'put', key: 'c', value: 3 },
+                    { type: 'put', key: 'd', value: 4 }
+                ]
+            )
+            let d = await db.get('d')
+            console.log(``)
+            console.log(`d = ${d}`)
+
+            console.log(``)
+            console.log("Looping through Iterator Example")
+            for await (var [key, value] of db.iterator({ gt: 'a' })) {
+                console.log(`${key}=${value}`)
+            }
+
+            console.log("Sublevel Example")
+            db2 = db.sublevel("newlevel", { valueEncoding: 'buffer' })
+
+            db3 = new PackagedBrowserLevel.BrowserLevel('bufferEncodingExample', { valueEncoding: 'buffer' })
+            const str = "world";
+            const encoder = new TextEncoder()
+            let myUInt8Array = encoder.encode(str)
+            console.log(myUInt8Array)
+            await db3.put('hello', myUInt8Array)
+            await db3.put('test', new Uint8Array(3))
+
+            let binaryWorld = await db3.get("hello")
+            let binaryTest = await db3.get("test")
+            console.log("")
+            console.log(`binary Hello World = `)
+            console.log(binaryWorld)
+            console.log(`binary test = `)
+            console.log(binaryTest)
+
+            db4 = new PackagedBrowserLevel.BrowserLevel('jsonEncodingExample', { valueEncoding: 'json' })
+            await db4.put('hello', {"Hello" : "World"})
+
+            let JSONEncodingGet = await db4.get("hello")
+            console.log("")
+            console.log(`JSON Encoded Hello World = ${JSON.stringify(JSONEncodingGet, null, 2)}`)
+
+            let chooseEncodingString = await db4.get("hello", { valueEncoding: 'utf8' })
+            console.log("")
+            console.log(`chooseEncoding = ${chooseEncodingString}`)
+            console.log(`type"chooseEncoding" = ${typeof(chooseEncodingString)}`)
+
+            let chooseEncodingBuffer = await db4.get("hello", { valueEncoding: 'buffer' })
+            console.log("")
+            console.log(`chooseEncoding = `)
+            console.log(chooseEncodingBuffer)
+            console.log(`type"chooseEncoding" = ${typeof(chooseEncodingBuffer)}`)
+
+            // Insert
+            db5 = new PackagedBrowserLevel.BrowserLevel('db5')
+            await db5.del("COUNT")
+            async function levelInsert(tmpDB, tmpKey, tmpVal, tmpEncoding='utf8'){
+                let val = "test"
+                try {
+                    val = await tmpDB.get(tmpKey)
+                    console.log(`Can't insert value "${tmpKey}=${tmpVal}"" already exists`)
+                } catch (error) {
+                    console.log("Error Inserting Content")
+                    console.log(error)
+                    await tmpDB.put(tmpKey, tmpVal, { valueEncoding: tmpEncoding })
+                    console.log(`Insert Sucessful`)
+                }
+            }
+            await levelInsert(db5, "COUNT", "Let's Count 1")
+            await levelInsert(db5, "COUNT", "Let's Count 2")
+            await levelInsert(db5, "COUNT", "Let's Count 3")
+            await levelInsert(db5, "COUNT2", "Let's Count 2")
+            await levelInsert(db5, "COUNT3", "Let's Count 3")
+
+            let CountUTF8 = await db5.get("COUNT", { valueEncoding: 'utf8' })
+            console.log("CountUTF8")
+            console.log(CountUTF8)
+            let CountUint8 = await db5.get("COUNT", { valueEncoding: 'buffer' })
+            console.log("CountUint8")
+            console.log(CountUint8)
+            let CountGetMany = await db5.getMany(["COUNT", "COUNT2", "COUNT3"])
+            console.log("CountGetMany")
+            console.log(CountGetMany)
+            let CountGetManyMissingKey = await db5.getMany(["COUNT", "COUNT2", "COUNT3", "THE"])
+            console.log("CountGetManyMissingKey")
+            console.log(CountGetManyMissingKey)
+
+            console.log("TEST SIZE LIMITS")
+        }
+
+        // Delay execution by 1 second
+        window.onload = function() {
+            setTimeout(runFunction, 1000); // 1000 milliseconds = 1 second
+        };
+    </script>
+</head>
+<body>
+    <h1>Paul Was Here</h1>
+</body>
+</html>
