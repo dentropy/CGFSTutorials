@@ -28,8 +28,10 @@ console.log("obj")
 console.log(obj)
 console.log("\ncidv0")
 console.log(cidv0)
+console.log(cidv0.code)
 console.log("\ncidv1")
 console.log(cidv1)
+console.log(cidv1.code)
 
 // let decoded = decode(encoded)
 // decoded.y[0] // 2
