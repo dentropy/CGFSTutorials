@@ -49,6 +49,7 @@ var data = data = {
 var hash = await sha256.digest(json.encode({ hello: 'world' }))
 var myCID = CID.create(1, json.code, hash)
 console.log(`Data     : ${JSON.stringify(data, null, 2)}`)
+console.log(data)
 console.log(`Hash     : ${hash.bytes}`)
 console.log(`CID      : ${myCID}`)
 console.log(`CID Code : ${myCID.code}`)
