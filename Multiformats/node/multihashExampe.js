@@ -34,3 +34,23 @@ console.log(`CID Code : ${myCID.code}`)
 // console.log(typeof(hash.digest))
 // console.log(hash.digest)
 // console.log(hash.size)
+
+
+var data = data = {
+    x: 1,
+    /* CID instances are encoded as links */
+    y: [2, 3, CID.parse('QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4')],
+    z: {
+      a: CID.parse('QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4'),
+      b: null,
+      c: 'string'
+    }
+  }
+var hash = await sha256.digest(json.encode({ hello: 'world' }))
+var myCID = CID.create(1, json.code, hash)
+console.log(`Data     : ${JSON.stringify(data, null, 2)}`)
+console.log(`Hash     : ${hash.bytes}`)
+console.log(`CID      : ${myCID}`)
+console.log(`CID Code : ${myCID.code}`)
+//> CID(bagaaierasords4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea)
+

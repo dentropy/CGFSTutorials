@@ -5,7 +5,7 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import * as dagPB from '@ipld/dag-pb'
 import { code } from 'multiformats/codecs/json'
 
-const obj = {
+const data = {
   x: 1,
   /* CID instances are encoded as links */
   y: [2, 3, CID.parse('QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4')],
@@ -17,15 +17,17 @@ const obj = {
 }
 
 
-let encoded = encode(obj)
+let encoded = encode(data)
 const hash = await sha256.digest(encoded)
 const cidv0 = CID.create(0, dagPB.code, hash)
 const cidv1 = CID.create(1, code, hash)
 
 
 
-console.log("obj")
-console.log(obj)
+console.log("data")
+console.log(data)
+console.log("encoded")
+console.log(encoded)
 console.log("\ncidv0")
 console.log(cidv0)
 console.log(cidv0.code)
