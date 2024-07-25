@@ -1,3 +1,5 @@
+// Store and Retrieve DAG-JSON from LevelDB (Buffer Encoding)
+
 import * as ipld from '@ipld/dag-json'
 import { CID } from 'multiformats'
 import { sha256 } from 'multiformats/hashes/sha2'
