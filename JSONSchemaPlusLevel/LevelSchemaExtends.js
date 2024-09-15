@@ -136,4 +136,30 @@ export default class LevelSchema extends Level {
         }
     }
 
+    async delSchema(sublevel_name, sublevel_key){
+        let tmpSublevel = this.sublevel(sublevel_name, { valueEncoding: 'json' })
+        try {
+            return await tmpSublevel.del(sublevel_key)
+        } catch (error) {
+            return {
+                status: "error",
+                description: "Could not delete that key from that sublevel",
+                details: error
+            }
+        }
+    }
+
+    async getSchema(sublevel_name, sublevel_key){
+        try {
+            let tmpSublevel = this.sublevel(sublevel_name, { valueEncoding: 'json' })
+            return await tmpSublevel.get(sublevel_key)
+        } catch (error) {
+            return {
+                status : "error",
+                description : "We got an error from leveldb",
+                details: error
+            }
+        }
+    }
+
 }

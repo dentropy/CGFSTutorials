@@ -3,6 +3,9 @@
 ## Description
 
 * Here we just want to extend LevelDB to only insert data in when it matches a JSONSChema
+* This library works like S3 where you always need to input the bucket name(sublevel), as well as the key of the file you want
+* Recursive sublevel's are not supposed, just create a new namespace. This is because each namespace contains metadata sublevels
+* TODO Iterator code still need to be written
 
 ## Tutorial
 
