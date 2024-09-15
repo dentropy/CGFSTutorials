@@ -1,16 +1,24 @@
 import Ajv from 'ajv'
+import { Level } from "level"
 
-export default class LevelSchema {
+export default class LevelSchema extends Level {
 
-    constructor(myLevel){
+    constructor(...args){
         // Set JSON Encoding in level_db_config
+        super(...args)
         this.ajv = new Ajv()
-        this.db = myLevel
-        this.schemaDB = this.db.sublevel("JSONSchema", { valueEncoding: 'json' })
+        this.schemaSublevel = this.sublevel("JSONSchema", { valueEncoding: 'json' })
     }
 
     async putSchemaSublevel(sublevel_name, sublevel_schema){
-        // Make sure not JSONSchema
+        if(sublevel_name == "JSONSchema"){
+            return {
+                status : "error",
+                description : "That sublevel name is reserved"
+            }
+        }
+
+        // Validate JSONSchema is valid
         try {
             const validate = this.ajv.compile(sublevel_schema)
         } catch (error) {
@@ -20,18 +28,15 @@ export default class LevelSchema {
                 description : "JSONSchema failed to compile"
             }
         }
-        // Check JSONSChema is JSONSchema
+
+        // Check if sublevel_name is already taken
         try {
-            // We do not want to overwtite Schemas that already exist
-            let specialDB = this.db.sublevel("JSONSchema", { valueEncoding: 'json' })
-            console.log("schemaDB")
-            console.log(this.schemaDB)
-            await this.schemaDB(sublevel_name)
+            await this.schemaSublevel.get(sublevel_name)
         } catch (error) {
-            await this.schemaDB(sublevel_name, sublevel_schema, { valueEncoding: 'json' })
+            await this.schemaSublevel.put(sublevel_name, sublevel_schema)
             console.log(`Insert Sucessful`)
             return {
-                status : "success",
+                status : "success"
             }
         }
         return {
@@ -42,7 +47,7 @@ export default class LevelSchema {
 
     async getJSONSchema(sublevel_name){
         try {
-            let the_schema = await this.schemaDB(sublevel_name)
+            let the_schema = await this.schemaSublevel.get(sublevel_name)
             return the_schema
         } catch (error) {
             return {
@@ -54,9 +59,11 @@ export default class LevelSchema {
     }
     
     async putSchema(sublevel_name, sublevel_key, sublevel_value){
+
         // Get the schema from the database
+        let raw_schema = null
         try {
-            let raw_schema = await this.schemaDB(sublevel_name)
+            raw_schema = await this.schemaSublevel.get(sublevel_name)
         } catch (error) {
             return {
                 status : "error",
@@ -64,9 +71,11 @@ export default class LevelSchema {
                 description : "Can not find schema"
             }
         }
+
         // Compile it, try catch not technically required
+        let schema = null;
         try {
-            const schema = ajv.compile(raw_schema)
+            schema = this.ajv.compile(raw_schema)
         } catch (error) {
             return {
                 status : "error",
@@ -77,8 +86,16 @@ export default class LevelSchema {
         // Check if our data is valid
         let validation = schema(sublevel_value)
         if (validation) {
-            let tmpDB = this.db.sublevel(sublevel_name, { valueEncoding: 'json' })
-            tmpDB.put(sublevel_key, sublevel_value)
+            try {
+                let tmpDB = this.sublevel(sublevel_name, { valueEncoding: 'json' })
+                tmpDB.put(sublevel_key, sublevel_value)
+            } catch (error) {
+                return {
+                    status : "error",
+                    error  : error,
+                    description : "Could not put data into sublevel"
+                }
+            }
         }
         else {
             return {
@@ -87,24 +104,36 @@ export default class LevelSchema {
                 description : "Data does not follow JSON Schema"
             }
         }
+        return {
+            status : "success"
+        }
 
     }
 
     async insertSchema(sublevel_name, sublevel_key, sublevel_value){
         try {
-            let tmpDB = this.db.sublevel(sublevel_name, { valueEncoding: 'json' })
-            val = await this.tmpDB.get(sublevel_key)
+            let tmpSublevel = this.sublevel(sublevel_name, { valueEncoding: 'json' })
+            await tmpSublevel.get(sublevel_key)
             return {
                 status : "error",
                 description : "Value already exists, please use putSchema to overwrite existing data"
             }
         } catch (error) {
-            await this.putSchema(tsublevel_name, sublevel_key, sublevel_value)
+            return await this.putSchema(sublevel_name, sublevel_key, sublevel_value)
         }
     }
 
-    getDB(){
-        return this.db
+    async insert(sublevel_name, sublevel_key, sublevel_value){
+        let tmpSublevel = this.sublevel(sublevel_name, { valueEncoding: 'json' })
+        try {
+            await tmpSublevel.get(sublevel_key)
+            return {
+                status : "error",
+                description : "Value already exists, please use putSchema to overwrite existing data"
+            }
+        } catch (error) {
+            return await tmpSublevel(sublevel_name, sublevel_key, sublevel_value)
+        }
     }
 
 }

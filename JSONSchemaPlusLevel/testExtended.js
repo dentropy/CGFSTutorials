@@ -1,21 +1,13 @@
-import LevelSchema from "./LevelSchema.js"
+import LevelSchema from "./LevelSchemaExtends.js"
 import { Level } from "level"
 
+// const myLevelDB = new Level('./db', { valueEncoding: 'json' })
+let db = new LevelSchema('./db', { valueEncoding: 'json' })
 
-console.log(`\n\n`)
-console.log(`Setting up LevelDB`)
-const myLevelDB = new Level('./db', { valueEncoding: 'json' })
-console.log(`Sucesfully set up LevelDB`)
-
-
-console.log(`\n\n`)
-console.log(`Setting up LevelSchema`)
-let db = new LevelSchema(myLevelDB)
-console.log(`Sucesfully set up LevelSchema`)
+// console.log(LevelSchema)
+// console.log(db)
 
 
-console.log(`\n\n`)
-console.log("Createing JSONSchema")
 const schema = {
     type: "object",
     properties: {
@@ -25,19 +17,16 @@ const schema = {
     required: ["foo"],
     additionalProperties: false
   }
-console.log(`This is our JSONSchema below`)
-console.log(`${JSON.stringify(schema, null, 2)}`)
+let putSchemaSublevel = await db.putSchemaSublevel("test", schema)
+console.log("putSchemaSublevel")
+console.log(putSchemaSublevel)
 
 
-console.log(`\n\n`)
-console.log(`Test getting the schema we just set in the prvious step`)
 let getJSONSchemaTest = await db.getJSONSchema("test")
+console.log("")
 console.log("getJSONSchemaTest")
 console.log(getJSONSchemaTest)
 
-
-console.log(`\n\n`)
-console.log(`Test setting INVALID data`)
 try {
     let putSchemaTest = await db.putSchema(
         "test",
@@ -46,9 +35,11 @@ try {
             foo : 12
         }
     )
+    console.log("")
     console.log("putSchemaTest Result")
     console.log(putSchemaTest)
 } catch (error) {
+    console.log("")
     console.log("putSchemaTest failed")
 }
 
@@ -78,8 +69,8 @@ const schema2 = {
     required: ["foo"],
     additionalProperties: false
   }
-let testSublevel = myLevelDB.sublevel("test", { valueEncoding: 'json' })
-await testSublevel.del("test")
+// let testSublevel = myLevelDB.sublevel("test", { valueEncoding: 'json' })
+// await testSublevel.del("test")
 let insertSchema = await db.insertSchema("test", "test", { foo : 14})
 console.log("")
 console.log("insertSchema")
@@ -87,10 +78,3 @@ console.log(insertSchema)
 let insertSchema2 = await db.insertSchema("test", "test3", { foo : 14})
 console.log("insertSchema2")
 console.log(insertSchema2)
-
-
-console.log(`\n\n`)
-console.log("Test creating an additional sublevel")
-let putSchemaSublevel = await db.putSchemaSublevel("test", schema)
-console.log("putSchemaSublevel")
-console.log(putSchemaSublevel)

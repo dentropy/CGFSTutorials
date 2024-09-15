@@ -44,6 +44,19 @@ export default class LevelSchema {
         }
     }
 
+    async getJSONSchema(){
+        try {
+            let the_schema = await this.level.get('JSONSchema')
+            return the_schema
+        } catch (error) {
+            return {
+                status : "error",
+                error  : error,
+                description : "Can not find schema"
+            }
+        }
+    }
+
     async getJSONSchema(sublevel_name){
         try {
             let the_schema = await this.schemaSublevel.get(sublevel_name)
