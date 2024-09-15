@@ -8,6 +8,8 @@ The way I like to code is by first getting a vairty of modifyable working exampl
 
 ## Tutorials
 
+* [JSONSchemaPlusLevel](./JSONSchemaPlusLevel/README.md)
+
 #### LevelDB
 
 ## RxDB
