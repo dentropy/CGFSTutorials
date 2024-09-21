@@ -12,9 +12,9 @@
 
 #### Value Encoding Options
 
-* utf8
-* json
-* buffer
+* "utf8"
+* "json"
+* "buffer"
 
 
 ## Functions Implimented
@@ -31,6 +31,9 @@
 * upsert(sublevel_name, sublevel_key, sublevel_value)
     * Insert, produce error if value already exists, if a value in the namespace of a sublevel, that matches the sublevel's JSONSchema
 * del(sublevel_name, sublevel_key)
+    * ENABLED IN SETTINGS
     * Delete a value in a sublevel, basically same as .del in level library
 * get(sublevel_name, sublevel_key)
     * Get a value in a sublevel, basically same as .get in level library
+* ITERATOR STUFF
+* REVERSE CID LOOKUP (Maybe do DID's first)
