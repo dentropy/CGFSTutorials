@@ -10,7 +10,7 @@ export default class LevelSchema extends Level {
         this.schemaSublevel = this.sublevel("JSONSchema", { valueEncoding: 'json' })
     }
 
-    async putSchemaSublevel(sublevel_name, sublevel_schema){
+    async createSchemaSublevel(sublevel_name, sublevel_schema){
         if(sublevel_name == "JSONSchema"){
             return {
                 status : "error",

@@ -34,9 +34,9 @@ console.log(`${JSON.stringify(schema, null, 2)}`)
 
 console.log(`\n\n`)
 console.log("Create a level to store data")
-let putSchemaSublevel = await db.putSchemaSublevel("test", schema)
-console.log("putSchemaSublevel")
-console.log(putSchemaSublevel)
+let createSchemaSublevel = await db.createSchemaSublevel("test", schema)
+console.log("createSchemaSublevel")
+console.log(createSchemaSublevel)
 
 
 console.log(`\n\n`)

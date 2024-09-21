@@ -20,3 +20,23 @@ rm -rf db && node test.js
 rm -rf db && node testExtended.js
 
 ```
+
+
+#### Functions
+
+* constructor(SAME_AS_LEVEL)
+    * insert(sublevel_name, sublevel_key, sublevel_value)
+        * If a key already exists in leveldb, do not overwrite it
+* Schema Functions
+    * createSchemaSublevel(sublevel_name, sublevel_schema)
+        * Create a sublevel with JSONSchema restrictions
+    * getJSONSchema(sublevel_name)
+        * Get the JSONSchema for a sublevel
+    * putSchema(sublevel_name, sublevel_key, sublevel_value)
+        * Put a value in the namespace of a sublevel, that matches the sublevel's JSONSchema
+    * insertSchema(sublevel_name, sublevel_key, sublevel_value)
+        * Insert, produce error if value already exists, if a value in the namespace of a sublevel, that matches the sublevel's JSONSchema
+    * delSchema(sublevel_name, sublevel_key)
+        * Delete a value in a sublevel, basically same as .del in level library
+    * getSchema(sublevel_name, sublevel_key)
+        * Get a value in a sublevel, basically same as .get in level library
