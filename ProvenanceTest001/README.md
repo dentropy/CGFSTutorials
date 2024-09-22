@@ -37,3 +37,30 @@
     * Get a value in a sublevel, basically same as .get in level library
 * ITERATOR STUFF
 * REVERSE CID LOOKUP (Maybe do DID's first)
+
+#### npm installs
+
+``` bash
+
+npm install --save-dev mocha
+npm install @ipld/dag-json
+npm install level
+npm install multiformats
+npm install uuid
+
+```
+
+#### Tests to do
+
+* What are they
+	* Setup and test level works
+	* Create a LevelSchemaProvenance object
+	* Test creating Sublevel's with invalid settings
+	* Successfully create a sublevel
+	* Test zbase32 encoding of sublevel
+	* Test schema insert with no key there
+	* Test schema insert with key already there
+	* Test schema insert with no key there 
+	* Test schemaless data insert with key already there
+	* Test upsert with no value there
+	* Test upsert with value already there
