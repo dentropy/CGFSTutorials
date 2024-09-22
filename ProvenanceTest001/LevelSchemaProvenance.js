@@ -5,6 +5,8 @@ import * as raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { CID } from 'multiformats/cid'
 
+
+
 export default class LevelSchemaProvenance {
 
     constructor(levelDB) {
@@ -139,7 +141,7 @@ export default class LevelSchemaProvenance {
                 }
             }
             await collection_sublevel_logging.put("index", 0)
-            await collection_sublevel_logCIDs.put("0", logCID.toV1())
+            await collection_sublevel_logging.put("0", logCID.toV1())
         }
         return {
             status: "success"
@@ -168,10 +170,12 @@ export default class LevelSchemaProvenance {
         } catch (error) {
             // When this runs it means we can insert the value without overwriting somethign
         }
-        let collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: settings.ValueEncoding })
+        let collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: "utf8" })
         const value_CID = await collection_sublevel_namespace.get(base32z_encoded_sublevel_key)
-        await collection_sublevel_CID_store.get(value_CID)
+        let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
+        return encodedCIDValue
     }
+
     async insert(sublevel_name, sublevel_key, sublevel_value) {
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
@@ -180,7 +184,7 @@ export default class LevelSchemaProvenance {
         let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
         let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
         let settings = await collection_sublevel_settings.get("settings")
-        let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'utf8' })
+        let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
 
         // Check for the key in the namespace
         try {
@@ -197,7 +201,7 @@ export default class LevelSchemaProvenance {
         // Setup CID Store
         let collection_sublevel_CID_store = null
         if (settings.LocalCIDStore == true) {
-            collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: 'buffer' })
+            collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
         }
         else {
             return {
@@ -210,24 +214,31 @@ export default class LevelSchemaProvenance {
         // Check codes here, https://github.com/multiformats/multicodec/blob/master/table.csv
         let encoded = null
         let storeCID = null
+        let base58btcEncoded = null
         if (settings.SchemaEnforced) {
             encoded = dagjson.encode(sublevel_value)
             const hash = await sha256.digest(encoded)
             storeCID = CID.create(1, 0x0129, hash)
         } else {
-            if(typeof(sublevel_value) == "string"){
+            if(typeof(sublevel_value) == "string" ){
+                if(sublevel_value[0] != "z"){
                 encoded = this.textEncoder.encode(sublevel_value)
+                base58btcEncoded = bases.base58btc.encode(encoded)
+                } else {
+                    encoded = sublevel_value
+                }
+
             }
             if(typeof(sublevel_value) == "object"){
                 encoded = this.textEncoder.encode(JSON.stringify(sublevel_value))
+                base58btcEncoded = bases.base58btc.encode(encoded)
             }
-            // encoded = raw.encode(sublevel_value)
             const hash = await sha256.digest(encoded)
             storeCID = CID.create(1, raw.code, hash)
         }
 
         // Store CID of value
-        await collection_sublevel_CID_store.put(storeCID, encoded)
+        await collection_sublevel_CID_store.put(storeCID, base58btcEncoded)
 
         // Put refernece to CID in namespace
         await collection_sublevel_namespace.put(base32z_encoded_sublevel_key, storeCID)
@@ -252,29 +263,24 @@ export default class LevelSchemaProvenance {
 
             // Get previous log Index
             let logIndex = await collection_sublevel_logging.get("index")
-            // Get the previous log CID
-            console.log("PAUL_WAS_HERE")
-            console.log(logIndex)
-            let lastLogCID = await collection_sublevel_logging.get("0")
 
-            console.log(lastLogCID)
-            // Generate logging object
-            let lastLog = collection_sublevel_logCIDs(lastLogCID)
-            lastLog = dagjson.decode(lastLog)
+            // Get the previous log CID
+            let lastLogCID = await collection_sublevel_logging.get("0")
 
             // Generate CID for logging object
             let logData = {
                 "method": "insert",
                 "index": logIndex + 1,
-                "value": sublevel_settings,
-                "lastLogCID": CID.parse(lastLogCID)
-            }
-            if (sublevel_settings.CollectionProvenanceTimestamped) {
-                logData.timestamp = Date.now().toString()
+                "value": storeCID,
+                "lastLogCID": lastLogCID["/"]
             }
             const encoded = dagjson.encode(logData)
             const hash = await sha256.digest(encoded)
             const logCID = CID.create(1, 0x0129, hash)
+            if (settings.CollectionProvenanceTimestamped) {
+                logData.timestamp = Date.now().toString()
+            }
+
             if (settings.CollectionProvenanceStoreLocal) {
                 let collection_sublevel_logCIDs = collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
                 collection_sublevel_logCIDs.put(logCID, encoded)

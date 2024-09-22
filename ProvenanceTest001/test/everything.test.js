@@ -2,6 +2,7 @@ import assert from "assert"
 import { Level } from 'level'
 import LevelSchemaProvenance from '../LevelSchemaProvenance.js'
 import { v4 as uuidv4 } from 'uuid';
+import { bases } from 'multiformats/basics'
 
 describe('Check if settings are set correctly', function () {
   describe('Check level works correctly', function () {
@@ -150,7 +151,15 @@ describe('Check if settings are set correctly', function () {
             }
         )
         let insertResponse = await myLSPDB.insert(sublevelName, "testkey", "testvalue")
-        console.log(insertResponse)
+        assert.equal(insertResponse.status, "success");
+        let textEncoder = new TextEncoder();
+        let textDecoder = new TextDecoder();
+        let getResponse = await myLSPDB.get(sublevelName, "testkey", "testvalue")
+        let base58btcCoded = bases.base58btc.encode(await(textEncoder.encode("testvalue")))
+        assert.equal(base58btcCoded, getResponse)
+        let base58btcDecoded = bases.base58btc.decode(getResponse)
+        let decodedTextResponse = textDecoder.decode(base58btcDecoded)
+        assert.equal("testvalue", decodedTextResponse)
     })
     it('Sucesfully create schemaless sublevel, insert to it, then they and insert again', async function () {
 

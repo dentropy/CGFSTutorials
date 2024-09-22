@@ -3,14 +3,16 @@ import { Level } from 'level'
 // Create a database
 const db = new Level('./mydb')
 
-async function iterateWithGT() {
+async function dumpLevel(db) {
+  let returnObj = {}
   for await (const [key, value] of db.iterator({ gt: '\x00' })) {
-    console.log(`${key.padEnd(12)}=${value}`)
+    returnObj[key] = value
   }
+  return returnObj
 }
 
 async function main(){
-  console.log(await iterateWithGT())
+  console.log(await dumpLevel(db))
 }
 
 main()
