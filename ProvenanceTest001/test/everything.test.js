@@ -28,7 +28,7 @@ describe('Check if settings are set correctly', function () {
                 String(uuidv4()),
                 {
                     "LocalCIDStore": false,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": false,
                     "CollectionProvenanceStoreLocal": true,
@@ -49,7 +49,7 @@ describe('Check if settings are set correctly', function () {
                 String(uuidv4()),
                 {
                     "LocalCIDStore": true,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": false,
                     "CollectionProvenanceStoreLocal": false,
@@ -71,7 +71,7 @@ describe('Check if settings are set correctly', function () {
                 sublevelName,
                 {
                     "LocalCIDStore": true,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": false,
                     "CollectionProvenanceStoreLocal": true,
@@ -90,7 +90,7 @@ describe('Check if settings are set correctly', function () {
                 sublevelName,
                 {
                     "LocalCIDStore": true,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": false,
                     "CollectionProvenanceStoreLocal": true,
@@ -109,7 +109,7 @@ describe('Check if settings are set correctly', function () {
                 sublevelName,
                 {
                     "LocalCIDStore": true,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": false,
                     "CollectionProvenanceStoreLocal": true,
@@ -121,7 +121,7 @@ describe('Check if settings are set correctly', function () {
                 sublevelName,
                 {
                     "LocalCIDStore": true,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": false,
                     "CollectionProvenanceStoreLocal": true,
@@ -144,7 +144,7 @@ describe('Check if settings are set correctly', function () {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": false,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
@@ -171,7 +171,7 @@ describe('Check if settings are set correctly', function () {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": false,
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
@@ -225,7 +225,7 @@ describe('Check if settings are set correctly', function () {
                             "completed"
                         ]
                     },
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
@@ -268,7 +268,7 @@ describe('Check if settings are set correctly', function () {
                             "completed"
                         ]
                     },
-                    "IndexProvenance": true,
+                    "IndexProvenance": false,
                     "CollectionProvenance": true,
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
@@ -279,6 +279,59 @@ describe('Check if settings are set correctly', function () {
             assert.equal(insertResponse.status, "error")
         })
         it('Sucesfully create a schema sublevel, insert valid json into it, validate that data is in sublevel', async function () {
+            const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
+            const myLSPDB = new LevelSchemaProvenance(myLevelDB)
+            const sublevelName = uuidv4()
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
+                sublevelName,
+                {
+                    "LocalCIDStore": true,
+                    "CollectionProvenanceStoreLocal": true,
+                    "SchemaEnforced": true,
+                    "Schema": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Generated schema for Root",
+                        "type": "object",
+                        "properties": {
+                            "userId": {
+                                "type": "number"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "completed": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "userId",
+                            "id",
+                            "title",
+                            "completed"
+                        ]
+                    },
+                    "IndexProvenance": false,
+                    "CollectionProvenance": true,
+                    "CollectionProvenanceTimestamped": true,
+                    "ValueEncoding": "utf8"
+                }
+            )
+            assert.equal(createLSPDBTest.status, "success")
+            const tmpData = {
+                "userId": 1,
+                "id": 1,
+                "title": "delectus aut autem",
+                "completed": false
+            }
+            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
+            assert.equal(insertResponse.status, "success")
+            const validateGet = await myLSPDB.get(sublevelName, "testkey")
+            assert.deepEqual(validateGet, tmpData)
+        })
+        it('Sucesfully create a schema sublevel with IndexProvenance, insert valid json into it', async function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
@@ -328,9 +381,59 @@ describe('Check if settings are set correctly', function () {
             }
             const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
             assert.equal(insertResponse.status, "success")
-            const validateGet = await myLSPDB.get(sublevelName, "testkey")
-            assert.deepEqual(validateGet, tmpData)
         })
-
+        it('Sucesfully create a schema sublevel with IndexProvenance, insert valid json into it, validate that data is in sublevel', async function () {
+            const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
+            const myLSPDB = new LevelSchemaProvenance(myLevelDB)
+            const sublevelName = uuidv4()
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
+                sublevelName,
+                {
+                    "LocalCIDStore": true,
+                    "CollectionProvenanceStoreLocal": true,
+                    "SchemaEnforced": true,
+                    "Schema": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Generated schema for Root",
+                        "type": "object",
+                        "properties": {
+                            "userId": {
+                                "type": "number"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "completed": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "userId",
+                            "id",
+                            "title",
+                            "completed"
+                        ]
+                    },
+                    "IndexProvenance": true,
+                    "CollectionProvenance": true,
+                    "CollectionProvenanceTimestamped": true,
+                    "ValueEncoding": "utf8"
+                }
+            )
+            assert.equal(createLSPDBTest.status, "success")
+            const tmpData = {
+                "userId": 1,
+                "id": 1,
+                "title": "delectus aut autem",
+                "completed": false
+            }
+            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
+            assert.equal(insertResponse.status, "success")
+            const getResponse = await myLSPDB.get(sublevelName, "testkey")
+            assert.deepEqual(tmpData)
+        })
     })
 })

@@ -24,7 +24,7 @@ export default class LevelSchemaProvenance {
                 "IndexProvenance": {
                     "type": "boolean"
                 },
-                "IndexProvenance": {
+                "IndexProvenanceTimestamp": {
                     "type": "boolean"
                 },
                 "CollectionProvenance": {
@@ -152,7 +152,7 @@ export default class LevelSchemaProvenance {
 
     }
 
-    async get(sublevel_name, sublevel_key){
+    async get(sublevel_name, sublevel_key) {
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
@@ -173,13 +173,23 @@ export default class LevelSchemaProvenance {
             }
         }
         let collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: "utf8" })
-        if(settings.SchemaEnforced){
+        if (settings.SchemaEnforced) {
             let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
             let decodedData = bases.base58btc.decode(encodedCIDValue)
             let jsonData = dagjson.decode(decodedData)
+            if(settings.IndexProvenance){
+                let encodedCIDValueMetadata = await collection_sublevel_CID_store.get(jsonData.currentCID)
+                let decodedMetaData = bases.base58btc.decode(encodedCIDValueMetadata)
+                jsonData = dagjson.decode(decodedMetaData)
+            }
             return jsonData
         } else {
             let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
+            if(settings.IndexProvenance){
+                let encodedCIDValueMetadata = await collection_sublevel_CID_store.get(jsonData.currentCID)
+                let decodedMetaData = bases.base58btc.decode(encodedCIDValueMetadata)
+                jsonData = dagjson.decode(decodedMetaData)
+            }
             return encodedCIDValue
         }
     }
@@ -203,7 +213,7 @@ export default class LevelSchemaProvenance {
             // When this runs it means we can insert the value without overwriting somethign
             check_key_exists = false
         }
-        if(check_key_exists){
+        if (check_key_exists) {
             return {
                 status: "error",
                 description: "Value already exists, please use putSchema to overwrite existing data"
@@ -230,10 +240,10 @@ export default class LevelSchemaProvenance {
         if (settings.SchemaEnforced) {
             // Check the schema against the data coming in
             let json_schema_checker = this.ajv.compile(settings.Schema)
-            
+
             let result_schema_check = json_schema_checker(sublevel_value)
 
-            if(result_schema_check){
+            if (result_schema_check) {
                 encoded = dagjson.encode(sublevel_value)
                 const hash = await sha256.digest(encoded)
                 storeCID = CID.create(1, 0x0129, hash)
@@ -246,16 +256,16 @@ export default class LevelSchemaProvenance {
             }
         } else {
             // TODO, should the raw data coming in already be base encoded?
-            if(typeof(sublevel_value) == "string" ){
-                if(sublevel_value[0] != "z"){
-                encoded = this.textEncoder.encode(sublevel_value)
-                base58btcEncoded = bases.base58btc.encode(encoded)
+            if (typeof (sublevel_value) == "string") {
+                if (sublevel_value[0] != "z") {
+                    encoded = this.textEncoder.encode(sublevel_value)
+                    base58btcEncoded = bases.base58btc.encode(encoded)
                 } else {
                     encoded = sublevel_value
                 }
 
             }
-            if(typeof(sublevel_value) == "object"){
+            if (typeof (sublevel_value) == "object") {
                 encoded = this.textEncoder.encode(JSON.stringify(sublevel_value))
                 base58btcEncoded = bases.base58btc.encode(encoded)
             }
@@ -267,7 +277,23 @@ export default class LevelSchemaProvenance {
         await collection_sublevel_CID_store.put(storeCID, base58btcEncoded)
 
         // Put refernece to CID in namespace
-        await collection_sublevel_namespace.put(base32z_encoded_sublevel_key, storeCID)
+        if(settings.IndexProvenance){
+            let indexMetadata = {
+                previousCID: null,
+                currentCID: storeCID
+            }
+            if(settings.IndexProvenanceTimestamp){
+                indexMetadata.timestamp = Date.now().toString()
+            }
+            const encoded = dagjson.encode(indexMetadata)
+            const hash = await sha256.digest(encoded)
+            const metadataCID = CID.create(1, 0x0129, hash)
+            const metadataBase58btcEncoded = bases.base58btc.encode(encoded)
+            await collection_sublevel_CID_store.put(metadataCID, metadataBase58btcEncoded)
+            await collection_sublevel_namespace.put(base32z_encoded_sublevel_key, metadataCID)
+        } else {
+            await collection_sublevel_namespace.put(base32z_encoded_sublevel_key, storeCID)
+        }
 
         // TODO we gotta read the settings from levelDB
 
@@ -328,21 +354,21 @@ export default class LevelSchemaProvenance {
         }
     }
 
-    async update(){
+    async update() {
         return {
             status: "error",
             description: "Not yet implimented."
         }
     }
 
-    async upsert(){
+    async upsert() {
         return {
             status: "error",
             description: "Not yet implimented."
         }
     }
 
-    async del(){
+    async del() {
         return {
             status: "error",
             description: "Not yet implimented."
