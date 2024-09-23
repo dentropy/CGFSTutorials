@@ -39,7 +39,7 @@ export default class LevelSchemaProvenance {
                 "ValueEncoding": {
                     "type": "string"
                 },
-                "schema": {
+                "Schema": {
                     "type": "string"
                 }
             },
@@ -86,7 +86,7 @@ export default class LevelSchemaProvenance {
         // Check for JSONSchema in settings and validate them
         if (sublevel_settings.SchemaEnforced == true) {
             try {
-                const validate = this.ajv.compile(sublevel_settings.schema)
+                const validate = this.ajv.compile(sublevel_settings.Schema)
             } catch (error) {
                 return {
                     status: "error",
@@ -96,7 +96,7 @@ export default class LevelSchemaProvenance {
             }
         }
 
-        // Check if the collection already exists or not
+        // Check if the collection already exis or not
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let collection_sublevel = await this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
@@ -149,7 +149,7 @@ export default class LevelSchemaProvenance {
 
     }
 
-    async get(sublevel_name, sublevel_key, sublevel_value){
+    async get(sublevel_name, sublevel_key){
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
@@ -157,23 +157,28 @@ export default class LevelSchemaProvenance {
         let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
         let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
         let settings = await collection_sublevel_settings.get("settings")
-        let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: "json" })
+        let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
 
         // Check for the key in the namespace
+        let value_CID = null
         try {
-            await collection_sublevel_namespace.get(base32z_encoded_sublevel_name)
+            value_CID = await collection_sublevel_namespace.get(base32z_encoded_sublevel_key)
+        } catch (error) {
             return {
                 status: "error",
-                description: "Value already exists, please use putSchema to overwrite existing data"
+                description: "Could not find value"
             }
-            // Just add if not index provenance
-        } catch (error) {
-            // When this runs it means we can insert the value without overwriting somethign
         }
         let collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: "utf8" })
-        const value_CID = await collection_sublevel_namespace.get(base32z_encoded_sublevel_key)
-        let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
-        return encodedCIDValue
+        if(settings.SchemaEnforced){
+            let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
+            let decodedData = bases.base58btc.decode(encodedCIDValue)
+            let jsonData = dagjson.decode(decodedData)
+            return jsonData
+        } else {
+            let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
+            return encodedCIDValue
+        }
     }
 
     async insert(sublevel_name, sublevel_key, sublevel_value) {
@@ -187,15 +192,19 @@ export default class LevelSchemaProvenance {
         let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
 
         // Check for the key in the namespace
+        let check_key_exists = null
         try {
-            await collection_sublevel_namespace.get(base32z_encoded_sublevel_name)
+            await collection_sublevel_namespace.get(base32z_encoded_sublevel_key)
+            check_key_exists = true
+        } catch (error) {
+            // When this runs it means we can insert the value without overwriting somethign
+            check_key_exists = false
+        }
+        if(check_key_exists){
             return {
                 status: "error",
                 description: "Value already exists, please use putSchema to overwrite existing data"
             }
-            // Just add if not index provenance
-        } catch (error) {
-            // When this runs it means we can insert the value without overwriting somethign
         }
 
         // Setup CID Store
@@ -216,10 +225,24 @@ export default class LevelSchemaProvenance {
         let storeCID = null
         let base58btcEncoded = null
         if (settings.SchemaEnforced) {
-            encoded = dagjson.encode(sublevel_value)
-            const hash = await sha256.digest(encoded)
-            storeCID = CID.create(1, 0x0129, hash)
+            // Check the schema against the data coming in
+            let json_schema_checker = this.ajv.compile(settings.Schema)
+            
+            let result_schema_check = json_schema_checker(sublevel_value)
+
+            if(result_schema_check){
+                encoded = dagjson.encode(sublevel_value)
+                const hash = await sha256.digest(encoded)
+                storeCID = CID.create(1, 0x0129, hash)
+                base58btcEncoded = bases.base58btc.encode(encoded)
+            } else {
+                return {
+                    status: "error",
+                    description: "The input value did not match the JSONSchema"
+                }
+            }
         } else {
+            // TODO, should the raw data coming in already be base encoded?
             if(typeof(sublevel_value) == "string" ){
                 if(sublevel_value[0] != "z"){
                 encoded = this.textEncoder.encode(sublevel_value)
