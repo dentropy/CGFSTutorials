@@ -433,7 +433,72 @@ describe('Check if settings are set correctly', function () {
             const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
             assert.equal(insertResponse.status, "success")
             const getResponse = await myLSPDB.get(sublevelName, "testkey")
-            assert.deepEqual(tmpData)
+            assert.deepEqual(getResponse, tmpData)
+        })
+    })
+    describe('Validate update query', function () {
+        it('Sucesfully update something', async function () {
+            const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
+            const myLSPDB = new LevelSchemaProvenance(myLevelDB)
+            const sublevelName = uuidv4()
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
+                sublevelName,
+                {
+                    "LocalCIDStore": true,
+                    "CollectionProvenanceStoreLocal": true,
+                    "SchemaEnforced": true,
+                    "Schema": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Generated schema for Root",
+                        "type": "object",
+                        "properties": {
+                            "userId": {
+                                "type": "number"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "completed": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "userId",
+                            "id",
+                            "title",
+                            "completed"
+                        ]
+                    },
+                    "IndexProvenance": true,
+                    "CollectionProvenance": true,
+                    "CollectionProvenanceTimestamped": true,
+                    "ValueEncoding": "utf8"
+                }
+            )
+            assert.equal(createLSPDBTest.status, "success")
+            const tmpData = {
+                "userId": 1,
+                "id": 1,
+                "title": "delectus aut autem",
+                "completed": false
+            }
+            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
+            assert.equal(insertResponse.status, "success")
+            const getResponse = await myLSPDB.get(sublevelName, "testkey")
+            assert.deepEqual(getResponse, tmpData)
+            const tmpData2 = {
+                "userId": 2,
+                "id": 2,
+                "title": "Something latin",
+                "completed": true
+            }
+            const updateResponse = await myLSPDB.update(sublevelName, "testkey", tmpData2)
+            assert.equal(updateResponse.status, "success")
+            const getResponse2 = await myLSPDB.get(sublevelName, "testkey")
+            assert.deepEqual(getResponse2, tmpData2)
         })
     })
 })
