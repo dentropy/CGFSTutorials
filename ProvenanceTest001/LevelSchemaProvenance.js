@@ -486,7 +486,7 @@ export default class LevelSchemaProvenance {
 
             // Generate CID for logging object
             let logData = {
-                "method": "insert",
+                "method": "update",
                 "index": logIndex + 1,
                 "value": storeCID,
                 "lastLogCID": lastLogCID["/"]
@@ -519,10 +519,171 @@ export default class LevelSchemaProvenance {
         }
     }
 
-    async upsert() {
+    async upsert(sublevel_name, sublevel_key, sublevel_value) {
+        let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
+        let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
+        let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
+        let base32z_encoded_sublevel_key = bases.base32z.encode(encoded_sublevel_key)
+        let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
+        let settings = await collection_sublevel_settings.get("settings")
+        let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
+
+        // Check for the key in the namespace
+        let check_key_exists = null
+        let namespace_CID_pointer = null
+        try {
+            namespace_CID_pointer = await collection_sublevel_namespace.get(base32z_encoded_sublevel_key)
+            check_key_exists = true
+        } catch (error) {
+            // When this runs it means we can insert the value without overwriting somethign
+            check_key_exists = false
+        }
+
+        // Setup CID Store
+        let collection_sublevel_CID_store = null
+        if (settings.LocalCIDStore ) {
+            collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
+        }
+        else {
+            return {
+                status: "error",
+                description: "Central and Remote CID stores are not implimented yet"
+            }
+        }
+
+        // Calcualte CID
+        // Check codes here, https://github.com/multiformats/multicodec/blob/master/table.csv
+        let encoded = null
+        let storeCID = null
+        let base58btcEncoded = null
+        if (settings.SchemaEnforced) {
+            // Check the schema against the data coming in
+            let json_schema_checker = this.ajv.compile(settings.Schema)
+
+            let result_schema_check = json_schema_checker(sublevel_value)
+
+            if (result_schema_check) {
+                encoded = dagjson.encode(sublevel_value)
+                const hash = await sha256.digest(encoded)
+                storeCID = CID.create(1, 0x0129, hash)
+                base58btcEncoded = bases.base58btc.encode(encoded)
+            } else {
+                return {
+                    status: "error",
+                    description: "The input value did not match the JSONSchema"
+                }
+            }
+        } else {
+            // TODO, should the raw data coming in already be base encoded?
+            if (typeof (sublevel_value) == "string") {
+                if (sublevel_value[0] != "z") {
+                    encoded = this.textEncoder.encode(sublevel_value)
+                    base58btcEncoded = bases.base58btc.encode(encoded)
+                } else {
+                    encoded = sublevel_value
+                }
+
+            }
+            if (typeof (sublevel_value) == "object") {
+                encoded = this.textEncoder.encode(JSON.stringify(sublevel_value))
+                base58btcEncoded = bases.base58btc.encode(encoded)
+            }
+            const hash = await sha256.digest(encoded)
+            storeCID = CID.create(1, raw.code, hash)
+        }
+
+        // Store CID of value
+        await collection_sublevel_CID_store.put(storeCID, base58btcEncoded)
+
+        // Put refernece to CID in namespace
+        if(settings.IndexProvenance){
+            // Get the metadata CID
+            let indexMetadata = null
+            if(check_key_exists){
+                let metadataBase58 = await collection_sublevel_CID_store.get(namespace_CID_pointer["/"])
+                let metadataBuffer = bases.base58btc.decode(metadataBase58)
+                let metadataJSON = dagjson.decode(metadataBuffer)
+                indexMetadata = {
+                    previousCID: metadataJSON.currentCID,
+                    currentCID: storeCID
+                }
+            }
+            else {
+                indexMetadata = {
+                    previousCID: null,
+                    currentCID: storeCID
+                }
+            }
+            if(settings.IndexProvenanceTimestamp){
+                indexMetadata.timestamp = Date.now().toString()
+            }
+            const encoded = dagjson.encode(indexMetadata)
+            const hash = await sha256.digest(encoded)
+            const metadataCID = CID.create(1, 0x0129, hash)
+            const metadataBase58btcEncoded = bases.base58btc.encode(encoded)
+            await collection_sublevel_CID_store.put(metadataCID, metadataBase58btcEncoded)
+            await collection_sublevel_namespace.put(base32z_encoded_sublevel_key, metadataCID)
+        } else {
+            await collection_sublevel_namespace.put(base32z_encoded_sublevel_key, storeCID)
+        }
+
+        // TODO we gotta read the settings from levelDB
+
+        if (settings.CollectionProvenance) {
+            // Get LogCID Sublevel
+            let collection_sublevel_logCIDs = null
+            if (settings.CollectionProvenanceStoreLocal) {
+                collection_sublevel_logCIDs = await collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+            }
+            else {
+                return {
+                    status: "error",
+                    description: "Central and Remote CID stores are not implimented yet"
+                }
+            }
+
+            // Get CID sublevel
+            let collection_sublevel_logging = collection_sublevel.sublevel("logging", { valueEncoding: 'json' })
+
+            // Get previous log Index
+            let logIndex = await collection_sublevel_logging.get("index")
+
+            // Get the previous log CID
+            let lastLogCID = await collection_sublevel_logging.get("0")
+
+            // Generate CID for logging object
+            let logData = {
+                "method": "upsert",
+                "index": logIndex + 1,
+                "value": storeCID,
+                "lastLogCID": lastLogCID["/"]
+            }
+            const encoded = dagjson.encode(logData)
+            const hash = await sha256.digest(encoded)
+            const logCID = CID.create(1, 0x0129, hash)
+            if (settings.CollectionProvenanceTimestamped) {
+                logData.timestamp = Date.now().toString()
+            }
+
+            if (settings.CollectionProvenanceStoreLocal) {
+                let collection_sublevel_logCIDs = collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                collection_sublevel_logCIDs.put(logCID, encoded)
+            }
+            else {
+                return {
+                    status: "error",
+                    description: "Only CollectionProvenanceStoreLocal set to true is supported"
+                }
+            }
+            // Update Logging store
+            collection_sublevel_logging.put("index", logIndex + 1)
+            collection_sublevel_logging.put(logIndex + 1, logCID)
+            // Store CID of logging object
+            collection_sublevel_logCIDs.put(logCID, encoded)
+        }
         return {
-            status: "error",
-            description: "Not yet implimented."
+            status: "success"
         }
     }
 
