@@ -24,6 +24,9 @@ export default class LevelSchemaProvenance {
                 "IndexProvenance": {
                     "type": "boolean"
                 },
+                "IndexProvenance": {
+                    "type": "boolean"
+                },
                 "CollectionProvenance": {
                     "type": "boolean"
                 },
@@ -322,6 +325,27 @@ export default class LevelSchemaProvenance {
         }
         return {
             status: "success"
+        }
+    }
+
+    async update(){
+        return {
+            status: "error",
+            description: "Not yet implimented."
+        }
+    }
+
+    async upsert(){
+        return {
+            status: "error",
+            description: "Not yet implimented."
+        }
+    }
+
+    async del(){
+        return {
+            status: "error",
+            description: "Not yet implimented."
         }
     }
 
