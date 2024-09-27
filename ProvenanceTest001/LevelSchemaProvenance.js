@@ -117,10 +117,14 @@ export default class LevelSchemaProvenance {
                     "properties": {},
                     "required": []
                 },
+                // TODO encoding is not yet implimented
                 "encoding": {
                     "type": "object",
                     "properties": {},
                     "required": []
+                },
+                "metadata_CID": {
+                    "type": "string"
                 }
             },
             "required": [
@@ -475,6 +479,19 @@ export default class LevelSchemaProvenance {
                 "value": storeCID,
                 "lastLogCID": lastLogCID["/"]
             }
+            let metadata_CID = null
+            try {
+                metadata_CID = CID.parse(input_data.metadata_CID)
+            } catch (error) {
+                return {
+                    status: "error",
+                    error: error,
+                    description: "Could not parse metadata_CID, make sure it is a V1 CID",
+                }
+            }
+            if(  Object.keys(input_data).includes( metadata_CID ) ){
+                logData.metadata_CID = String(metadata_CID)
+            }
             const encoded = dagjson.encode(logData)
             const hash = await sha256.digest(encoded)
             const logCID = CID.create(1, 0x0129, hash)
@@ -651,6 +668,19 @@ export default class LevelSchemaProvenance {
                 "index": logIndex + 1,
                 "value": storeCID,
                 "lastLogCID": lastLogCID["/"]
+            }
+            let metadata_CID = null
+            try {
+                metadata_CID = CID.parse(input_data.metadata_CID)
+            } catch (error) {
+                return {
+                    status: "error",
+                    error: error,
+                    description: "Could not parse metadata_CID, make sure it is a V1 CID",
+                }
+            }
+            if(  Object.keys(input_data).includes( metadata_CID ) ){
+                logData.metadata_CID = String(metadata_CID)
             }
             const encoded = dagjson.encode(logData)
             const hash = await sha256.digest(encoded)
@@ -831,6 +861,19 @@ export default class LevelSchemaProvenance {
                 "index": logIndex + 1,
                 "value": storeCID,
                 "lastLogCID": lastLogCID["/"]
+            }
+            let metadata_CID = null
+            try {
+                metadata_CID = CID.parse(input_data.metadata_CID)
+            } catch (error) {
+                return {
+                    status: "error",
+                    error: error,
+                    description: "Could not parse metadata_CID, make sure it is a V1 CID",
+                }
+            }
+            if(  Object.keys(input_data).includes( metadata_CID ) ){
+                logData.metadata_CID = String(metadata_CID)
             }
             const encoded = dagjson.encode(logData)
             const hash = await sha256.digest(encoded)
