@@ -544,7 +544,11 @@ describe('Check if settings are set correctly', function () {
                 "title": "Something latin",
                 "completed": true
             }
-            const updateResponse = await myLSPDB.update(sublevelName, "testkey", tmpData2)
+            const updateResponse = await myLSPDB.update({
+                sublevel_name: sublevelName,
+                sublevel_key: "testkey",
+                sublevel_value: tmpData2
+            })
             assert.equal(updateResponse.status, "success")
             const getResponse2 = await myLSPDB.get({
                 sublevel_name: sublevelName, 
@@ -602,7 +606,11 @@ describe('Check if settings are set correctly', function () {
                 "title": "delectus aut autem",
                 "completed": false
             }
-            const upsertResponse = await myLSPDB.upsert(sublevelName, "testkey", tmpData)
+            const upsertResponse = await myLSPDB.upsert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: tmpData
+            })
             assert.equal(upsertResponse.status, "success")
             const getResponse = await myLSPDB.get({
                 sublevel_name: sublevelName, 
@@ -615,7 +623,11 @@ describe('Check if settings are set correctly', function () {
                 "title": "Something latin",
                 "completed": true
             }
-            const upsertResponse2 = await myLSPDB.upsert(sublevelName, "testkey", tmpData2)
+            const upsertResponse2 = await myLSPDB.upsert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: tmpData2
+            })
             assert.equal(upsertResponse2.status, "success")
             const getResponse2 = await myLSPDB.get({
                 sublevel_name: sublevelName, 

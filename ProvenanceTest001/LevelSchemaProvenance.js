@@ -472,7 +472,18 @@ export default class LevelSchemaProvenance {
         }
     }
 
-    async update(sublevel_name, sublevel_key, sublevel_value) {
+    async update(input_data) {
+        try {
+            this.changeSchema(input_data)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Invalid input_data",
+                settingsJSONSchema: this.changeRawSchmea
+            }
+        }
+        let {sublevel_name, sublevel_key, sublevel_value} = input_data
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
@@ -638,7 +649,18 @@ export default class LevelSchemaProvenance {
         }
     }
 
-    async upsert(sublevel_name, sublevel_key, sublevel_value) {
+    async upsert(input_data) {
+        try {
+            this.changeSchema(input_data)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Invalid input_data",
+                settingsJSONSchema: this.changeRawSchmea
+            }
+        }
+        let {sublevel_name, sublevel_key, sublevel_value} = input_data
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
