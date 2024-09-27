@@ -152,7 +152,11 @@ describe('Check if settings are set correctly', function () {
                     "ValueEncoding": "utf8"
                 }
             })
-            let insertResponse = await myLSPDB.insert(sublevelName, "testkey", "testvalue")
+            let insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: "testvalue"
+            })
             assert.equal(insertResponse.status, "success");
             let textEncoder = new TextEncoder();
             let textDecoder = new TextDecoder();
@@ -182,7 +186,11 @@ describe('Check if settings are set correctly', function () {
                     "ValueEncoding": "utf8"
                 }
             })
-            let insertResponse = await myLSPDB.insert(sublevelName, "testkey", "testvalue")
+            let insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: "testvalue"
+            })
             assert.equal(insertResponse.status, "success");
             let textEncoder = new TextEncoder();
             let textDecoder = new TextDecoder();
@@ -195,7 +203,11 @@ describe('Check if settings are set correctly', function () {
             let base58btcDecoded = bases.base58btc.decode(getResponse)
             let decodedTextResponse = textDecoder.decode(base58btcDecoded)
             assert.equal("testvalue", decodedTextResponse)
-            let insertResponse2 = await myLSPDB.insert(sublevelName, "testkey", "testvalue2")
+            let insertResponse2 = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: "testvalue2"
+            })
             assert.equal(insertResponse2.status, "error")
         })
         it('Sucesfully create a schema sublevel', async function () {
@@ -283,7 +295,11 @@ describe('Check if settings are set correctly', function () {
                 }
             })
             assert.equal(createLSPDBTest.status, "success")
-            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", { hello: "world" })
+            const insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: { hello: "world" }
+            })
             assert.equal(insertResponse.status, "error")
         })
         it('Sucesfully create a schema sublevel, insert valid json into it, validate that data is in sublevel', async function () {
@@ -334,7 +350,11 @@ describe('Check if settings are set correctly', function () {
                 "title": "delectus aut autem",
                 "completed": false
             }
-            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
+            const insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: tmpData
+            })
             assert.equal(insertResponse.status, "success")
             const validateGet = await myLSPDB.get({
                 sublevel_name: sublevelName,
@@ -390,7 +410,11 @@ describe('Check if settings are set correctly', function () {
                 "title": "delectus aut autem",
                 "completed": false
             }
-            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
+            const insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: tmpData
+            })
             assert.equal(insertResponse.status, "success")
         })
         it('Sucesfully create a schema sublevel with IndexProvenance, insert valid json into it, validate that data is in sublevel', async function () {
@@ -441,7 +465,11 @@ describe('Check if settings are set correctly', function () {
                 "title": "delectus aut autem",
                 "completed": false
             }
-            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
+            const insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey",
+                sublevel_value: tmpData
+            })
             assert.equal(insertResponse.status, "success")
             const getResponse = await myLSPDB.get({
                 sublevel_name: sublevelName, 
@@ -499,7 +527,11 @@ describe('Check if settings are set correctly', function () {
                 "title": "delectus aut autem",
                 "completed": false
             }
-            const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
+            const insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName,
+                sublevel_key: "testkey",
+                sublevel_value: tmpData
+            })
             assert.equal(insertResponse.status, "success")
             const getResponse = await myLSPDB.get({
                 sublevel_name: sublevelName, 

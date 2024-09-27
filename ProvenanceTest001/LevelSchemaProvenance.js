@@ -97,10 +97,38 @@ export default class LevelSchemaProvenance {
                 "sublevel_key"
             ]
         }
+        this.changeRawSchmea = {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+                "sublevel_name": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "sublevel_key": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "sublevel_value": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
+            },
+            "required": [
+                "sublevel_name",
+                "sublevel_key",
+                "sublevel_value"
+            ]
+        }
         this.ajv = new Ajv()
         this.settingsSchema = this.ajv.compile(this.settingsRawSchema)
         this.createSchemaSublevelSchema = this.ajv.compile(this.createSchemaSublevelRawSchema)
         this.getSchema = this.ajv.compile(this.getRawSchema)
+        this.changeSchema = this.ajv.compile(this.changeRawSchmea)
         this.textEncoder = new TextEncoder();
     }
 
@@ -271,7 +299,19 @@ export default class LevelSchemaProvenance {
         }
     }
 
-    async insert(sublevel_name, sublevel_key, sublevel_value) {
+    async insert(input_data) {
+        try {
+            this.changeSchema(input_data)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Invalid input_data",
+                settingsJSONSchema: this.changeRawSchmea
+            }
+        }
+        let {sublevel_name, sublevel_key, sublevel_value} = input_data
+
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
