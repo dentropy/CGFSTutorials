@@ -7,8 +7,8 @@ import * as raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { CID } from 'multiformats/cid'
 
-describe('Check if settings are set correctly', function () {
-    describe('Check level works correctly', function () {
+describe('Test putRawCID works', function () {
+    describe('Test Basic putRawCID functioanlity', function () {
         it('Sucesfully create schemaless LevelSchemaProvenance sublevel, then run putRawCID on it', async function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
