@@ -156,7 +156,10 @@ describe('Check if settings are set correctly', function () {
             assert.equal(insertResponse.status, "success");
             let textEncoder = new TextEncoder();
             let textDecoder = new TextDecoder();
-            let getResponse = await myLSPDB.get(sublevelName, "testkey", "testvalue")
+            let getResponse = await myLSPDB.get({
+                sublevel_name: sublevelName,
+                sublevel_key: "testkey"
+            })
             let base58btcCoded = bases.base58btc.encode(await (textEncoder.encode("testvalue")))
             assert.equal(base58btcCoded, getResponse)
             let base58btcDecoded = bases.base58btc.decode(getResponse)
@@ -183,7 +186,10 @@ describe('Check if settings are set correctly', function () {
             assert.equal(insertResponse.status, "success");
             let textEncoder = new TextEncoder();
             let textDecoder = new TextDecoder();
-            let getResponse = await myLSPDB.get(sublevelName, "testkey", "testvalue")
+            let getResponse = await myLSPDB.get({
+                sublevel_name: sublevelName,
+                sublevel_key: "testkey"
+            })
             let base58btcCoded = bases.base58btc.encode(await (textEncoder.encode("testvalue")))
             assert.equal(base58btcCoded, getResponse)
             let base58btcDecoded = bases.base58btc.decode(getResponse)
@@ -330,7 +336,10 @@ describe('Check if settings are set correctly', function () {
             }
             const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
             assert.equal(insertResponse.status, "success")
-            const validateGet = await myLSPDB.get(sublevelName, "testkey")
+            const validateGet = await myLSPDB.get({
+                sublevel_name: sublevelName,
+                sublevel_key: "testkey"
+            })
             assert.deepEqual(validateGet, tmpData)
         })
         it('Sucesfully create a schema sublevel with IndexProvenance, insert valid json into it', async function () {
@@ -434,7 +443,10 @@ describe('Check if settings are set correctly', function () {
             }
             const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
             assert.equal(insertResponse.status, "success")
-            const getResponse = await myLSPDB.get(sublevelName, "testkey")
+            const getResponse = await myLSPDB.get({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey"
+            })
             assert.deepEqual(getResponse, tmpData)
         })
     })
@@ -489,7 +501,10 @@ describe('Check if settings are set correctly', function () {
             }
             const insertResponse = await myLSPDB.insert(sublevelName, "testkey", tmpData)
             assert.equal(insertResponse.status, "success")
-            const getResponse = await myLSPDB.get(sublevelName, "testkey")
+            const getResponse = await myLSPDB.get({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey"
+            })
             assert.deepEqual(getResponse, tmpData)
             const tmpData2 = {
                 "userId": 2,
@@ -499,7 +514,10 @@ describe('Check if settings are set correctly', function () {
             }
             const updateResponse = await myLSPDB.update(sublevelName, "testkey", tmpData2)
             assert.equal(updateResponse.status, "success")
-            const getResponse2 = await myLSPDB.get(sublevelName, "testkey")
+            const getResponse2 = await myLSPDB.get({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey"
+            })
             assert.deepEqual(getResponse2, tmpData2)
         })
     })
@@ -554,7 +572,10 @@ describe('Check if settings are set correctly', function () {
             }
             const upsertResponse = await myLSPDB.upsert(sublevelName, "testkey", tmpData)
             assert.equal(upsertResponse.status, "success")
-            const getResponse = await myLSPDB.get(sublevelName, "testkey")
+            const getResponse = await myLSPDB.get({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey"
+            })
             assert.deepEqual(getResponse, tmpData)
             const tmpData2 = {
                 "userId": 2,
@@ -564,7 +585,10 @@ describe('Check if settings are set correctly', function () {
             }
             const upsertResponse2 = await myLSPDB.upsert(sublevelName, "testkey", tmpData2)
             assert.equal(upsertResponse2.status, "success")
-            const getResponse2 = await myLSPDB.get(sublevelName, "testkey")
+            const getResponse2 = await myLSPDB.get({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey"
+            })
             assert.deepEqual(getResponse2, tmpData2)
         })
     })

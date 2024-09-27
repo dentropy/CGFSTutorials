@@ -60,25 +60,47 @@ export default class LevelSchemaProvenance {
             "title": "Generated schema for Root",
             "type": "object",
             "properties": {
-              "sublevel_name": {
-                "type": "object",
-                "properties": {},
-                "required": []
-              },
-              "sublevel_settings": {
-                "type": "object",
-                "properties": {},
-                "required": []
-              }
+                "sublevel_name": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "sublevel_settings": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
             },
             "required": [
-              "sublevel_name",
-              "sublevel_settings"
+                "sublevel_name",
+                "sublevel_settings"
             ]
-          }
+        }
+        this.getRawSchema = {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+                "sublevel_name": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "sublevel_key": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
+            },
+            "required": [
+                "sublevel_name",
+                "sublevel_key"
+            ]
+        }
         this.ajv = new Ajv()
         this.settingsSchema = this.ajv.compile(this.settingsRawSchema)
-        this.createSchemaSublevelSchema = this.ajv.compile(this.createSchemaSublevelRawSchema);
+        this.createSchemaSublevelSchema = this.ajv.compile(this.createSchemaSublevelRawSchema)
+        this.getSchema = this.ajv.compile(this.getRawSchema)
         this.textEncoder = new TextEncoder();
     }
 
@@ -154,10 +176,10 @@ export default class LevelSchemaProvenance {
 
         // Store CID_store settings
         let CID_store_settings = {
-            "CIDs"    : { type : "local" }
+            "CIDs": { type: "local" }
         }
-        if(sublevel_settings.CollectionProvenance){
-            CID_store_settings["logCIDs"] = { type : "local" }
+        if (sublevel_settings.CollectionProvenance) {
+            CID_store_settings["logCIDs"] = { type: "local" }
         }
 
         // If logging is enabled log that this collection was created
@@ -194,7 +216,19 @@ export default class LevelSchemaProvenance {
 
     }
 
-    async get(sublevel_name, sublevel_key) {
+    async get(input_data) {
+        let sublevel_name = input_data.sublevel_name
+        let sublevel_key = input_data.sublevel_key
+        try {
+            this.getSchema(input_data)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Invalid input_data",
+                settingsJSONSchema: this.createSchemaSublevelRawSchema
+            }
+        }
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
@@ -220,7 +254,7 @@ export default class LevelSchemaProvenance {
             let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
             let decodedData = bases.base58btc.decode(encodedCIDValue)
             let jsonData = dagjson.decode(decodedData)
-            if(settings.IndexProvenance){
+            if (settings.IndexProvenance) {
                 let encodedCIDValueMetadata = await collection_sublevel_CID_store.get(jsonData.currentCID)
                 let decodedMetaData = bases.base58btc.decode(encodedCIDValueMetadata)
                 jsonData = dagjson.decode(decodedMetaData)
@@ -228,7 +262,7 @@ export default class LevelSchemaProvenance {
             return jsonData
         } else {
             let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
-            if(settings.IndexProvenance){
+            if (settings.IndexProvenance) {
                 let encodedCIDValueMetadata = await collection_sublevel_CID_store.get(jsonData.currentCID)
                 let decodedMetaData = bases.base58btc.decode(encodedCIDValueMetadata)
                 jsonData = dagjson.decode(decodedMetaData)
@@ -321,12 +355,12 @@ export default class LevelSchemaProvenance {
         await collection_sublevel_CID_store.put(storeCID, base58btcEncoded)
 
         // Put refernece to CID in namespace
-        if(settings.IndexProvenance){
+        if (settings.IndexProvenance) {
             let indexMetadata = {
                 previousCID: null,
                 currentCID: storeCID
             }
-            if(settings.IndexProvenanceTimestamp){
+            if (settings.IndexProvenanceTimestamp) {
                 indexMetadata.timestamp = Date.now().toString()
             }
             const encoded = dagjson.encode(indexMetadata)
@@ -428,7 +462,7 @@ export default class LevelSchemaProvenance {
 
         // Setup CID Store
         let collection_sublevel_CID_store = null
-        if (settings.LocalCIDStore ) {
+        if (settings.LocalCIDStore) {
             collection_sublevel_CID_store = CID_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
         }
         else {
@@ -483,7 +517,7 @@ export default class LevelSchemaProvenance {
         await collection_sublevel_CID_store.put(storeCID, base58btcEncoded)
 
         // Put refernece to CID in namespace
-        if(settings.IndexProvenance){
+        if (settings.IndexProvenance) {
             // Get the metadata CID
             let metadataBase58 = await collection_sublevel_CID_store.get(namespace_CID_pointer["/"])
             let metadataBuffer = bases.base58btc.decode(metadataBase58)
@@ -492,7 +526,7 @@ export default class LevelSchemaProvenance {
                 previousCID: metadataJSON.currentCID,
                 currentCID: storeCID
             }
-            if(settings.IndexProvenanceTimestamp){
+            if (settings.IndexProvenanceTimestamp) {
                 indexMetadata.timestamp = Date.now().toString()
             }
             const encoded = dagjson.encode(indexMetadata)
@@ -588,7 +622,7 @@ export default class LevelSchemaProvenance {
 
         // Setup CID Store
         let collection_sublevel_CID_store = null
-        if (settings.LocalCIDStore ) {
+        if (settings.LocalCIDStore) {
             collection_sublevel_CID_store = CID_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
         }
         else {
@@ -643,10 +677,10 @@ export default class LevelSchemaProvenance {
         await collection_sublevel_CID_store.put(storeCID, base58btcEncoded)
 
         // Put refernece to CID in namespace
-        if(settings.IndexProvenance){
+        if (settings.IndexProvenance) {
             // Get the metadata CID
             let indexMetadata = null
-            if(check_key_exists){
+            if (check_key_exists) {
                 let metadataBase58 = await collection_sublevel_CID_store.get(namespace_CID_pointer["/"])
                 let metadataBuffer = bases.base58btc.decode(metadataBase58)
                 let metadataJSON = dagjson.decode(metadataBuffer)
@@ -661,7 +695,7 @@ export default class LevelSchemaProvenance {
                     currentCID: storeCID
                 }
             }
-            if(settings.IndexProvenanceTimestamp){
+            if (settings.IndexProvenanceTimestamp) {
                 indexMetadata.timestamp = Date.now().toString()
             }
             const encoded = dagjson.encode(indexMetadata)
