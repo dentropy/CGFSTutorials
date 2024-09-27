@@ -13,7 +13,7 @@ export default class LevelSchemaProvenance {
         // Set JSON Encoding in level_db_config
         this.level = levelDB
         this.level.open()
-        this.rawSettingsSchema = {
+        this.settingsRawSchema = {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "title": "Generated schema for Root",
             "type": "object",
@@ -55,13 +55,47 @@ export default class LevelSchemaProvenance {
                 "ValueEncoding"
             ]
         }
+        this.createSchemaSublevelRawSchema = {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+              "sublevel_name": {
+                "type": "object",
+                "properties": {},
+                "required": []
+              },
+              "sublevel_settings": {
+                "type": "object",
+                "properties": {},
+                "required": []
+              }
+            },
+            "required": [
+              "sublevel_name",
+              "sublevel_settings"
+            ]
+          }
         this.ajv = new Ajv()
-        this.settingsSchema = this.ajv.compile(this.rawSettingsSchema)
+        this.settingsSchema = this.ajv.compile(this.settingsRawSchema)
+        this.createSchemaSublevelSchema = this.ajv.compile(this.createSchemaSublevelRawSchema);
         this.textEncoder = new TextEncoder();
     }
 
-    async createSchemaSublevel(sublevel_name, sublevel_settings) {
-        // Validate Setting are valid
+    async createSchemaSublevel(input_data) {
+        try {
+            this.createSchemaSublevelSchema(input_data)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Invalid input_data",
+                settingsJSONSchema: this.createSchemaSublevelRawSchema
+            }
+        }
+
+        let sublevel_settings = input_data.sublevel_settings
+        let sublevel_name = input_data.sublevel_name
         try {
             this.settingsSchema(sublevel_settings)
         } catch (error) {
@@ -69,10 +103,9 @@ export default class LevelSchemaProvenance {
                 status: "error",
                 error: error,
                 description: "Settings are invalid",
-                settingsJSONSchema: this.rawSettingsSchema
+                settingsJSONSchema: this.settingsRawSchema
             }
         }
-
         if (sublevel_settings.LocalCIDStore == false) {
             return {
                 status: "error",

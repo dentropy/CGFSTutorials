@@ -24,9 +24,10 @@ describe('Check if settings are set correctly', function () {
         it('Fail to create LevelSchemaProvenance sublevel due to LocalCIDStore set to false', async function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                String(uuidv4()),
-                {
+            const sublevelName = uuidv4()
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": false,
                     "IndexProvenance": false,
                     "CollectionProvenance": true,
@@ -35,7 +36,7 @@ describe('Check if settings are set correctly', function () {
                     "SchemaEnforced": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             const expectedResponse = {
                 status: 'error',
                 description: 'RemoteCIDStore functionality is not yet implimented'
@@ -45,9 +46,10 @@ describe('Check if settings are set correctly', function () {
         it('Fail to create LevelSchemaProvenance sublevel due to CollectionProvenanceStoreLocal set to false', async function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                String(uuidv4()),
-                {
+            const sublevelName = uuidv4()
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "IndexProvenance": false,
                     "CollectionProvenance": true,
@@ -56,7 +58,7 @@ describe('Check if settings are set correctly', function () {
                     "SchemaEnforced": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             const expectedResponse = {
                 status: 'error',
                 description: 'Remote CollectionProvenanceStoreLocal is not implimented yet'
@@ -67,9 +69,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "IndexProvenance": false,
                     "CollectionProvenance": true,
@@ -78,7 +80,7 @@ describe('Check if settings are set correctly', function () {
                     "SchemaEnforced": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "error");
             assert.equal(createLSPDBTest.description, "JSONSchema for collection failed to compile, make sure schema is included when SchemaEnforced is set to true");
         })
@@ -86,9 +88,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "IndexProvenance": false,
                     "CollectionProvenance": true,
@@ -97,7 +99,7 @@ describe('Check if settings are set correctly', function () {
                     "SchemaEnforced": false,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
         })
 
@@ -105,9 +107,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "IndexProvenance": false,
                     "CollectionProvenance": true,
@@ -116,10 +118,10 @@ describe('Check if settings are set correctly', function () {
                     "SchemaEnforced": false,
                     "ValueEncoding": "utf8"
                 }
-            )
-            const createLSPDBTestAlreadyTaken = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            })
+            const createLSPDBTestAlreadyTaken = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "IndexProvenance": false,
                     "CollectionProvenance": true,
@@ -128,7 +130,7 @@ describe('Check if settings are set correctly', function () {
                     "SchemaEnforced": false,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTestAlreadyTaken.status, "error");
             assert.equal(createLSPDBTestAlreadyTaken.description, 'This sublevel already exists');
         })
@@ -138,9 +140,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": false,
@@ -149,7 +151,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             let insertResponse = await myLSPDB.insert(sublevelName, "testkey", "testvalue")
             assert.equal(insertResponse.status, "success");
             let textEncoder = new TextEncoder();
@@ -165,9 +167,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": false,
@@ -176,7 +178,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             let insertResponse = await myLSPDB.insert(sublevelName, "testkey", "testvalue")
             assert.equal(insertResponse.status, "success");
             let textEncoder = new TextEncoder();
@@ -194,9 +196,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": true,
@@ -230,16 +232,16 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
         })
         it('Sucesfully create a schema sublevel, insert invalid json into it', async function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": true,
@@ -273,7 +275,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
             const insertResponse = await myLSPDB.insert(sublevelName, "testkey", { hello: "world" })
             assert.equal(insertResponse.status, "error")
@@ -282,9 +284,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": true,
@@ -318,7 +320,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
             const tmpData = {
                 "userId": 1,
@@ -335,9 +337,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": true,
@@ -371,7 +373,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
             const tmpData = {
                 "userId": 1,
@@ -386,9 +388,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": true,
@@ -422,7 +424,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
             const tmpData = {
                 "userId": 1,
@@ -441,9 +443,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": true,
@@ -477,7 +479,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
             const tmpData = {
                 "userId": 1,
@@ -506,9 +508,9 @@ describe('Check if settings are set correctly', function () {
             const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
             const myLSPDB = new LevelSchemaProvenance(myLevelDB)
             const sublevelName = uuidv4()
-            const createLSPDBTest = await myLSPDB.createSchemaSublevel(
-                sublevelName,
-                {
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
                     "LocalCIDStore": true,
                     "CollectionProvenanceStoreLocal": true,
                     "SchemaEnforced": true,
@@ -542,7 +544,7 @@ describe('Check if settings are set correctly', function () {
                     "CollectionProvenanceTimestamped": true,
                     "ValueEncoding": "utf8"
                 }
-            )
+            })
             assert.equal(createLSPDBTest.status, "success")
             const tmpData = {
                 "userId": 1,
