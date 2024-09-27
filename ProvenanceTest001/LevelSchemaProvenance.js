@@ -239,7 +239,7 @@ export default class LevelSchemaProvenance {
         if (sublevel_settings.CollectionProvenance) {
             CID_store_settings["logCIDs"] = { type: "local" }
         }
-        await collection_sublevel_settings.put("CIDStores", sublevel_settings)
+        await collection_sublevel_settings.put("CIDStores", CID_store_settings)
 
         // If logging is enabled log that this collection was created
         let collection_sublevel_logging = await collection_sublevel.sublevel("logging", { valueEncoding: 'json' })
@@ -902,16 +902,16 @@ export default class LevelSchemaProvenance {
                 description: "content does not seem to be base58btc encoded"
             }
         }
-        const hash = await sha256.digest(rawEncode)
+        const hash = await sha256.digest(tmp_data_buffer)
         const referenceCID = CID.parse(input_data.CID)
         const calculated_CID = CID.create(1, referenceCID.code, hash)
-        if (referenceCID != calculated_CID) {
+        if (input_data.CID != String(calculated_CID)) {
             return {
                 status: "error",
                 description: "CID's do not match",
                 data: {
                     supplied_CID: input_data.CID,
-                    calculated_CID: calculated_CID
+                    calculated_CID: String(calculated_CID)
                 }
             }
         }
