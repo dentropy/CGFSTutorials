@@ -103,6 +103,7 @@ export default class LevelSchemaProvenance {
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let collection_sublevel = await this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let CID_sublevel = await collection_sublevel.sublevel("CIDs", { valueEncoding: 'json' })
         let collection_sublevel_settings = await collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
         try {
             const tmpSettings = await collection_sublevel_settings.get("settings")
@@ -117,6 +118,14 @@ export default class LevelSchemaProvenance {
 
         // Put the settings in the database
         await collection_sublevel_settings.put("settings", sublevel_settings)
+
+        // Store CID_store settings
+        let CID_store_settings = {
+            "CIDs"    : { type : "local" }
+        }
+        if(sublevel_settings.CollectionProvenance){
+            CID_store_settings["logCIDs"] = { type : "local" }
+        }
 
         // If logging is enabled log that this collection was created
         let collection_sublevel_logging = await collection_sublevel.sublevel("logging", { valueEncoding: 'json' })
@@ -134,7 +143,7 @@ export default class LevelSchemaProvenance {
             const logCID = CID.create(1, 0x0129, hash)
             let collection_sublevel_logCIDs = null
             if (sublevel_settings.CollectionProvenanceStoreLocal) {
-                collection_sublevel_logCIDs = await collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                collection_sublevel_logCIDs = await CID_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
                 await collection_sublevel_logCIDs.put(logCID, encoded)
             }
             else {
@@ -158,6 +167,7 @@ export default class LevelSchemaProvenance {
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
         let base32z_encoded_sublevel_key = bases.base32z.encode(encoded_sublevel_key)
         let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let CID_sublevel = await collection_sublevel.sublevel("CIDs", { valueEncoding: 'json' })
         let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
         let settings = await collection_sublevel_settings.get("settings")
         let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
@@ -172,7 +182,7 @@ export default class LevelSchemaProvenance {
                 description: "Could not find value"
             }
         }
-        let collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: "utf8" })
+        let collection_sublevel_CID_store = CID_sublevel.sublevel("CIDs", { valueEncoding: "utf8" })
         if (settings.SchemaEnforced) {
             let encodedCIDValue = await collection_sublevel_CID_store.get(value_CID["/"])
             let decodedData = bases.base58btc.decode(encodedCIDValue)
@@ -200,6 +210,7 @@ export default class LevelSchemaProvenance {
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
         let base32z_encoded_sublevel_key = bases.base32z.encode(encoded_sublevel_key)
         let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let CID_sublevel = await collection_sublevel.sublevel("CIDs", { valueEncoding: 'json' })
         let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
         let settings = await collection_sublevel_settings.get("settings")
         let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
@@ -223,7 +234,7 @@ export default class LevelSchemaProvenance {
         // Setup CID Store
         let collection_sublevel_CID_store = null
         if (settings.LocalCIDStore) {
-            collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
+            collection_sublevel_CID_store = CID_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
         }
         else {
             return {
@@ -301,7 +312,7 @@ export default class LevelSchemaProvenance {
             // Get LogCID Sublevel
             let collection_sublevel_logCIDs = null
             if (settings.CollectionProvenanceStoreLocal) {
-                collection_sublevel_logCIDs = await collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                collection_sublevel_logCIDs = await CID_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
             }
             else {
                 return {
@@ -334,7 +345,7 @@ export default class LevelSchemaProvenance {
             }
 
             if (settings.CollectionProvenanceStoreLocal) {
-                let collection_sublevel_logCIDs = collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                let collection_sublevel_logCIDs = CID_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
                 collection_sublevel_logCIDs.put(logCID, encoded)
             }
             else {
@@ -360,6 +371,7 @@ export default class LevelSchemaProvenance {
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
         let base32z_encoded_sublevel_key = bases.base32z.encode(encoded_sublevel_key)
         let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let CID_sublevel = await collection_sublevel.sublevel("CIDs", { valueEncoding: 'json' })
         let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
         let settings = await collection_sublevel_settings.get("settings")
         let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
@@ -384,7 +396,7 @@ export default class LevelSchemaProvenance {
         // Setup CID Store
         let collection_sublevel_CID_store = null
         if (settings.LocalCIDStore ) {
-            collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
+            collection_sublevel_CID_store = CID_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
         }
         else {
             return {
@@ -466,7 +478,7 @@ export default class LevelSchemaProvenance {
             // Get LogCID Sublevel
             let collection_sublevel_logCIDs = null
             if (settings.CollectionProvenanceStoreLocal) {
-                collection_sublevel_logCIDs = await collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                collection_sublevel_logCIDs = await CID_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
             }
             else {
                 return {
@@ -499,7 +511,7 @@ export default class LevelSchemaProvenance {
             }
 
             if (settings.CollectionProvenanceStoreLocal) {
-                let collection_sublevel_logCIDs = collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                let collection_sublevel_logCIDs = CID_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
                 collection_sublevel_logCIDs.put(logCID, encoded)
             }
             else {
@@ -525,6 +537,7 @@ export default class LevelSchemaProvenance {
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
         let base32z_encoded_sublevel_key = bases.base32z.encode(encoded_sublevel_key)
         let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let CID_sublevel = await collection_sublevel.sublevel("CIDs", { valueEncoding: 'json' })
         let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
         let settings = await collection_sublevel_settings.get("settings")
         let collection_sublevel_namespace = collection_sublevel.sublevel("namespace", { valueEncoding: 'json' })
@@ -543,7 +556,7 @@ export default class LevelSchemaProvenance {
         // Setup CID Store
         let collection_sublevel_CID_store = null
         if (settings.LocalCIDStore ) {
-            collection_sublevel_CID_store = collection_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
+            collection_sublevel_CID_store = CID_sublevel.sublevel("CIDs", { valueEncoding: 'utf8' })
         }
         else {
             return {
@@ -634,7 +647,7 @@ export default class LevelSchemaProvenance {
             // Get LogCID Sublevel
             let collection_sublevel_logCIDs = null
             if (settings.CollectionProvenanceStoreLocal) {
-                collection_sublevel_logCIDs = await collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                collection_sublevel_logCIDs = await CID_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
             }
             else {
                 return {
@@ -667,7 +680,7 @@ export default class LevelSchemaProvenance {
             }
 
             if (settings.CollectionProvenanceStoreLocal) {
-                let collection_sublevel_logCIDs = collection_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
+                let collection_sublevel_logCIDs = CID_sublevel.sublevel("logCIDs", { valueEncoding: 'buffer' })
                 collection_sublevel_logCIDs.put(logCID, encoded)
             }
             else {
