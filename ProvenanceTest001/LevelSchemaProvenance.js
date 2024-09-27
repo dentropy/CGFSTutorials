@@ -116,6 +116,11 @@ export default class LevelSchemaProvenance {
                     "type": "object",
                     "properties": {},
                     "required": []
+                },
+                "encoding": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
                 }
             },
             "required": [
@@ -124,11 +129,36 @@ export default class LevelSchemaProvenance {
                 "sublevel_value"
             ]
         }
+        this.putRawCIDRawSchema = {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+                "sublevel_name": {
+                    "type": "string"
+                },
+                "CID": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "CID_sublevel_name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "CID",
+                "content",
+                "CID_sublevel_name"
+            ]
+        }
         this.ajv = new Ajv()
         this.settingsSchema = this.ajv.compile(this.settingsRawSchema)
         this.createSchemaSublevelSchema = this.ajv.compile(this.createSchemaSublevelRawSchema)
         this.getSchema = this.ajv.compile(this.getRawSchema)
         this.changeSchema = this.ajv.compile(this.changeRawSchmea)
+        this.putRawCIDSchema = this.ajv.compile(this.putRawCIDRawSchema)
         this.textEncoder = new TextEncoder();
     }
 
@@ -209,6 +239,7 @@ export default class LevelSchemaProvenance {
         if (sublevel_settings.CollectionProvenance) {
             CID_store_settings["logCIDs"] = { type: "local" }
         }
+        await collection_sublevel_settings.put("CIDStores", sublevel_settings)
 
         // If logging is enabled log that this collection was created
         let collection_sublevel_logging = await collection_sublevel.sublevel("logging", { valueEncoding: 'json' })
@@ -310,7 +341,7 @@ export default class LevelSchemaProvenance {
                 settingsJSONSchema: this.changeRawSchmea
             }
         }
-        let {sublevel_name, sublevel_key, sublevel_value} = input_data
+        let { sublevel_name, sublevel_key, sublevel_value } = input_data
 
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
@@ -483,7 +514,7 @@ export default class LevelSchemaProvenance {
                 settingsJSONSchema: this.changeRawSchmea
             }
         }
-        let {sublevel_name, sublevel_key, sublevel_value} = input_data
+        let { sublevel_name, sublevel_key, sublevel_value } = input_data
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
@@ -660,7 +691,7 @@ export default class LevelSchemaProvenance {
                 settingsJSONSchema: this.changeRawSchmea
             }
         }
-        let {sublevel_name, sublevel_key, sublevel_value} = input_data
+        let { sublevel_name, sublevel_key, sublevel_value } = input_data
         let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
         let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
         let encoded_sublevel_key = this.textEncoder.encode(sublevel_key)
@@ -824,6 +855,70 @@ export default class LevelSchemaProvenance {
             // Store CID of logging object
             collection_sublevel_logCIDs.put(logCID, encoded)
         }
+        return {
+            status: "success"
+        }
+    }
+
+    async putRawCID(input_data) {
+        try {
+            this.putRawCIDSchema(input_data)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Invalid input_data",
+                settingsJSONSchema: this.putRawCIDRawSchema
+            }
+        }
+        let { sublevel_name, content, CID_sublevel_name } = input_data
+
+        let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
+        let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
+        let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let CID_sublevel = await collection_sublevel.sublevel("CIDs", { valueEncoding: 'json' })
+        let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
+        // TODO, we should have a flag to allow this in settings
+        let settings = await collection_sublevel_settings.get("settings")
+        let CIDStores = await collection_sublevel_settings.get("CIDStores")
+
+
+        // Check CID_sublevel_name exists
+        if (!Object.keys(CIDStores).includes(CID_sublevel_name)) {
+            return {
+                status: "error",
+                description: "Can't find CID_sublevel_name in database"
+            }
+        }
+
+        // Validate CID
+        let tmp_data_buffer = null
+        try {
+            tmp_data_buffer = bases.base58btc.decode(content)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "content does not seem to be base58btc encoded"
+            }
+        }
+        const hash = await sha256.digest(rawEncode)
+        const referenceCID = CID.parse(input_data.CID)
+        const calculated_CID = CID.create(1, referenceCID.code, hash)
+        if (referenceCID != calculated_CID) {
+            return {
+                status: "error",
+                description: "CID's do not match",
+                data: {
+                    supplied_CID: input_data.CID,
+                    calculated_CID: calculated_CID
+                }
+            }
+        }
+
+        // Put CID in database
+        let raw_cid_store = await CID_sublevel.sublevel(CID_sublevel_name, { valueEncoding: 'utf-8' })
+        await raw_cid_store.put(referenceCID, content)
         return {
             status: "success"
         }
