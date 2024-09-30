@@ -160,12 +160,26 @@ export default class LevelSchemaProvenance {
                 "CID_sublevel_name"
             ]
         }
+        this.getMostRecentLogRawSchema = {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+                "sublevel_name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "sublevel_name"
+            ]
+        }
         this.ajv = new Ajv()
         this.settingsSchema = this.ajv.compile(this.settingsRawSchema)
         this.createSchemaSublevelSchema = this.ajv.compile(this.createSchemaSublevelRawSchema)
         this.getSchema = this.ajv.compile(this.getRawSchema)
         this.changeSchema = this.ajv.compile(this.changeRawSchmea)
         this.putRawCIDSchema = this.ajv.compile(this.putRawCIDRawSchema)
+        this.getMostRecentLogSchema = this.ajv.compile(this.getMostRecentLogRawSchema)
         this.textEncoder = new TextEncoder();
     }
 
@@ -473,7 +487,7 @@ export default class LevelSchemaProvenance {
             let logIndex = await collection_sublevel_logging.get("index")
 
             // Get the previous log CID
-            let lastLogCID = await collection_sublevel_logging.get("0")
+            let lastLogCID = await collection_sublevel_logging.get(logIndex)
 
             // Generate CID for logging object
             let logData = {
@@ -671,7 +685,7 @@ export default class LevelSchemaProvenance {
             let logIndex = await collection_sublevel_logging.get("index")
 
             // Get the previous log CID
-            let lastLogCID = await collection_sublevel_logging.get("0")
+            let lastLogCID = await collection_sublevel_logging.get(logIndex)
 
             // Generate CID for logging object
             let logData = {
@@ -872,7 +886,7 @@ export default class LevelSchemaProvenance {
             let logIndex = await collection_sublevel_logging.get("index")
 
             // Get the previous log CID
-            let lastLogCID = await collection_sublevel_logging.get("0")
+            let lastLogCID = await collection_sublevel_logging.get(logIndex)
 
             // Generate CID for logging object
             let logData = {
@@ -992,6 +1006,51 @@ export default class LevelSchemaProvenance {
         return {
             status: "success"
         }
+    }
+
+    async getMostRecentLog(input_data){
+        try {
+            this.getMostRecentLogSchema(input_data)
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Invalid input_data",
+                settingsJSONSchema: this.getMostRecentLogRawSchema
+            }
+        }
+        let sublevel_name = input_data.sublevel_name
+        let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
+        let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
+        let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+        let CID_sublevel = await collection_sublevel.sublevel("CIDs", { valueEncoding: 'json' })
+        let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
+        let settings = await collection_sublevel_settings.get("settings")
+
+        if(!Object.keys(settings).includes("CollectionProvenance")){
+            return {
+                status: "error",
+                description: "CollectionProvenance flag not set"
+            }
+        }
+        if(settings.CollectionProvenance != true){
+            return {
+                status: "error",
+                description: "CollectionProvenance flat set to false"
+            }
+        }
+        let collection_sublevel_logging = await collection_sublevel.sublevel("logging", { valueEncoding: 'json' })
+        let collection_sublevel_logCIDs = await CID_sublevel.sublevel("logCIDs", { valueEncoding: 'json' })
+
+        // Get previous log Index
+        let logIndex = await collection_sublevel_logging.get("index")
+
+        // Get the previous log CID
+        let lastLogCID = await collection_sublevel_logging.get(logIndex)
+        let lastCID = await collection_sublevel_logCIDs.get(lastLogCID["/"])
+
+        return lastCID
+
     }
 
     async del() {

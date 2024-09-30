@@ -101,4 +101,69 @@ describe('Test metadata_CID functionality', function () {
             assert.equal(insertResponse2.status, "error")
         })
     })
+    describe('Test getting the last log', function () {
+        it('Sucesfully submit a metadata_CID with a insert request, and then fetch the most recent log', async function () {
+            const myLevelDB = new Level(`./mydb/${String(uuidv4())}`, { valueEncoding: 'json' })
+            const myLSPDB = new LevelSchemaProvenance(myLevelDB)
+            const sublevelName = uuidv4()
+            const createLSPDBTest = await myLSPDB.createSchemaSublevel({
+                sublevel_name: sublevelName,
+                sublevel_settings: {
+                    "LocalCIDStore": true,
+                    "IndexProvenance": false,
+                    "CollectionProvenance": true,
+                    "CollectionProvenanceTimestamped": false,
+                    "CollectionProvenanceStoreLocal": true,
+                    "SchemaEnforced": false,
+                    "ValueEncoding": "utf8"
+                }
+            })
+
+            // Generate metadata CID
+            const textEncoder = new TextEncoder();
+            let data = "This is a test"
+            let metadata_data = "Hello World"
+            let uint8Data = textEncoder.encode(metadata_data)
+            let rawEncode = raw.encode(uint8Data)
+            let hash = await sha256.digest(rawEncode)
+            let myCID = CID.create(1, raw.code, hash)
+
+            const insertResponse = await myLSPDB.insert({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: data,
+                metadata_CID: String(myCID)
+            })
+            assert.equal(insertResponse.status, "success")
+            const getResponse = await myLSPDB.get({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey"
+            })
+            const textDecoder = new TextDecoder();
+            const bufferResponse = bases.base58btc.decode(getResponse)
+            const stringResponse = await textDecoder.decode(bufferResponse)
+            assert.equal(stringResponse, data)
+            let getMostRecentLog = await myLSPDB.getMostRecentLog({
+                sublevel_name: sublevelName
+            })
+            assert.equal(getMostRecentLog.index, 1)
+            data = "test2"
+            metadata_data = "Hello World 2"
+            uint8Data = textEncoder.encode(metadata_data)
+            rawEncode = raw.encode(uint8Data)
+            hash = await sha256.digest(rawEncode)
+            myCID = CID.create(1, raw.code, hash)
+            const updateResponse = await myLSPDB.update({
+                sublevel_name: sublevelName, 
+                sublevel_key: "testkey", 
+                sublevel_value: data,
+                metadata_CID: String(myCID)
+            })
+            assert.equal(updateResponse.status, "success")
+            getMostRecentLog = await myLSPDB.getMostRecentLog({
+                sublevel_name: sublevelName
+            })
+            assert.equal(getMostRecentLog.index, 2)
+        })
+    })
 })
