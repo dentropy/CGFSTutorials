@@ -42,6 +42,9 @@ export default class LevelSchemaProvenance {
                 "ValueEncoding": {
                     "type": "string"
                 },
+                "RequireMetadataCID": {
+                    "type": "boolean"
+                },
                 "Schema": {
                     "type": "string"
                 }
@@ -479,6 +482,12 @@ export default class LevelSchemaProvenance {
                 "value": storeCID,
                 "lastLogCID": lastLogCID["/"]
             }
+            const encoded = dagjson.encode(logData)
+            const hash = await sha256.digest(encoded)
+            const logCID = CID.create(1, 0x0129, hash)
+            if (settings.CollectionProvenanceTimestamped) {
+                logData.timestamp = Date.now().toString()
+            }
             let metadata_CID = null
             if(  Object.keys(input_data).includes( metadata_CID ) ){
                 try {
@@ -492,11 +501,13 @@ export default class LevelSchemaProvenance {
                 }
                 logData.metadata_CID = String(metadata_CID)
             }
-            const encoded = dagjson.encode(logData)
-            const hash = await sha256.digest(encoded)
-            const logCID = CID.create(1, 0x0129, hash)
-            if (settings.CollectionProvenanceTimestamped) {
-                logData.timestamp = Date.now().toString()
+            if( settings.RequireMetadataCID == true){
+                if(logData.metadata_CID === null){
+                    return {
+                        status: "error",
+                        description: "This Sublevel requires a metadata_CID",
+                    }
+                }
             }
 
             if (settings.CollectionProvenanceStoreLocal) {
@@ -681,6 +692,14 @@ export default class LevelSchemaProvenance {
                     }
                 }
                 logData.metadata_CID = String(metadata_CID)
+            }
+            if( settings.RequireMetadataCID == true){
+                if(logData.metadata_CID == null){
+                    return {
+                        status: "error",
+                        description: "This Sublevel requires a metadata_CID",
+                    }
+                }
             }
             const encoded = dagjson.encode(logData)
             const hash = await sha256.digest(encoded)
@@ -874,6 +893,14 @@ export default class LevelSchemaProvenance {
                     }
                 }
                 logData.metadata_CID = String(metadata_CID)
+            }
+            if( settings.RequireMetadataCID == true){
+                if(logData.metadata_CID == null){
+                    return {
+                        status: "error",
+                        description: "This Sublevel requires a metadata_CID",
+                    }
+                }
             }
             const encoded = dagjson.encode(logData)
             const hash = await sha256.digest(encoded)
