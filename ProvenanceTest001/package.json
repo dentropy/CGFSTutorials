@@ -14,10 +14,15 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.664.0",
     "@ipld/dag-json": "^10.2.2",
     "ajv": "^8.17.1",
+    "aws-sdk": "^2.1691.0",
+    "encoding-down": "^7.1.0",
     "level": "^8.0.1",
     "multiformats": "^13.3.0",
+    "s3leveldown": "^3.0.0",
+    "subleveldown": "^6.0.1",
     "uuid": "^10.0.0"
   }
 }
