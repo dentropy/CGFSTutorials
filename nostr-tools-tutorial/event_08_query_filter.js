@@ -50,5 +50,6 @@ relay.subscribe([
 
 console.log("\nsignedEvent")
 console.log(signedEvent)
+console.log(JSON.stringify(signedEvent, null, 2))
 
 await relay.publish(signedEvent)
