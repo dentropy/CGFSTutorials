@@ -1,0 +1,454 @@
+{
+    "app_name": "DD_token_RBAC",
+    "app_version": "0.0.1",
+    "namespace": {
+        "TokenStateSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "max_supply": {
+                    "type": "number"
+                },
+                "current_supply": {
+                    "type": "number"
+                },
+                "admin_dids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "token_transaction_count": {
+                    "type": "number"
+                },
+                "last_transaction_timestamp_ms": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "id",
+                "max_supply",
+                "current_supply",
+                "admin_dids",
+                "token_transaction_count",
+                "last_transaction_timestamp_ms"
+            ]
+        }
+    },
+    "TokenBalancesSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Generated schema for Root",
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "string"
+            },
+            "token_id": {
+                "type": "string"
+            },
+            "did": {
+                "type": "string"
+            },
+            "nonce": {
+                "type": "number"
+            },
+            "balance": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "id",
+            "token_id",
+            "did",
+            "nonce",
+            "balance"
+        ]
+    },
+    "TransactionsSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Generated schema for Root",
+        "type": "object",
+        "properties": {
+            "app_name": {
+                "type": "string"
+            },
+            "version": {
+                "type": "string"
+            },
+            "token_id": {
+                "type": "string"
+            },
+            "from_did": {
+                "type": "string"
+            },
+            "to_did": {
+                "type": "string"
+            },
+            "opteraion_name": {
+                "type": "string"
+            },
+            "timestamp_ms": {
+                "type": "number"
+            },
+            "value": {
+                "type": "string"
+            },
+            "did_nonce": {
+                "type": "number"
+            },
+            "token_nonce": {
+                "type": "number"
+            },
+            "memo": {
+                "type": "string"
+            },
+            "operation_data": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        },
+        "required": [
+            "app_name",
+            "version",
+            "token_id",
+            "from_did",
+            "to_did",
+            "opteraion_name",
+            "timestamp_ms",
+            "value",
+            "did_nonce",
+            "token_nonce",
+            "memo",
+            "operation_data"
+        ]
+    },
+    "TokenDeploySchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Generated schema for Root",
+        "type": "object",
+        "properties": {
+            "app_name": {
+                "type": "string"
+            },
+            "version": {
+                "type": "string"
+            },
+            "token_id": {
+                "type": "string"
+            },
+            "from_did": {
+                "type": "string"
+            },
+            "to_did": {
+                "type": "string"
+            },
+            "operation_name": {
+                "type": "string"
+            },
+            "timestamp_ms": {
+                "type": "number"
+            },
+            "value": {
+                "type": "string"
+            },
+            "did_nonce": {
+                "type": "number"
+            },
+            "token_nonce": {
+                "type": "number"
+            },
+            "memo": {
+                "type": "string"
+            },
+            "operation_data": {
+                "type": "object",
+                "properties": {
+                    "token_name": {
+                        "type": "string"
+                    },
+                    "token_ticker": {
+                        "type": "string"
+                    },
+                    "max_supply": {
+                        "type": "string"
+                    },
+                    "limit_per_mint": {
+                        "type": "string"
+                    },
+                    "decimals": {
+                        "type": "number"
+                    },
+                    "inital_token_admins": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "token_name",
+                    "token_ticker",
+                    "max_supply",
+                    "limit_per_mint",
+                    "decimals",
+                    "inital_token_admins"
+                ]
+            }
+        },
+        "required": [
+            "app_name",
+            "version",
+            "token_id",
+            "from_did",
+            "to_did",
+            "operation_name",
+            "timestamp_ms",
+            "value",
+            "did_nonce",
+            "token_nonce",
+            "memo",
+            "operation_data"
+        ]
+    },
+    "TokenMintSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Generated schema for Root",
+        "type": "object",
+        "properties": {
+            "app_name": {
+                "type": "string"
+            },
+            "version": {
+                "type": "string"
+            },
+            "token_id": {
+                "type": "string"
+            },
+            "from_did": {
+                "type": "string"
+            },
+            "to_did": {
+                "type": "string"
+            },
+            "operation_name": {
+                "type": "string"
+            },
+            "timestamp_ms": {
+                "type": "number"
+            },
+            "value": {
+                "type": "string"
+            },
+            "did_nonce": {
+                "type": "number"
+            },
+            "token_nonce": {
+                "type": "number"
+            },
+            "memo": {
+                "type": "string"
+            },
+            "operation_data": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        },
+        "required": [
+            "app_name",
+            "version",
+            "token_id",
+            "from_did",
+            "to_did",
+            "operation_name",
+            "timestamp_ms",
+            "value",
+            "did_nonce",
+            "token_nonce",
+            "memo",
+            "operation_data"
+        ]
+    },
+    "TokenTransferSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Generated schema for Root",
+        "type": "object",
+        "properties": {
+            "app_name": {
+                "type": "string"
+            },
+            "version": {
+                "type": "string"
+            },
+            "token_id": {
+                "type": "string"
+            },
+            "from_did": {
+                "type": "string"
+            },
+            "to_did": {
+                "type": "string"
+            },
+            "operation_name": {
+                "type": "string"
+            },
+            "timestamp_ms": {
+                "type": "number"
+            },
+            "value": {
+                "type": "string"
+            },
+            "did_nonce": {
+                "type": "number"
+            },
+            "token_nonce": {
+                "type": "number"
+            },
+            "memo": {
+                "type": "string"
+            },
+            "operation_data": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        },
+        "required": [
+            "app_name",
+            "version",
+            "token_id",
+            "from_did",
+            "to_did",
+            "operation_name",
+            "timestamp_ms",
+            "value",
+            "did_nonce",
+            "token_nonce",
+            "memo",
+            "operation_data"
+        ]
+    },
+    "TokenBurnSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Generated schema for Root",
+        "type": "object",
+        "properties": {
+            "app_name": {
+                "type": "string"
+            },
+            "version": {
+                "type": "string"
+            },
+            "token_id": {
+                "type": "string"
+            },
+            "from_did": {
+                "type": "string"
+            },
+            "to_did": {
+                "type": "string"
+            },
+            "operation_name": {
+                "type": "string"
+            },
+            "timestamp_ms": {
+                "type": "number"
+            },
+            "value": {
+                "type": "string"
+            },
+            "did_nonce": {
+                "type": "number"
+            },
+            "token_nonce": {
+                "type": "number"
+            },
+            "memo": {
+                "type": "string"
+            },
+            "operation_data": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        },
+        "required": [
+            "app_name",
+            "version",
+            "token_id",
+            "from_did",
+            "to_did",
+            "operation_name",
+            "timestamp_ms",
+            "value",
+            "did_nonce",
+            "token_nonce",
+            "memo",
+            "operation_data"
+        ]
+    },
+    "TokenAdminRekeySchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Generated schema for Root",
+        "type": "object",
+        "properties": {
+            "app_name": {
+                "type": "string"
+            },
+            "version": {
+                "type": "string"
+            },
+            "token_id": {
+                "type": "string"
+            },
+            "from_did": {
+                "type": "string"
+            },
+            "to_did": {
+                "type": "string"
+            },
+            "operation_name": {
+                "type": "string"
+            },
+            "timestamp_ms": {
+                "type": "number"
+            },
+            "value": {
+                "type": "string"
+            },
+            "did_nonce": {
+                "type": "number"
+            },
+            "token_nonce": {
+                "type": "number"
+            },
+            "memo": {
+                "type": "string"
+            },
+            "operation_data": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        },
+        "required": [
+            "app_name",
+            "version",
+            "token_id",
+            "from_did",
+            "to_did",
+            "operation_name",
+            "timestamp_ms",
+            "value",
+            "did_nonce",
+            "token_nonce",
+            "memo",
+            "operation_data"
+        ]
+    }
+}

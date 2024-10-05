@@ -1,0 +1,11 @@
+{
+    "sublevel_settings" : {
+        "LocalCIDStore": false,
+        "IndexProvenance": false,
+        "CollectionProvenance": true,
+        "CollectionProvenanceTimestamped": false,
+        "CollectionProvenanceStoreLocal": true,
+        "SchemaEnforced": false,
+        "ValueEncoding": "utf8"
+    }
+}
