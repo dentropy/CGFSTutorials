@@ -73,6 +73,6 @@ npm install uuid
 bun ./CGFS/serverFunctions/InstallCGFS.js -i ./CGFS/serverFunctions/install.json
 
 
-bun ./LLMResolver/actions/RUN.js -i ./LLMResolver/actions/RUN.json
+bun ./LLMResolver/actions/POC.js -i ./LLMResolver/actions/RUN.json
 
 ```
