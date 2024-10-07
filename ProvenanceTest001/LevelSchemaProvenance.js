@@ -13,6 +13,7 @@ export default class LevelSchemaProvenance {
         // Set JSON Encoding in level_db_config
         this.level = levelDB
         this.level.open()
+        this.level.put("CGFS_VERSION", "0.0.1")
         this.settingsRawSchema = {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "title": "Generated schema for Root",
@@ -181,6 +182,10 @@ export default class LevelSchemaProvenance {
         this.putRawCIDSchema = this.ajv.compile(this.putRawCIDRawSchema)
         this.getMostRecentLogSchema = this.ajv.compile(this.getMostRecentLogRawSchema)
         this.textEncoder = new TextEncoder();
+    }
+
+    async getCGFSVersion(){
+        return await this.level.get("CGFS_VERSION") 
     }
 
     async createSchemaSublevel(input_data) {
@@ -1051,6 +1056,25 @@ export default class LevelSchemaProvenance {
 
         return lastCID
 
+    }
+
+    async getSublevelSettings(input_data){
+        
+        try {
+            let { sublevel_name } = input_data
+            let encoded_sublevel_name = this.textEncoder.encode(sublevel_name)
+            let base32z_encoded_sublevel_name = bases.base32z.encode(encoded_sublevel_name)
+            let collection_sublevel = this.level.sublevel(base32z_encoded_sublevel_name, { valueEncoding: 'json' })
+            let collection_sublevel_settings = collection_sublevel.sublevel("settings", { valueEncoding: 'json' })
+            let settings = await collection_sublevel_settings.get("settings")
+            return settings
+        } catch (error) {
+            return {
+                status: "error",
+                error: error,
+                description: "Failed to fetch getSublevelSettings"
+            }
+        }
     }
 
     async del() {

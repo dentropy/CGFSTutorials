@@ -1,5 +1,5 @@
 import fs from 'fs'
-import LevelSchemaProvenance from './LevelSchemaProvenance.js'
+import LevelSchemaProvenance from '../../LevelSchemaProvenance.js'
 import { Level } from 'level'
 import { v4 as uuidv4 } from 'uuid';
 
