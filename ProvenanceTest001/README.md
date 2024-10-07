@@ -65,3 +65,11 @@ npm install uuid
 	* Test schemaless data insert with key already there
 	* Test upsert with no value there
 	* Test upsert with value already there
+
+#### CGFS App
+
+``` bash
+
+node ./CGFS/serverFunctions/InstallCGFS.js -i ./CGFS/serverFunctions/install.json
+
+```

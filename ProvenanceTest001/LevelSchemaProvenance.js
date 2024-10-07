@@ -12,7 +12,7 @@ export default class LevelSchemaProvenance {
     constructor(levelDB) {
         // Set JSON Encoding in level_db_config
         this.level = levelDB
-        this.level.open()
+        // this.level.open()
         this.level.put("CGFS_VERSION", "0.0.1")
         this.settingsRawSchema = {
             "$schema": "http://json-schema.org/draft-07/schema#",

@@ -1,5 +1,5 @@
 {
-    "level_filepath": "/home/dentropy/Projects/CGFSTutorials/ProvenanceTest001/mydb/TEST005",
-    "nostr_private_key": "0x1234",
-    "nostr_key_status": "admin"
+    "level_dir": "/home/dentropy/Projects/CGFSTutorials/ProvenanceTest001/mydb/TEST005",
+    "nostr_key_status": "admin",
+    "nostr_public_key": ""
 }
