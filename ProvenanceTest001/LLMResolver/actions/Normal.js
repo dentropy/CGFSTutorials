@@ -202,7 +202,7 @@ async function process_nostr_event(relay, event) {
         kind: 1,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
-            // ["p", `${event.pubkey}`]
+            ["e", `${event.id}`]
         ],
         content: JSON.stringify(response_to_user, null, 2),
     }, nsec.data)
@@ -245,7 +245,7 @@ async function process_nostr_event(relay, event) {
         kind: 1,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
-            // ["p", `${event.pubkey}`]
+            ["e", `${event.id}`]
         ],
         content: llm_response.message.content,
     }, nsec.data)
