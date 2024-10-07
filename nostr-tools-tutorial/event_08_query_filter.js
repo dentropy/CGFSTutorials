@@ -15,7 +15,7 @@ let signedEvent = finalizeEvent({
   created_at: Math.floor(Date.now() / 1000),
   tags: [
     ['p', "dentish"],
-    ['CID', "bagaaieraqeiesbwbkdgq5wzdcdxdqn6jgnbltptfsuufeq6wn5kuiikujkda"]
+    ['CIDA', "bagaaieraqeiesbwbkdgq5wzdcdxdqn6jgnbltptfsuufeq6wn5kuiikujkda"]
   ],
   content: 'hello',
 }, secret_key)
@@ -38,7 +38,7 @@ console.log(`\nconnected to ${relay.url}`)
 
 relay.subscribe([
     {
-      tags: ["p"]
+      "#CIDA": []
     },
   ], {
     onevent(event) {

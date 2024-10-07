@@ -70,6 +70,9 @@ npm install uuid
 
 ``` bash
 
-node ./CGFS/serverFunctions/InstallCGFS.js -i ./CGFS/serverFunctions/install.json
+bun ./CGFS/serverFunctions/InstallCGFS.js -i ./CGFS/serverFunctions/install.json
+
+
+bun ./LLMResolver/actions/RUN.js -i ./LLMResolver/actions/RUN.json
 
 ```
