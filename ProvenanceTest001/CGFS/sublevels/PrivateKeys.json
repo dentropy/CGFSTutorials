@@ -1,0 +1,32 @@
+{
+    "sublevel_settings": {
+        "LocalCIDStore": true,
+        "IndexProvenance": false,
+        "CollectionProvenance": true,
+        "CollectionProvenanceTimestamped": false,
+        "CollectionProvenanceStoreLocal": true,
+        "SchemaEnforced": true,
+        "ValueEncoding": "utf8",
+        "Schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "private_key": {
+                    "type": "string"
+                },
+                "key_type": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "private_key",
+                "key_type"
+            ]
+        }
+    }
+}

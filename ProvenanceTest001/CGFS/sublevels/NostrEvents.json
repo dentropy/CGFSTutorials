@@ -1,0 +1,54 @@
+{
+    "sublevel_settings": {
+        "LocalCIDStore": true,
+        "IndexProvenance": false,
+        "CollectionProvenance": true,
+        "CollectionProvenanceTimestamped": false,
+        "CollectionProvenanceStoreLocal": true,
+        "SchemaEnforced": true,
+        "ValueEncoding": "utf8",
+        "Schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Generated schema for Root",
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "number"
+                },
+                "pubkey": {
+                    "type": "string"
+                },
+                "sig": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "required": [
+                "content",
+                "created_at",
+                "id",
+                "kind",
+                "pubkey",
+                "sig",
+                "tags"
+            ]
+        }
+    }
+}

@@ -15,18 +15,21 @@
                 "id": {
                     "type": "string"
                 },
-                "remote_content": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {},
-                        "required": []
-                    }
+                "did": {
+                    "type": "string"
+                },
+                "getters": {
+                    "type": "string"
+                },
+                "actions": {
+                    "type": "string"
                 }
             },
             "required": [
                 "id",
-                "remote_content"
+                "did",
+                "getters",
+                "actions"
             ]
         }
     }
