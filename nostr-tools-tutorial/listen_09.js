@@ -6,7 +6,7 @@ const relay = await Relay.connect('wss://nos.lol')
 console.log(`\nconnected to ${relay.url}`)
 
 import * as nip19 from 'nostr-tools/nip19'
-let npub_raw = 'npub17pfs355fdw83u8ga4se9u4xy2smkk0mz5ld6zpl9uqs8zjhckqdsp9ym48'
+let npub_raw = 'npub1ek36rza32zjc8pec8daz6veyywv55xtemzaxr0saymd04a4r66eqpxphdl'
 let npub = nip19.decode(npub_raw)
 console.log(npub)
 // relay.subscribe([

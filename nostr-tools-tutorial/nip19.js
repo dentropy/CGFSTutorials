@@ -1,0 +1,7 @@
+import * as nip19 from 'nostr-tools/nip19'
+
+let npub = nip19.decode("npub17pfs355fdw83u8ga4se9u4xy2smkk0mz5ld6zpl9uqs8zjhckqdsp9ym48")
+
+console.log(JSON.stringify(npub, null, 2))
+
+"npub1ek36rza32zjc8pec8daz6veyywv55xtemzaxr0saymd04a4r66eqpxphdl"

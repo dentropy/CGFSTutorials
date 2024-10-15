@@ -1,7 +1,7 @@
 import { Relay } from 'nostr-tools'
 // import 'websocket-polyfill' // UNCOMMENT WHEN USING BUN
 
-const relay = await Relay.connect('ws://localhost:7000')
+const relay = await Relay.connect('wss://relay.damus.io')
 console.log(`\nconnected to ${relay.url}`)
 
 

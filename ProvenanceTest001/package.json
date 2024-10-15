@@ -22,6 +22,7 @@
     "encoding-down": "^7.1.0",
     "level": "^8.0.1",
     "multiformats": "^13.3.0",
+    "nostr-tools": "^2.7.2",
     "s3leveldown": "^3.0.0",
     "subleveldown": "^6.0.1",
     "uuid": "^10.0.0"

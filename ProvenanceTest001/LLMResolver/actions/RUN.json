@@ -2,5 +2,5 @@
     "level_dir": "./mydb/TEST_NOSTR_001",
     "nostr_private_key": "nsec15jxwsjagjvymtvy2xh825hmkj2mtzeehj9mgpr7dauh2mhm6k9msu4ea4d",
     "app_dir" : "TODO",
-    "LLM_URL" : "http://192.168.7.209:11434/api/chat"
+    "LLM_URL" : "http://10.66.66.14:11434/api/chat"
 }
