@@ -19,6 +19,17 @@ let signedEvent = finalizeEvent({
 
 let isGood = verifyEvent(signedEvent)
 
+signedEvent = {
+  kind: 308018,
+  created_at: 1729427962,
+  tags: [
+    [ "title", "Twitch" ], [ "d", "twitch" ]
+  ],
+  content: "",
+  pubkey: "a582c706dad3a703d6c0211dc25e6bb2cbc9081ced7c2adbab91150b905645a7",
+  id: "884209832ccb2a6ac11c9631f1f819b46eacf406a7199847fa1ee177e88b56dc",
+  sig: "7a861d4a4c867266cf86880b7aea2d6eb7f9a16e9579049dc42f650794e3d3c5d079026248ecb439c9c5ab5629e8d3ba6586881dcc0aab9de6327e331eb8ce5e"
+}
 
 console.log("\nsignedEvent")
 console.log(signedEvent)
@@ -29,7 +40,7 @@ console.log(isGood)
 import { Relay } from 'nostr-tools'
 // import 'websocket-polyfill' // UNCOMMENT WHEN USING BUN
 
-const relay = await Relay.connect('ws://localhost:7007')
+const relay = await Relay.connect('wss://relay.newatiantis.top')
 console.log(`\nconnected to ${relay.url}`)
 
 

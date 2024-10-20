@@ -8,7 +8,7 @@ let raw_events = raw_data.split("\n")
 // console.log("PAUL_WAS_HERE")
 // console.log(raw_data)
 
-const relay = await Relay.connect('ws://localhost:7007')
+const relay = await Relay.connect('wss://relay.newatlantis.top')
 console.log("PAUL_WAS_HERE")
 
 for( let i = 0; i < raw_events.length; i++){
