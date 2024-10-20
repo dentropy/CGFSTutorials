@@ -50,7 +50,7 @@ messages_per_sec = 3
 
 # Limit the maximum size of an EVENT message.  Defaults to 128 KB.
 # Set to 0 for unlimited.
-max_event_bytes = 131072
+max_event_bytes = 1310720 # 131072
 
 # Maximum WebSocket message in bytes.  Defaults to 128 KB.
 #max_ws_message_bytes = 131072
@@ -65,6 +65,10 @@ max_event_bytes = 131072
 # Event persistence buffer size, in number of events.  This provides
 # backpressure to senders if writes are slow.  Defaults to 16.
 #event_persist_buffer = 16
+
+event_kind_blacklist = [
+   70202,
+]
 
 [authorization]
 # Pubkey addresses in this array are whitelisted for event publishing.

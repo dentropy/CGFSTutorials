@@ -5,24 +5,10 @@ const relay = await Relay.connect('ws://localhost:7007')
 console.log(`\nconnected to ${relay.url}`)
 relay.subscribe([
     {
-        kinds: [308018]
-        // authors: ['a582c706dad3a703d6c0211dc25e6bb2cbc9081ced7c2adbab91150b905645a7'],
+        kinds: [308018],
     },
   ], {
     onevent(event) {
       console.log('we got the event we wanted:', event)
     }
   })
-
-
-/*
-
-{
-    onevent(event) {
-      console.log('we got the event we wanted:', event)
-    },
-    oneose() {
-      sub.close()
-    }
-  }
-*/
