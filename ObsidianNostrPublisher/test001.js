@@ -7,7 +7,7 @@ import { Relay } from 'nostr-tools'
 
 const mnemonic = "curve foster stay broccoli equal icon bamboo champion casino impact will damp"
 let mnemonic_validation = validateWords(mnemonic)
-let secret_key = privateKeyFromSeedWords(mnemonic, "", 8)
+let secret_key = privateKeyFromSeedWords(mnemonic, "", 13)
 let public_key = getPublicKey(secret_key)
 
 console.log("Using public_key")
@@ -20,8 +20,12 @@ function convertString(str) {
     return str.toLowerCase().replace(/[^a-z]/g, '-');
 }
 
+// function transformString(str) {
+//     return str.toLowerCase().replace(/\d+/g, '-').replace(/[^a-z]/g, '_');
+// }
+
 function transformString(str) {
-    return str.toLowerCase().replace(/\d+/g, '-').replace(/[^a-z]/g, '_');
+    return str.toLowerCase().replace(/ /g, '_').replace(/\d+/g, '-').replace(/[^\w-]/g, '-');
 }
 
 
@@ -43,10 +47,13 @@ function removeYamlFromMarkdown(markdown) {
 import { Database } from "bun:sqlite";
 
 // const db = await new Database("./pkm.sqlite");
-const db = await new Database("./testpkm.sqlite");
+const db = await new Database("./pkm.sqlite");
 let query = `SELECT * FROM markdown_nodes;`
+
+query = `SELECT *  from markdown_nodes where id in (SELECT to_node_id from markdown_edges where title='index') or title = 'index'; `
+
 let documents = db.query(query).all()
-console.log("Got Documents")
+console.log(`Got ${documents.length} Documents`)
 for (var i = 0; i < documents.length; i++) {
     await new Promise(r => setTimeout(() => r(), 1000));
     console.log("Fetching Document");
@@ -81,6 +88,7 @@ for (var i = 0; i < documents.length; i++) {
     let raw_name_naddr = nip19.naddrEncode(raw_name_naddr_info)
     console.log(`Sending ${documents[i].title}`)
     console.log("published")
+    console.log(published)
     console.log(signedEvent)
     console.log("addr")
     console.log(naddr)

@@ -116,7 +116,7 @@ console.log(is_this_it)
 
 
 let naddr_info = {
-    identifier: "daily-learnings",
+    identifier: "index",
     pubkey: "a582c706dad3a703d6c0211dc25e6bb2cbc9081ced7c2adbab91150b905645a7",
     kind: 30818,
     relays: ["wss://relay.newatlantis.top"]
