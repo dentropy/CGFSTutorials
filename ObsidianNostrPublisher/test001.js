@@ -7,7 +7,7 @@ import { Relay } from 'nostr-tools'
 
 const mnemonic = "curve foster stay broccoli equal icon bamboo champion casino impact will damp"
 let mnemonic_validation = validateWords(mnemonic)
-let secret_key = privateKeyFromSeedWords(mnemonic, "", 13)
+let secret_key = privateKeyFromSeedWords(mnemonic, "", 14)
 let public_key = getPublicKey(secret_key)
 
 console.log("Using public_key")
@@ -50,7 +50,7 @@ import { Database } from "bun:sqlite";
 const db = await new Database("./pkm.sqlite");
 let query = `SELECT * FROM markdown_nodes;`
 
-query = `SELECT *  from markdown_nodes where id in (SELECT to_node_id from markdown_edges where title='index') or title = 'index'; `
+// query = `SELECT *  from markdown_nodes where id in (SELECT to_node_id from markdown_edges where title='index') or title = 'index'; `
 
 let documents = db.query(query).all()
 console.log(`Got ${documents.length} Documents`)
