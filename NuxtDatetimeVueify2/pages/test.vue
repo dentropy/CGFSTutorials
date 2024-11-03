@@ -1,0 +1,23 @@
+<template>
+
+    <body>
+
+        <h2>Event Scheduling Form</h2>
+
+        <form action="/submit" method="POST">
+            <!-- Date selection -->
+            <label for="event-date">Select Event Date:</label>
+            <input type="date" id="event-date" name="event-date" required>
+            <br><br>
+
+            <!-- Time selection -->
+            <label for="event-time">Select Event Time:</label>
+            <input type="time" id="event-time" name="event-time" required>
+            <br><br>
+
+            <!-- Submit button -->
+            <button type="submit">Submit</button>
+        </form>
+
+    </body>
+</template>

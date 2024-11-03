@@ -1,7 +1,17 @@
 /* 
-Script Description
+Script Description:
 
+Here we setup the basics for understand Solana Transactions,
 
+We Create Accounts
+Load them up with transactions
+Get their balances
+Get their transactions
+Get the Slot(Block) associated with a transaction
+
+Next Steps:
+
+Figure out how the transactions are hashed to generate a block hash
 */
 
 import {
