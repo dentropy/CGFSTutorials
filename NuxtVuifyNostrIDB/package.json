@@ -10,8 +10,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "nostr-tools": "^2.10.1",
     "nuxt": "^3.13.2",
+    "uuid": "^11.0.2",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vuetify-nuxt-module": "latest"
   }
 }
