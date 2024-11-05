@@ -1,6 +1,7 @@
 import { SimplePool } from "nostr-tools/pool";
 
-const relays = ["ws://localhost:7007", "wss://relay.newatlantis.top"];
+const relays = ["wss://relay.newatlantis.top"];
+// "ws://localhost:7007", 
 export const nostrGet = async (params) => {
   //   const relayObject = await window.nostr.getRelays();
   //   const relays = Object.keys(relayObject);
@@ -19,6 +20,13 @@ let nostr_filter = {
 
 nostr_filter = {
   "authors": ["35fac4687dfbb0bae87ab74fd65c5efea894b14b3f29e19b6d11b4ad89016e1d"]
+}
+
+nostr_filter = {
+  "kinds": [
+    1
+  ],
+  "limit": 20
 }
 
 console.log(`Relays are \b${JSON.stringify(relays, null, 2)}`)

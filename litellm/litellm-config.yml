@@ -1,0 +1,21 @@
+model_list:
+  - model_name: gpt-4o-2024-08-06
+    litellm_params:
+      model: openai/gpt-4o-2024-08-06
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: text-completion-openai/gpt-3.5-turbo
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: "llama3.2"             
+    litellm_params:
+      model: "openai/llama3.2"
+      api_base: os.environ/OLLAMA_HOST_URL
+    model_info:
+      supports_function_calling: true
+
+general_settings: 
+  database_url: "postgresql://postgres:postgres@postgres:5432/litellm"
+
+# psql postgresql://postgres:postgres@localhost:5432/litellm
+# eralchemy2 -i 'postgresql+psycopg2://postgres:postgres@localhost:5432/litellm' -o erd_from_sqlite.md
