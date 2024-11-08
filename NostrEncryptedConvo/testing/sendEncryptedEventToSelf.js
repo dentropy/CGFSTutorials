@@ -10,8 +10,9 @@ let npub = nip19.decode("npub1ek36rza32zjc8pec8daz6veyywv55xtemzaxr0saymd04a4r66
 const mnemonic = "curve foster stay broccoli equal icon bamboo champion casino impact will damp";
 const relays = [
     "ws://localhost:7007",
+    "ws://localhost:7000",
     // "wss://relay.newatlantis.top",
-    // "wss://relay.damus.io/"
+    "wss://relay.damus.io/"
 ]
 
 
@@ -37,7 +38,7 @@ for (var i = 0; i < 10; i++) {
 
 // Send a encrypted message from account 0 to account 1
 import { encrypt, decrypt } from 'nostr-tools/nip04'
-const encrypted_text = await encrypt(bytesToHex(accounts[0].secret_key), npub, 'hello')
+const encrypted_text = await encrypt(bytesToHex(accounts[0].secret_key), npub, 'Hi Friend')
 
 console.log("encrypted_text")
 console.log(encrypted_text)
@@ -51,7 +52,18 @@ export const nostrGet = async (relays, filter) => {
     console.log("events");
     console.log(events);
     return events;
-};
+}
+
+const signedEvent = finalizeEvent({
+    kind: 4,
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [
+        ["p", npub]
+    ],
+    content: encrypted_text,
+}, accounts[0].secret_key)
+console.log("signedEvent")
+console.log(signedEvent)
 const myPool = new SimplePool();
 await myPool.publish(relays, signedEvent)
 console.log("Done sending event")
