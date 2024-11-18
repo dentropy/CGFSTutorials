@@ -5,8 +5,8 @@ import { nip19 } from 'nostr-tools'
 let npub = nip19.decode("npub1ek36rza32zjc8pec8daz6veyywv55xtemzaxr0saymd04a4r66eqpxphdl").data
 const relays = [
     // "ws://localhost:7007",
-    // "wss://relay.newatlantis.top",
-    "wss://relay.damus.io/"
+    "wss://relay.newatlantis.top",
+    // "wss://relay.damus.io/"
 ]
 
 
@@ -30,11 +30,9 @@ let unix_time = Math.floor((new Date()).getTime() / 1000);
 console.log("npub")
 console.log(npub)
 let nostr_filter = {
-    // ids: ["f3c2631ae50eac22d0953ebf93356125e194606c7a3a3d2e9d546418dc7725d1"]
-    // authors: [npub],
-    // since: 1731042276,
-    kinds: [ 10002 ],
-    // "#p": [ "c1a5158306476b92625c9c00202f1a275e5df1af89bd02beb7ae9819d88bc96f" ],
+    authors: [ "8593eee7d28c49aa052817b1bcf1d2f10637f86ef6ad20d3765b823dc755d819" ],
+    kinds: [ 4 ],
+    "#p": "862f8ab237e083eb83b038c9fb1c18433f5aa2972224e0729fbd94bf18e7d0e6",
   }
 let nostr_response = await nostrGet(relays, nostr_filter);
 
