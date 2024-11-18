@@ -1,15 +1,10 @@
 import { nip19, getPublicKey, nip04 } from "nostr-tools";
 import { bytesToHex } from "@noble/hashes/utils";
 import { nostrGet } from "./nostrGet";
-export default async function fetchNostrConvoAndDecrypt(relays, account_sent_to, nsec) {
+export default async function fetchNostrConvoAndDecrypt(relays, nsec, npub) {
 
-  console.log("account_sent_to")
-  console.log(account_sent_to)
-  console.log("nsec")
-  console.log(nsec)
+  let account_sent_to = nip19.decode(npub).data
   let account_sent_from = getPublicKey(nip19.decode(nsec).data);
-  console.log("account_sent_from")
-  console.log(account_sent_from)
   // Setup the filters and get the messages of this conversation
   let filter_from_bot = {
     authors: [account_sent_to],
@@ -17,12 +12,17 @@ export default async function fetchNostrConvoAndDecrypt(relays, account_sent_to,
     "#p": account_sent_from,
   }
 
-  console.log("filter_from_bot")
-  console.log(filter_from_bot)
-
   let events_from_bot = await nostrGet(relays, filter_from_bot);
 
-  console.log("Got Inital Nostr Events")
+  // console.log("account_sent_to")
+  // console.log(account_sent_to)
+  // console.log("nsec")
+  // console.log(nsec)
+  // console.log("account_sent_from")
+  // console.log(account_sent_from)
+  // console.log("filter_from_bot")
+  // console.log(filter_from_bot)
+  // console.log("Got Inital Nostr Events")
 
   let filter_from_user = {
     authors: [account_sent_from],
@@ -37,7 +37,7 @@ export default async function fetchNostrConvoAndDecrypt(relays, account_sent_to,
   for (let convoEvent of all_events) {
     try {
       let decrypted_content = await nip04.decrypt(
-        bytesToHex(account_sent_to.secret_key),
+        nip19.decode(nsec).data,
         convoEvent.pubkey,
         convoEvent.content,
       );

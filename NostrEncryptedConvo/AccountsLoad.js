@@ -1,0 +1,21 @@
+/*
+Inputs
+  * MNEMPONIC (Optional)
+*/
+import 'dotenv/config'
+import generateNostrAccountsFromMnemonic from './lib/generateNostrAccountsFromMnemonic.js'
+
+import bip39 from "bip39";
+const mnemonic = process.env.MNEMONIC ||  bip39.generateMnemonic();
+let accounts = generateNostrAccountsFromMnemonic(mnemonic)
+
+console.log(`export MNEMONIC='${mnemonic}'`)
+for(let i = 0 ; i < accounts.length; i++){
+  console.log(`export NSEC${i}='${accounts[i].nsec}'`)
+  console.log(`export NPUB${i}='${accounts[i].npub}'`)
+}
+if(process.env.NOSTR_RELAYS == "" || process.env.NOSTR_RELAYS == undefined){
+    console.log(`export NOSTR_RELAYS='wss://relay.newatlantis.top'`)
+} else {
+  console.log(`export NOSTR_RELAYS='${process.env.NOSTR_RELAYS}'`)
+}

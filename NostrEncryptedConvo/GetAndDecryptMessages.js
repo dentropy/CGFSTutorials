@@ -4,12 +4,12 @@ Inputs
   * NPUB
   * NOSTR_RELAYS
 */
-
-import * as nip19 from "nostr-tools/nip19";
+import 'dotenv/config'
 import fetchNostrConvoAndDecrypt from "./lib/fetchNostrConvoAndDecrypt";
-import { nostrGet } from "./lib/nostrGet";
 
-let nsec = process.env.NSEC;
+console.log(process.env)
+
+let nsec = process.env.NSEC3;
 console.log(nsec);
 if (nsec == "" || nsec == undefined) {
   console.log(
@@ -19,9 +19,8 @@ if (nsec == "" || nsec == undefined) {
 } else {
   console.log(`\nYour nsec is ${nsec}`);
 }
-let private_key = nip19.decode(nsec).data;
 
-let npub = process.env.NPUB;
+let npub = process.env.NPUB4;
 console.log(npub);
 if (npub == "" || npub == undefined) {
   console.log(
@@ -31,8 +30,9 @@ if (npub == "" || npub == undefined) {
 } else {
   console.log(`\nYour npub is ${npub}`);
 }
-const public_key = nip19.decode(npub).data;
 
+console.log("process.env.NOSTR_RELAYS")
+console.log(process.env.NOSTR_RELAYS)
 let relays = process.env.NOSTR_RELAYS;
 if (relays == "" || relays == undefined) {
   console.log(
@@ -50,8 +50,8 @@ if (relays == "" || relays == undefined) {
 
 let convo = await fetchNostrConvoAndDecrypt(
   relays,
-  public_key,
   nsec,
+  npub,
 );
 
 console.log("Convo Below")

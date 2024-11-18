@@ -10,7 +10,7 @@ import { finalizeEvent, getPublicKey, nip04 } from "nostr-tools";
 import { bytesToHex } from '@noble/hashes/utils'
 import { SimplePool } from "nostr-tools/pool";
 
-let nsec = process.env.NSEC;
+let nsec = process.env.NSEC3;
 if (nsec == "" || nsec == undefined) {
   console.log(
     `You did not set the NSEC environment variable with your nostr key`,
@@ -20,7 +20,7 @@ if (nsec == "" || nsec == undefined) {
   console.log(`\nYour nsec is ${nsec}`);
 }
 
-let nsec1 = process.env.NSEC1;
+let nsec1 = process.env.NSEC4;
 if (nsec == "" || nsec == undefined) {
   console.log(
     `You did not set the NSEC environment variable with your nostr key`,
@@ -62,7 +62,7 @@ const lorem = new LoremIpsum({
 });
 
 const myPool = new SimplePool()
-for (var i = 0; i < 5; i++) {
+for (var i = 0; i < 2; i++) {
   var random_text = lorem.generateParagraphs(3);
   var encrypted_text = await nip04.encrypt(
     accounts[0].secret_key,
