@@ -85,3 +85,14 @@ export NOSTR_RELAYS='wss://relay.newatlantis.top/'
 bun run SendEncryptedMessage.js
 
 ```
+
+
+#### FakeThread.js
+
+``` bash
+
+source .env
+export NOSTR_RELAYS='wss://relay.newatlantis.top/'
+bun run FakeThread.js
+
+```
