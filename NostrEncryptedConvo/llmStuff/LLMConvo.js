@@ -4,7 +4,6 @@ export default async function LLMConvo(messages, nsec) {
     let ai_assistent_account = nip19.decode(nsec).data
     let llm_messages = []
     for (let message of messages) {
-        console.log(message)
         if (message.pubkey == ai_assistent_account) {
             llm_messages.push({
                 role: "assistant",

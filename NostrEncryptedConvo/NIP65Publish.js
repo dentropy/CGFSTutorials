@@ -19,7 +19,7 @@ if (nsec == "" || nsec == undefined) {
 } else {
   console.log(`\nYour nsec is ${nsec}`);
 }
-private_key = nip19.decode(nsec).data;
+let private_key = nip19.decode(nsec).data;
 
 
 let relays = process.env.NOSTR_RELAYS;

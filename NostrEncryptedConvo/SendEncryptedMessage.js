@@ -7,7 +7,7 @@ Inputs
 */
 
 import { nostrGet } from "./lib/nostrGet.js";
-import * as nip19 from "nostr-tools/nip19";
+import { nip04, nip19 } from "nostr-tools";
 import { finalizeEvent, verifyEvent } from 'nostr-tools'
 import { Relay } from 'nostr-tools/relay'
 
@@ -95,18 +95,19 @@ if(nip65_relays.length == 0){
 
 
 // Create encrypted event
-let ciphertext = await encrypt(private_key, public_key, nostr_message)
+let ciphertext = await nip04.encrypt(private_key, public_key, nostr_message)
 let signedEvent = finalizeEvent({
     kind: 4,
     created_at: Math.floor(Date.now() / 1000),
     tags: [ 
-      [public_key]
+      ["p", public_key]
     ],
     content: ciphertext,
   }, private_key)
 if(!verifyEvent(signedEvent)){
     console.log("Generated event could not be verified")
 }
+console.log(signedEvent)
 
 // Loop NIP65 through relays sending event
 for(const relay_url of nip65_relays){

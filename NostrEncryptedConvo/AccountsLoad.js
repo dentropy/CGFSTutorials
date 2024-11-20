@@ -19,3 +19,8 @@ if(process.env.NOSTR_RELAYS == "" || process.env.NOSTR_RELAYS == undefined){
 } else {
   console.log(`export NOSTR_RELAYS='${process.env.NOSTR_RELAYS}'`)
 }
+if(process.env.NIP_65_NOSTR_RELAYS == "" || process.env.NOSTR_RELAYS == undefined){
+  console.log(`export NIP_65_NOSTR_RELAYS='wss://nos.lol/,wss://nostr.land/,wss://nostr.wine/,wss://purplerelay.com/,wss://relay.damus.io/,wss://relay.snort.social/'`)
+} else {
+  console.log(`export NIP_65_NOSTR_RELAYS='${process.env.NIP_65_NOSTR_RELAYS}'`)
+}

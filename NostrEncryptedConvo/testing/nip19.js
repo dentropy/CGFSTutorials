@@ -1,4 +1,4 @@
-import * as nip19 from 'nostr-tools/nip19'
+import { nip19 } from 'nostr-tools'
 
 let npub = nip19.decode("npub1xhavg6ralwct46r6ka8avhz7l65ffv2t8u57rxmdzx62mzgpdcws4sgj2f")
 

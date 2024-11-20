@@ -30,9 +30,10 @@ let unix_time = Math.floor((new Date()).getTime() / 1000);
 console.log("npub")
 console.log(npub)
 let nostr_filter = {
-    authors: [ "8593eee7d28c49aa052817b1bcf1d2f10637f86ef6ad20d3765b823dc755d819" ],
-    kinds: [ 4 ],
-    "#p": "862f8ab237e083eb83b038c9fb1c18433f5aa2972224e0729fbd94bf18e7d0e6",
+    ids: [ "86094119e3817c68bcf0d99604aed7868983e8b14040856780dad0c7734acab1" ],
+    // authors: [ "8593eee7d28c49aa052817b1bcf1d2f10637f86ef6ad20d3765b823dc755d819" ],
+    // kinds: [ 4 ],
+    // "#p": "862f8ab237e083eb83b038c9fb1c18433f5aa2972224e0729fbd94bf18e7d0e6",
   }
 let nostr_response = await nostrGet(relays, nostr_filter);
 

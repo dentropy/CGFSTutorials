@@ -1,1 +1,8 @@
-{ "dependencies": { "@nostr-dev-kit/ndk": "^2.10.5", "@nostrify/nostrify": "npm:@jsr/nostrify__nostrify", "lorem-ipsum": "^2.0.8" } }
+{
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "^2.10.5",
+    "@nostrify/nostrify": "npm:@jsr/nostrify__nostrify",
+    "lorem-ipsum": "^2.0.8",
+    "nostr-tools": "^2.10.3"
+  }
+}

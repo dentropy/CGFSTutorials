@@ -1,67 +1,55 @@
-import { getPublicKey, nip19 } from 'nostr-tools'
+import { getPublicKey, nip19, nip04 } from 'nostr-tools'
 import { validateWords, privateKeyFromSeedWords } from 'nostr-tools/nip06'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
 import { finalizeEvent, verifyEvent } from 'nostr-tools'
-
-// My Account
-let npub = nip19.decode("npub1ek36rza32zjc8pec8daz6veyywv55xtemzaxr0saymd04a4r66eqpxphdl").data
-
-// Create a bunch of nostr accounts
-const mnemonic = "curve foster stay broccoli equal icon bamboo champion casino impact will damp";
-const relays = [
-    "ws://localhost:7007",
-    "ws://localhost:7000",
-    // "wss://relay.newatlantis.top",
-    "wss://relay.damus.io/"
-]
-
-
-let mnemonic_validation = validateWords(mnemonic)
-if (!mnemonic_validation) {
-    console.log("Invalid Mnemonic")
-    process.exit(0);
-}
-let accounts = []
-for (var i = 0; i < 10; i++) {
-    let secret_key = privateKeyFromSeedWords(mnemonic, "", i)
-    let public_key = getPublicKey(secret_key)
-    let uint8_secret_key = new Buffer.from(secret_key, "hex")
-    let nsec = nip19.nsecEncode(uint8_secret_key)
-    let npub = nip19.npubEncode(public_key)
-    accounts.push({
-        secret_key: secret_key,
-        public_key: public_key,
-        nsec: nsec,
-        npub: npub
-    })
-}
-
-// Send a encrypted message from account 0 to account 1
-import { encrypt, decrypt } from 'nostr-tools/nip04'
-const encrypted_text = await encrypt(bytesToHex(accounts[0].secret_key), npub, 'Hi Friend')
-
-console.log("encrypted_text")
-console.log(encrypted_text)
-
-
 import { SimplePool } from "nostr-tools/pool";
-export const nostrGet = async (relays, filter) => {
-    const pool = new SimplePool();
-    const events = await pool.querySync(relays, filter);
-    pool.publi
-    console.log("events");
-    console.log(events);
-    return events;
+
+let nsec = process.env.NSEC;
+if (nsec == "" || nsec == undefined) {
+    console.log(
+        `You did not set the NSEC environment variable with your nostr key`,
+    );
+    process.exit();
+} else {
+    console.log(`\nYour nsec is ${nsec}`);
 }
 
+let npub = process.env.NPUB;
+if (nsec == "" || nsec == undefined) {
+    console.log(
+        `You did not set the NPUB environment variable with who you want to send message to`,
+    );
+    process.exit();
+} else {
+    console.log(`\nYour npub is ${nsec}`);
+}
+
+
+let relays = process.env.NOSTR_RELAYS;
+if (relays == "" || relays == undefined) {
+    console.log(
+        `You did not set the NOSTR_RELAYS environment variable, use commas to separate relays from one another, for example`,
+    );
+    console.log(
+        `export NOSTR_RELAYS='wss://relay.newatlantis.top/,wss://nos.lol/' `,
+    );
+    process.exit();
+} else {
+    relays = relays.split(",");
+    console.log(`\nYour relay list is`);
+    console.log(relays);
+}
+
+
+const encrypted_text = await nip04.encrypt(bytesToHex(nip19.decode(nsec).data), npub, 'Hi Friend')
 const signedEvent = finalizeEvent({
     kind: 4,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
-        ["p", npub]
+        ["p", nip19.decode(npub).data]
     ],
     content: encrypted_text,
-}, accounts[0].secret_key)
+}, nip19.decode(pnsec).data)
 console.log("signedEvent")
 console.log(signedEvent)
 const myPool = new SimplePool();
