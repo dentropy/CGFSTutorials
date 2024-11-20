@@ -50,7 +50,7 @@ wss://relay.newatlantis.top
 ```
 
 
-#### LLM Bot Env Variables
+#### LLM DM Bot Env Variables
 
 
 ``` bash
@@ -65,6 +65,26 @@ export OPENAI_API_KEY='sk-ENTROPY'
 export BASE_URL='http://localhost:11434/'
 export OPENAI_API_KEY='sk-ENTROPY'
 
+
+export NIP_65_NOSTR_RELAYS='wss://relay.newatlantis.top/,wss://nos.lol/,wss://nostr.land/,wss://nostr.wine/,wss://purplerelay.com/,wss://relay.damus.io/,wss://relay.snort.social/'
+export RELAYS_TO_STORE_DMS='wss://relay.newatlantis.top/'
+export NSEC=$NSEC0
+
+```
+
+#### LLM Thread Bot Env Variables
+
+``` bash
+
+source .env
+
+# For OpenAI 
+export BASE_URL='https://api.openai.com/'
+export OPENAI_API_KEY='sk-ENTROPY'
+
+# For Ollama running locally
+export BASE_URL='http://localhost:11434/'
+export OPENAI_API_KEY='sk-ENTROPY'
 
 export NIP_65_NOSTR_RELAYS='wss://relay.newatlantis.top/,wss://nos.lol/,wss://nostr.land/,wss://nostr.wine/,wss://purplerelay.com/,wss://relay.damus.io/,wss://relay.snort.social/'
 export RELAYS_TO_STORE_DMS='wss://relay.newatlantis.top/'

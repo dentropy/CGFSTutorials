@@ -97,7 +97,8 @@ var signedEvent = finalizeEvent({
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["p", accounts[0].pubkey],
-      ["e", rootEvent.id, "wss://relay.newatlantis.top", "root"]
+      ["e", rootEvent.id, "wss://relay.newatlantis.top", "root"],
+      ["e", rootEvent.id, "wss://relay.newatlantis.top", "reply"]
     ],
     content: random_text,
   }, accounts[1].secret_key);
@@ -111,7 +112,8 @@ var firstLevelResponse = finalizeEvent({
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["p", accounts[0].pubkey],
-      ["e", rootEvent.id, "wss://relay.newatlantis.top", "root"]
+      ["e", rootEvent.id, "wss://relay.newatlantis.top", "root"],
+      ["e", rootEvent.id, "wss://relay.newatlantis.top", "reply"]
     ],
     content: random_text,
   }, accounts[1].secret_key);
@@ -127,7 +129,7 @@ var signedEvent = finalizeEvent({
         ["p", accounts[0].pubkey],
         ["p", accounts[1].pubkey],
         ["e", rootEvent.id, "wss://relay.newatlantis.top", "root"],
-        ["e", firstLevelResponse.id, "wss://relay.newatlantis.top", "replied"]
+        ["e", firstLevelResponse.id, "wss://relay.newatlantis.top", "reply"]
     ],
     content: random_text,
   }, accounts[2].secret_key);

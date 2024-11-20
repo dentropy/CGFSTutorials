@@ -17,6 +17,9 @@ export default async function LLMConvo(messages, nsec) {
             })
         }
     }
+
+    console.log("\n\nllm_messages")
+    console.log(llm_messages)
     let llm_response = await fetch(`${process.env.BASE_URL}/v1/chat/completions`, {
         method: "POST",
         body: JSON.stringify({
@@ -30,5 +33,8 @@ export default async function LLMConvo(messages, nsec) {
         },
     });
     llm_response = await llm_response.json()
+    console.log("\n")
+    console.log("llm_response")
+    console.log(llm_response)
     return llm_response.choices[0].message.content
 }
