@@ -6,7 +6,7 @@ Inputs
 */
 import 'dotenv/config'
 import fetchNostrConvoAndDecrypt from "./lib/fetchNostrConvoAndDecrypt";
-
+import LLMConvo from './llmStuff/LLMConvo';
 let nsec = process.env.NSEC3;
 console.log(nsec);
 if (nsec == "" || nsec == undefined) {
@@ -52,5 +52,8 @@ let convo = await fetchNostrConvoAndDecrypt(
   npub,
 );
 
-console.log("Convo Below")
-console.log(convo);
+let llm_response = await LLMConvo(convo, nsec)
+
+console.log(llm_response)
+
+// Next we need to send the response to the user

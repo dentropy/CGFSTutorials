@@ -1,5 +1,5 @@
 // Set ollama_url so everything works
-const ollama_url = "http://192.168.7.209:11434"
+const ollama_url = process.env.OLLAMA_URL || "http://192.168.7.209:11434"
 
 // Test User Message
 const test_user_message = `Ask me at 9am tomorrow what I ate for breakfast`

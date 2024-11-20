@@ -3,7 +3,7 @@ Inputs
   * MNEMPONIC (Optional)
 */
 import 'dotenv/config'
-import generateNostrAccountsFromMnemonic from './lib/generateNostrAccountsFromMnemonic.js'
+import generateNostrAccountsFromMnemonic from './generateNostrAccountsFromMnemonic.js'
 
 import bip39 from "bip39";
 const mnemonic = process.env.MNEMONIC ||  bip39.generateMnemonic();
