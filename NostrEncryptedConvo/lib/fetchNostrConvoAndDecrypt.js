@@ -1,6 +1,7 @@
 import { nip19, getPublicKey, nip04 } from "nostr-tools";
-import { bytesToHex } from "@noble/hashes/utils";
 import { nostrGet } from "./nostrGet";
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
+
 export default async function fetchNostrConvoAndDecrypt(relays, nsec, npub) {
 
   let account_sent_to = nip19.decode(npub).data
@@ -38,14 +39,14 @@ export default async function fetchNostrConvoAndDecrypt(relays, nsec, npub) {
     try {
       let decrypted_content = await nip04.decrypt(
         nip19.decode(nsec).data,
-        convoEvent.pubkey,
+        account_sent_to,
         convoEvent.content,
       );
       convoEvent.decrypted_content = decrypted_content;
       decrypted_events.push(convoEvent);
     } catch (error) {
       convoEvent.decrypted_content = "FAILED";
-      decrypted_events.push(convoEvent);
+      decrypted_events.push(convoEvent); 
     }
   }
   decrypted_events.sort((a, b) => a.created_at - b.created_at);

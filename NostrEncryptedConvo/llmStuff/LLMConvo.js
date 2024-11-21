@@ -1,7 +1,7 @@
-import { nip19 } from "nostr-tools";
+import { nip19, getPublicKey } from "nostr-tools";
 
 export default async function LLMConvo(messages, nsec) {
-    let ai_assistent_account = nip19.decode(nsec).data
+    let ai_assistent_account = getPublicKey(nip19.decode(nsec).data)
     let llm_messages = []
     for (let message of messages) {
         if (message.pubkey == ai_assistent_account) {

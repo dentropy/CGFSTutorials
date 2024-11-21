@@ -69,6 +69,16 @@ export OPENAI_API_KEY='sk-ENTROPY'
 export NIP_65_NOSTR_RELAYS='wss://relay.newatlantis.top/,wss://nos.lol/,wss://nostr.land/,wss://nostr.wine/,wss://purplerelay.com/,wss://relay.damus.io/,wss://relay.snort.social/'
 export RELAYS_TO_STORE_DMS='wss://relay.newatlantis.top/'
 export NSEC=$NSEC0
+```
+
+
+``` bash
+# Load Account
+source .env
+export NSEC=$NSEC16
+echo $NSEC16
+
+bun NIP65Publish.js
 
 ```
 

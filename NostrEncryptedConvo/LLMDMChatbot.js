@@ -97,6 +97,8 @@ async function check_NIP65_published(nip_65_relays, nsec, relays_to_store_dms) {
 }
 
 async function respond_to_message(relays, nsec, nip_65_relays, npub) {
+  console.log("MY_NPUB")
+  console.log(npub)
   let convo = await fetchNostrConvoAndDecrypt(
     relays,
     nsec,
@@ -135,6 +137,11 @@ async function respond_to_message(relays, nsec, nip_65_relays, npub) {
     nip19.decode(nsec).data,
     nip19.decode(npub).data,
     llm_response,
+  )
+  let decrypted_test = await nip04.decrypt(
+    nip19.decode(nsec).data,
+    nip19.decode(npub).data,
+    encrypted_text
   )
   var signedEvent = finalizeEvent({
     kind: 4,
