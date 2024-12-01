@@ -1,0 +1,16 @@
+{
+  "name": "nostreventkind0",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.6.0",
+    "libsql": "^0.5.0-pre.2",
+    "sqlite3": "^5.1.7"
+  }
+}
