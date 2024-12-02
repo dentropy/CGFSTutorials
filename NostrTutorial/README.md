@@ -68,6 +68,8 @@ deno -A cli.js sql-query -db ./db.sqlite -sql 'SELECT COUNT(*) FROM events;'
 
 ```
 
+Now check out [nosdump sql queries](./docs/nodsump.md)
+
 #### send-event
 
 ``` bash
