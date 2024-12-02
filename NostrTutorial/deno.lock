@@ -1,0 +1,133 @@
+{
+  "version": "4",
+  "specifiers": {
+    "npm:@noble/hashes@^1.6.1": "1.6.1",
+    "npm:bip39@^3.1.0": "3.1.0",
+    "npm:commander@^12.1.0": "12.1.0",
+    "npm:dotenv@^16.4.5": "16.4.5",
+    "npm:libsql@~0.5.0-pre.2": "0.5.0-pre.2",
+    "npm:nostr-tools@^2.10.4": "2.10.4"
+  },
+  "npm": {
+    "@libsql/darwin-arm64@0.5.0-pre.2": {
+      "integrity": "sha512-jLKZSKM+6f/3qH12MyUGaa/zq84myQWLqsRzGkEccpKX5+xY/mYP9t9LYwDF/V8ciPQ1SvfNikkdLNkqViYYAw=="
+    },
+    "@libsql/darwin-x64@0.5.0-pre.2": {
+      "integrity": "sha512-//Iq6QSWNPN5jjTq4WvCZADW2J8p3UqSwo09qwNZGw81LheAbZYO9AVV7plxAk7wSDX4W1Ee5SgNbCYxY3HiiQ=="
+    },
+    "@libsql/linux-arm64-gnu@0.5.0-pre.2": {
+      "integrity": "sha512-IGA/VvRfTs1K4fxu29jHb1432qju/WFUHyEkQP8jHKsrYkorLfI/L0rlFhnLrZ61OF790c9gNM0cTtqoYnt7KQ=="
+    },
+    "@libsql/linux-arm64-musl@0.5.0-pre.2": {
+      "integrity": "sha512-ythJjzqpI+TEUDc8L0frn9kKrjo+wfaqTJTXw///Cyu7kwEI0wI0GlVR0Y03pLYs1RIuirVA1FVmV3nt7fkzuA=="
+    },
+    "@libsql/linux-x64-gnu@0.5.0-pre.2": {
+      "integrity": "sha512-KKIM7vI15/1P0U31/eL5kgkPktarXyoKRM9meP/vNDNixlU5GL+D8GLT5FCTMNhtM+BnDiUN7umakhl5XfOqzg=="
+    },
+    "@libsql/linux-x64-musl@0.5.0-pre.2": {
+      "integrity": "sha512-nO9zjq6q5NKU5Hx8Mm9+Y8edxDbO7XKxPq9C7GHytu7FPxVTYrMIVioN2xWcnPhaawWS/TlZZTaJuwLbY177NQ=="
+    },
+    "@libsql/win32-x64-msvc@0.5.0-pre.2": {
+      "integrity": "sha512-jaqSOTyi8r3ZgVuOzdMS1birMlj41/yFH+iW73HvWRjTAjJ5DNGpfL9r5KgnEEGxpRL8SkEUnfGJUgP9v8HQHw=="
+    },
+    "@neon-rs/load@0.0.4": {
+      "integrity": "sha512-kTPhdZyTQxB+2wpiRcFWrDcejc4JI6tkPuS7UZCG4l6Zvc5kU/gGQ/ozvHTh1XR5tS+UlfAfGuPajjzQjCiHCw=="
+    },
+    "@noble/ciphers@0.5.3": {
+      "integrity": "sha512-B0+6IIHiqEs3BPMT0hcRmHvEj2QHOLu+uwt+tqDDeVd0oyVzh7BPrDcPjRnV1PV/5LaknXJJQvOuRGR0zQJz+w=="
+    },
+    "@noble/curves@1.1.0": {
+      "integrity": "sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA==",
+      "dependencies": [
+        "@noble/hashes@1.3.1"
+      ]
+    },
+    "@noble/curves@1.2.0": {
+      "integrity": "sha512-oYclrNgRaM9SsBUBVbb8M6DTV7ZHRTKugureoYEncY5c65HOmRzvSiTE3y5CYaPYJA/GVkrhXEoF0M3Ya9PMnw==",
+      "dependencies": [
+        "@noble/hashes@1.3.2"
+      ]
+    },
+    "@noble/hashes@1.3.1": {
+      "integrity": "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="
+    },
+    "@noble/hashes@1.3.2": {
+      "integrity": "sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ=="
+    },
+    "@noble/hashes@1.6.1": {
+      "integrity": "sha512-pq5D8h10hHBjyqX+cfBm0i8JUXJ0UhczFc4r74zbuT9XgewFo2E3J1cOaGtdZynILNmQ685YWGzGE1Zv6io50w=="
+    },
+    "@scure/base@1.1.1": {
+      "integrity": "sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA=="
+    },
+    "@scure/bip32@1.3.1": {
+      "integrity": "sha512-osvveYtyzdEVbt3OfwwXFr4P2iVBL5u1Q3q4ONBfDY/UpOuXmOlbgwc1xECEboY8wIays8Yt6onaWMUdUbfl0A==",
+      "dependencies": [
+        "@noble/curves@1.1.0",
+        "@noble/hashes@1.3.2",
+        "@scure/base"
+      ]
+    },
+    "@scure/bip39@1.2.1": {
+      "integrity": "sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==",
+      "dependencies": [
+        "@noble/hashes@1.3.2",
+        "@scure/base"
+      ]
+    },
+    "bip39@3.1.0": {
+      "integrity": "sha512-c9kiwdk45Do5GL0vJMe7tS95VjCii65mYAH7DfWl3uW8AVzXKQVUm64i3hzVybBDMp9r7j9iNxR85+ul8MdN/A==",
+      "dependencies": [
+        "@noble/hashes@1.6.1"
+      ]
+    },
+    "commander@12.1.0": {
+      "integrity": "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA=="
+    },
+    "detect-libc@2.0.2": {
+      "integrity": "sha512-UX6sGumvvqSaXgdKGUsgZWqcUyIXZ/vZTrlRT/iobiKhGL0zL4d3osHj3uqllWJK+i+sixDS/3COVEOFbupFyw=="
+    },
+    "dotenv@16.4.5": {
+      "integrity": "sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg=="
+    },
+    "libsql@0.5.0-pre.2": {
+      "integrity": "sha512-6eobJ6s2jLKwkf0NrxuOr06lnEdaNOXx5lxwfPMOJm1b4mzBXPH5Mrx0TMSDYP5eAHw8LBWJGadaJtVQ72ab5g==",
+      "dependencies": [
+        "@libsql/darwin-arm64",
+        "@libsql/darwin-x64",
+        "@libsql/linux-arm64-gnu",
+        "@libsql/linux-arm64-musl",
+        "@libsql/linux-x64-gnu",
+        "@libsql/linux-x64-musl",
+        "@libsql/win32-x64-msvc",
+        "@neon-rs/load",
+        "detect-libc"
+      ]
+    },
+    "nostr-tools@2.10.4": {
+      "integrity": "sha512-biU7sk+jxHgVASfobg2T5ttxOGGSt69wEVBC51sHHOEaKAAdzHBLV/I2l9Rf61UzClhliZwNouYhqIso4a3HYg==",
+      "dependencies": [
+        "@noble/ciphers",
+        "@noble/curves@1.2.0",
+        "@noble/hashes@1.3.1",
+        "@scure/base",
+        "@scure/bip32",
+        "@scure/bip39",
+        "nostr-wasm"
+      ]
+    },
+    "nostr-wasm@0.1.0": {
+      "integrity": "sha512-78BTryCLcLYv96ONU8Ws3Q1JzjlAt+43pWQhIl86xZmWeegYCNLPml7yQ+gG3vR6V5h4XGj+TxO+SS5dsThQIA=="
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:@noble/hashes@^1.6.1",
+      "npm:bip39@^3.1.0",
+      "npm:commander@^12.1.0",
+      "npm:dotenv@^16.4.5",
+      "npm:libsql@~0.5.0-pre.2",
+      "npm:nostr-tools@^2.10.4"
+    ]
+  }
+}

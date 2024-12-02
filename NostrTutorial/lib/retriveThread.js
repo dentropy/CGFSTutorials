@@ -13,9 +13,9 @@ export async function RetriveThread(relays, event_id){
         
         
         let the_event = events[events.length - 1]
-        // console.log("events.length")
-        // console.log(events.length)
-        // console.log(events)
+        console.log("events.length")
+        console.log(events.length)
+        console.log(events)
 
 
         // let reply_to_event = ""
@@ -67,9 +67,9 @@ export async function RetriveThread(relays, event_id){
                 root_event = tag[1]
             }
         }
-        // console.log("reply_event")
-        // console.log(`reply_event=${reply_event} root_event=${root_event}`)
-        // console.log("\n\n\n")
+        console.log("reply_event")
+        console.log(`reply_event=${reply_event} root_event=${root_event}`)
+        console.log("\n\n\n")
 
         if(reply_event == root_event || reply_event == undefined || reply_event == ""){
             let response_event = await nostrGet(
