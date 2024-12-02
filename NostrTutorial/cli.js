@@ -5,8 +5,13 @@ import bip39 from "bip39";
 import fs from 'node:fs'
 import Database from 'libsql';
 
+import { Relay, nip19, finalizeEvent, verifyEvent } from 'nostr-tools'
+
 import generateNostrAccountsFromMnemonic from './lib/accountsGenerate.js'
 import { RetriveThread } from "./lib/retriveThread.js";
+import { fakeDMConvo } from "./lib/fakeDMConvo.js";
+import { getNostrConvoAndDecrypt } from './lib/getNostrConvoAndDecrypt.js'
+
 program
     .name('nostr-cli')
     .description('CLI so you can talk on Nostr')
@@ -33,7 +38,7 @@ program.command('generate-accounts-env')
             console.log(`export MNEMONIC='${mnemonic}'`)
             for (let i = 0; i < accounts.length; i++) {
                 console.log(`export NSEC${i}='${accounts[0].nsec}'`)
-                console.log(`export NPUP${i}='${accounts[0].npub}'`)
+                console.log(`export NPUB${i}='${accounts[0].npub}'`)
             }
         } else {
             console.log('Mnemonic is invalid')
@@ -59,6 +64,52 @@ program.command('generate-accounts-json')
         }
     })
 
+program.command('send-event')
+    .description('send-event')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays')
+    .requiredOption('-f, --event_data <string>', 'JSON with at least the keys content : string and kind : number')
+    .requiredOption('-nsec, --nsec <string>', 'Nostr private key encoded as nsec using NIP19')
+    .action(async (args, options) => {
+        let fileContents = ""
+        try {
+            fileContents = fs.readFileSync(args.event_data, 'utf-8')
+            fileContents = JSON.parse(fileContents)
+        } catch (error) {
+            console.log(`Error reading file ${args.event_data} error posted below`)
+            console.log(error)
+        }
+        if (!Object.keys(fileContents).includes("tags")) {
+            fileContents.tags = []
+        }
+        console.log("fileContents")
+        console.log(fileContents)
+        let signedEvent = ""
+        try {
+            signedEvent = finalizeEvent({
+                kind: fileContents.kind,
+                created_at: Math.floor(Date.now() / 1000),
+                tags: fileContents.tags,
+                content: fileContents.content,
+            }, nip19.decode(args.nsec).data)
+            console.log("Your signed event is:")
+            console.log(signedEvent)
+        } catch (error) {
+            console.log("We got an error encoding your event, it is posted below")
+            console.log(error)
+            process.exit()
+        }
+        for (const relay_url of args.relays.split(',')) {
+            try {
+                const relay = await Relay.connect(relay_url)
+                await relay.publish(signedEvent)
+                console.log(`Published event ${relay_url}`)
+            } catch (error) {
+                console.log(`Could not publish to ${relay_url}`)
+                console.log(error)
+            }
+        }
+        process.exit()
+    })
 
 program.command('load-nosdump-into-sqlite')
     .description('Loads the output of nosdump into a sqlite database for easy querrying')
@@ -145,6 +196,59 @@ program.command('get-thread-events')
         console.log(result)
         process.exit()
     })
+
+program.command('gen-fake-dm-convo')
+    .description('Get and decrypted a Direct Message nostr conversation')
+    .requiredOption('-from, --from_nsec <string>', 'Must include nsec or private key')
+    .requiredOption('-to, --to_nsec <string>', 'Must include nsec or private key')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays')
+    .action(async (args, options) => {
+        try {
+            await fakeDMConvo(args.from_nsec, args.to_nsec, args.relays.split(','))
+            console.log("Fake DM convo generated sucessfully")
+        } catch (error) {
+            console.log("We got an error generating the DM conversation, it is posted below")
+            console.log(error)
+        }
+        process.exit()
+    })
+
+program.command('get-encrypted-convo')
+    .description('Get and decrypted a Direct Message nostr conversation')
+    .requiredOption('-from, --from_nsec <string>', 'Must include nsec or private key')
+    .requiredOption('-to, --to_npub <string>', 'Must include nsec or private key')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays')
+    .action(async (args, options) => {
+        let convo = await getNostrConvoAndDecrypt(args.relays.split(','), args.from_nsec, args.to_npub)
+        console.log(convo)
+        process.exit()
+    })
+
+// program.command('get-nip65')
+//     .description('nostr-cli -npub <NPUB> -relays <RELAYS>')
+//     .option('-npub, --npub', 'npub of the user\'s Relay List Metadata')
+//     .requiredOption('-r, --relays <string>', 'A list of nostr relays')
+//     .action((str, options) => {
+//         console.log(bip39.generateMnemonic())
+//     })
+
+// program.command('get-profile')
+//     .description('nostr-cli create-profile -nsec <NSEC> -profile_json <PROFILE_JSON> -relays <RELAYS>')
+//     .option('-npub, --npub', 'npub of the user\'s Relay List Metadata')
+//     .option('-pj, --profile_json', 'The JSON you want to encode into the Nostr accounts profile and publish it')
+//     .option('-r, --relays', 'A list of nostr relays')
+//     .action((str, options) => {
+//         console.log(bip39.generateMnemonic())
+//     })
+// program.command('create-profile')
+//     .description('nostr-cli create-profile -nsec <NSEC> -profile_json <PROFILE_JSON> -relays <RELAYS>')
+//     .option('-nsec, --nsec', 'nsec of the user\'s Relay List Metadata')
+//     .option('-pj, --profile_json', 'The JSON you want to encode into the Nostr accounts profile and publish it')
+//     .option('-r, --relays', 'A list of nostr relays')
+//     .action((str, options) => {
+//         console.log(bip39.generateMnemonic())
+//     })
+
 // program.command('download')
 //     .description('nostr-cli download -nostr_filter <NOSTR_FILTER> -from_relays <RELAYS> -db_path <SQLITE_PATH>')
 //     .option('-nf, --nostr_filter', 'Nostr Filter')
@@ -171,60 +275,4 @@ program.command('get-thread-events')
 //         console.log('TODO')
 //     })
 
-program.command('get-encrypted-convo')
-    .description('Get and decrypted a Direct Message nostr conversation')
-    .option('-from, --from_npub', 'Must be public key of account')
-    .option('-to, --to_nsec', 'Must include nsec or private key')
-    .option('-r, --relays', 'A list of nostr relays')
-    .action((str, options) => {
-        console.log(bip39.generateMnemonic())
-    })
-
-program.command('get-nip65')
-    .description('nostr-cli -npub <NPUB> -relays <RELAYS>')
-    .option('-npub, --npub', 'npub of the user\'s Relay List Metadata')
-    .option('-r, --relays', 'A list of nostr relays')
-    .action((str, options) => {
-        console.log(bip39.generateMnemonic())
-    })
-
-program.command('get-profile')
-    .description('nostr-cli create-profile -nsec <NSEC> -profile_json <PROFILE_JSON> -relays <RELAYS>')
-    .option('-npub, --npub', 'npub of the user\'s Relay List Metadata')
-    .option('-pj, --profile_json', 'The JSON you want to encode into the Nostr accounts profile and publish it')
-    .option('-r, --relays', 'A list of nostr relays')
-    .action((str, options) => {
-        console.log(bip39.generateMnemonic())
-    })
-program.command('create-profile')
-    .description('nostr-cli create-profile -nsec <NSEC> -profile_json <PROFILE_JSON> -relays <RELAYS>')
-    .option('-nsec, --nsec', 'nsec of the user\'s Relay List Metadata')
-    .option('-pj, --profile_json', 'The JSON you want to encode into the Nostr accounts profile and publish it')
-    .option('-r, --relays', 'A list of nostr relays')
-    .action((str, options) => {
-        console.log(bip39.generateMnemonic())
-    })
-
-program.command('test')
-    .description('test')
-    .option('-p, --p <string...>', 'Can we do this multiple times?')
-    .action((args, options) => {
-        console.log(args)
-    })
 program.parse();
-
-// const options = program.opts();
-
-// if(Object.keys(options).length == 0){
-//   program.help()
-// }
-// if(!"input" in Object.keys(options)){
-//   console.log("ERROR: Missing input file")
-//   process.exit();
-// }
-// if(!"output" in Object.keys(options)){
-//   console.log("ERROR: Missing output file")
-//   process.exit();
-// }
-
-// console.log(options)

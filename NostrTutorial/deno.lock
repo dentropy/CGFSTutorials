@@ -6,6 +6,7 @@
     "npm:commander@^12.1.0": "12.1.0",
     "npm:dotenv@^16.4.5": "16.4.5",
     "npm:libsql@~0.5.0-pre.2": "0.5.0-pre.2",
+    "npm:lorem-ipsum@^2.0.8": "2.0.8",
     "npm:nostr-tools@^2.10.4": "2.10.4"
   },
   "npm": {
@@ -84,6 +85,9 @@
     "commander@12.1.0": {
       "integrity": "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA=="
     },
+    "commander@9.5.0": {
+      "integrity": "sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ=="
+    },
     "detect-libc@2.0.2": {
       "integrity": "sha512-UX6sGumvvqSaXgdKGUsgZWqcUyIXZ/vZTrlRT/iobiKhGL0zL4d3osHj3uqllWJK+i+sixDS/3COVEOFbupFyw=="
     },
@@ -102,6 +106,12 @@
         "@libsql/win32-x64-msvc",
         "@neon-rs/load",
         "detect-libc"
+      ]
+    },
+    "lorem-ipsum@2.0.8": {
+      "integrity": "sha512-5RIwHuCb979RASgCJH0VKERn9cQo/+NcAi2BMe9ddj+gp7hujl6BI+qdOG4nVsLDpwWEJwTVYXNKP6BGgbcoGA==",
+      "dependencies": [
+        "commander@9.5.0"
       ]
     },
     "nostr-tools@2.10.4": {
@@ -127,6 +137,7 @@
       "npm:commander@^12.1.0",
       "npm:dotenv@^16.4.5",
       "npm:libsql@~0.5.0-pre.2",
+      "npm:lorem-ipsum@^2.0.8",
       "npm:nostr-tools@^2.10.4"
     ]
   }
