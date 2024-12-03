@@ -14,6 +14,13 @@
 - [Nostr Profile Manager](https://metadata.nostr.com/)
 - [NIP19 Nostr Army Knife](https://nak.nostr.com/)
 
+
+- [Get NIP-05 verified](https://nostr-how.vercel.app/en/guides/get-verified)
+- [Nostr Connect - Chrome Web Store](https://chromewebstore.google.com/detail/nostr-connect/ampjiinddmggbhpebhaegmjkbbeofoaj?hl=en%2C)
+- [Nostr Profile Manager](https://metadata.nostr.com/#)
+- [CodyTseng/nostr-relay-tray: a nostr relay for desktop](https://github.com/CodyTseng/nostr-relay-tray)
+- [awesome-nostr | nostr.net - awesome-nostr is a collection of projects and resources built on nostr to help developers and users find new things](https://nostr.net/)
+
 #### Example Events
 
 * [Example Event](https://coracle.social/notes/nevent1qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qg3waehxw309ahx7um5wgh8w6twv5hsz9nhwden5te0wfjkccte9ekk7um5wgh8qatz9uqsuamnwvaz7tmwdaejumr0dshsz9mhwden5te0wfjkccte9ec8y6tdv9kzumn9wshsqgpxcvgj7qs5lqxknnnq2jg7qxqkgfswh22qsxk2ansstrltm2rf7uj0yfrd)
