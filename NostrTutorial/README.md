@@ -11,7 +11,7 @@
 #### Tooling
 
 - [Filter Console](https://nostrudel.ninja/#/tools/console)
-- [Nostr Profile Manager](https://metadata.nostr.com/)
+- [Nostr Profile and Relay Manager](https://metadata.nostr.com/)
 - [NIP19 Nostr Army Knife](https://nak.nostr.com/)
 
 
