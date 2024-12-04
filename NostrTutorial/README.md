@@ -132,6 +132,23 @@ deno -A cli.js get-encrypted-convo -from $NSEC1 -to $NPUB0 --relays $RELAYS
 
 ```
 
+#### fake-thread
+
+``` bash
+
+source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude')
+
+echo $NSEC0
+echo $NSEC1
+
+export RELAYS='ws://127.0.0.1:7007'
+export RELAYS='wss://relay.newatlantis.top'
+echo $RELAYS
+
+deno -A cli.js fake-thread -nsec0 $NSEC0 -nsec1 $NSEC1 -nsec2 $NPUB0 --relays $RELAYS
+
+
+```
 #### get-thread-events
 
 **NOT IMPLIMENTED YET**

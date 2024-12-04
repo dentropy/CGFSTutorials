@@ -11,6 +11,7 @@ import generateNostrAccountsFromMnemonic from './lib/accountsGenerate.js'
 import { RetriveThread } from "./lib/retriveThread.js";
 import { fakeDMConvo } from "./lib/fakeDMConvo.js";
 import { getNostrConvoAndDecrypt } from './lib/getNostrConvoAndDecrypt.js'
+import { fakeThread } from "./lib/fakeThread.js";
 
 program
     .name('nostr-cli')
@@ -186,17 +187,6 @@ program.command('sql-query')
         }
     })
 
-program.command('get-thread-events')
-    .description('Downloads all the events from a Nostr thread as jsonl (nosdump Format)')
-    .requiredOption('-e, --event_id <string>', 'The id key in the nostr event\'s JSON')
-    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
-    .action(async (args, options) => {
-        console.log("This needs to be rewritten")
-        let result = await RetriveThread(args.relays.split(','), args.event_id)
-        console.log(result)
-        process.exit()
-    })
-
 program.command('gen-fake-dm-convo')
     .description('Get and decrypted a Direct Message nostr conversation')
     .requiredOption('-from, --from_nsec <string>', 'Must include nsec or private key')
@@ -224,6 +214,37 @@ program.command('get-encrypted-convo')
         process.exit()
     })
 
+program.command('fake-thread')
+    .description('Generate a fake Nostr thread using 3 Nostr Accounts')
+    .requiredOption('-nsec0, --nsec0 <string>', 'Must include nsec or private key')
+    .requiredOption('-nsec1, --nsec1 <string>', 'Must include nsec or private key')
+    .requiredOption('-nsec2, --nsec2 <string>', 'Must include nsec or private key')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays')
+    .option('-dr, --default_relay <string>', 'The relay included in the events to lookup the event it is replying to')
+    .option('-ms, --ms_wait_time <number>', 'Number of miliseconds to wait between sending events')
+    .action(async (args, options) => {
+        let response = await fakeThread(
+            args.nsec1,
+            args.nsec2,
+            args.nsec1,
+            args.relays.split(','),
+            args.default_relay,
+            args.ms_wait_time
+        )
+        console.log(response)
+        process.exit()
+    })
+
+program.command('get-thread-events')
+    .description('Downloads all the events from a Nostr thread as jsonl (nosdump Format)')
+    .requiredOption('-e, --event_id <string>', 'The id key in the nostr event\'s JSON')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .action(async (args, options) => {
+        console.log("This needs to be rewritten")
+        let result = await RetriveThread(args.relays.split(','), args.event_id)
+        console.log(result)
+        process.exit()
+    })
 // program.command('get-nip65')
 //     .description('nostr-cli -npub <NPUB> -relays <RELAYS>')
 //     .option('-npub, --npub', 'npub of the user\'s Relay List Metadata')
