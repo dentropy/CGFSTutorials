@@ -240,9 +240,21 @@ program.command('get-thread-events')
     .requiredOption('-e, --event_id <string>', 'The id key in the nostr event\'s JSON')
     .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
     .action(async (args, options) => {
-        console.log("This needs to be rewritten")
         let result = await RetriveThread(args.relays.split(','), args.event_id)
-        console.log(result)
+        for(let event of Object.keys(result.events_by_id)){
+            if("reply_to" in result.events_by_id[event]){
+                result.events_by_id[event].reply_to = result.events_by_id[event].reply_to.event_data.id
+            }
+            let reply_list = []
+            console.log(result.events_by_id[event].replies)
+            if(result.events_by_id[event].replies.length >= 1) {
+                for( let reply of result.events_by_id[event].replies){
+                    reply_list.push(reply.event_data.id)
+                }
+            }
+            result.events_by_id[event].replies = reply_list
+        }
+        console.log(JSON.stringify(result, null, 2))
         process.exit()
     })
 // program.command('get-nip65')

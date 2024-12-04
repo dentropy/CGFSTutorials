@@ -4,6 +4,9 @@ export async function RetriveThread(relays, event_id){
         events_by_id: {}
     }
     function findMatchingFirstStringOfTag(event, firstTagString){
+        if(event == undefined){
+            return []
+        }
         let resultTags = []
         for (const tag of event.tags){
             if(tag[0] == firstTagString){
@@ -12,9 +15,20 @@ export async function RetriveThread(relays, event_id){
         }
         return resultTags
     }
+    function augmentRelaysFromEvent(relays, event){
+        let e_tags = findMatchingFirstStringOfTag(event, 'e')
+        for( const tag of e_tags) {
+            if(tag[2] != "") { 
+                if(!relays.includes(tag[2])){
+                    relays.push(tag[2])
+                }
+            }
+        }
+        return relays
+    }
     function isRootEvent(event){
         // Returns true or returns the id of the rootEvent
-        let eTags = findMatchingFirstStringOfTag(event, 'e')
+        let eTags = findMatchingFirstStringOfTag(event[0], 'e')
         for (const tag of eTags){
             if (tag[3] == "root"){
                 return tag[1]
@@ -22,29 +36,66 @@ export async function RetriveThread(relays, event_id){
         }
         return true
     }
-    function getRelyEvents(){}
+    async function getRelyEvent(relays, the_event, depth_index){
+        // Get reply tag and update
+        let eTags = findMatchingFirstStringOfTag(the_event[0], 'e')
+        // Update the replies and replied_to
+        for(const tag of eTags){
+            if(tag[3] = "reply"){
+                console.log("tag[1]")
+                console.log(tag[1])
+                // thread.events_by_id[tag[1]].replied_to = thread.events_by_id[the_event.id]
+                // thread.events_by_id[the_event.id].replies.push(thread.events_by_id[tag[1]])
+            }
+        }
+        await checkForReplies(augmentRelaysFromEvent(relays, the_event), the_event.id, depth_index)
+    }
+    async function checkForReplies(relays, event_id, depth_index){
+        if(depth_index == 4){
+            return
+        }
+        let replies = await nostrGet(relays, { "#e": [event_id] })
+        for( const event of replies){
+            if(thread.events_by_id[event.id] == undefined){
+                thread.events_by_id[event.id] = {
+                    reply_to: thread.events_by_id[event_id],
+                    event_data: event,
+                    depth_index: depth_index + 1,
+                    replies: []
+                }
+            }
+            thread.events_by_id[event_id].replies.push(thread.events_by_id[event.id])
+            await getRelyEvent(relays, event, depth_index + 1)
+        }
+    } 
 
 
-    let firstEvent = await nostrGet(event_id)
+    let firstEvent = await nostrGet(relays, { ids: [event_id] })
     thread.events_by_id[event_id] = {
-        event_data: firstEvent,
+        event_data: firstEvent[0],
         replies: [],
-        reply_to: [],
-        depth_index: []
+        depth_index: -1
     }
     if (isRootEvent(firstEvent)){
-        thread.root_event = thread[event_id]
+        thread.root_event = thread.events_by_id[event_id]
+        thread.events_by_id[event_id].depth_index = 0
     } else {
-        const rootEvent = nostrGet(isRootEvent(event_id))
+        const rootEvent = await nostrGet(relays, { ids: [isRootEvent(event_id)] })
         thread.events_by_id[event_id] = {
-            event_data: rootEvent,
+            event_data: rootEvent[0],
             replies: [],
-            reply_to: [],
-            depth_index: []
+            depth_index: 0
         }
-        thread.root_event = thread[event_id]
     }
+
+    await checkForReplies(relays, thread.root_event.event_data.id, 0)
+    return thread
 }
+
+
+
+
+
 
 
 export async function RetriveThreadOld(relays, event_id){

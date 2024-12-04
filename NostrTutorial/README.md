@@ -154,9 +154,44 @@ deno -A cli.js fake-thread -nsec0 $NSEC0 -nsec1 $NSEC1 -nsec2 $NPUB0 --relays $R
 **NOT IMPLIMENTED YET**
 ``` bash
 
-export EVENT_ID='26c3112f0214f80d69ce605491e018164260eba94081acaece1058febda869f7'
+export EVENT_ID='ee54d3d5ed8f9b02c1fc210a6244f7a17f72c443a582e75cd229eed2ed89a09b'
+export RELAYS='ws://127.0.0.1:7007'
+
 export RELAYS='wss://relay.damus.io/,wss://nos.lol/,wss://nostr.wine,relay.primal.net'
 
-deno -A cli.js get-thread-events --event_id $EVENT_ID --relays $RELAYS
+deno -A cli.js get-thread-events --event_id $EVENT_ID --relays "$RELAYS"
+
+
+
+nosdump $RELAYS
+nosdump -e '04429d6207af389fba1f0da8ebcaabc963a157a3d77a871ef1b17891185ecb23' $RELAYS
+
+
+cd NostrTutorials
+cd lib
+deno repl --allow-all --eval-file='./retriveThread.js' 
+
+
+```
+
+``` js
+
+let thread = await RetriveThread(process.env.RELAYS.split(','), process.env.EVENT_ID)
+
+Object.keys(thread)
+Object.keys(thread.events_by_id)
+Object.keys(thread.root_event)
+console.log(thread.root_event.replies)
+Object.keys(thread.root_event.replies)
+
+for(const event_id of Object.keys(thread.events_by_id)){
+    console.log(thread.events_by_id[event_id].event_data.id)
+    console.log(thread.events_by_id[event_id].depth_index)
+}
+
+thread.events_by_id['ee54d3d5ed8f9b02c1fc210a6244f7a17f72c443a582e75cd229eed2ed89a09b']
+thread.events_by_id['61d36ac51a3f32d6c2dba9937a37a6bb7dfc9733c264c106e6606c3980dd9f72']
+thread.events_by_id['36b7afd5a9dabefe16ca509728d3c70f99d38c24bef7ee8d36ae454e13cb71f3']
+thread.events_by_id['ead28b10273eab94bc4e39f87a730f3c6efcfd24c77f0fe3ae337ba9842bc223']
 
 ```

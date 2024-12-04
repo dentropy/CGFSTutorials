@@ -2,6 +2,7 @@
   "version": "4",
   "specifiers": {
     "npm:@noble/hashes@^1.6.1": "1.6.1",
+    "npm:@types/node@*": "22.5.4",
     "npm:bip39@^3.1.0": "3.1.0",
     "npm:commander@^12.1.0": "12.1.0",
     "npm:dotenv@^16.4.5": "16.4.5",
@@ -76,6 +77,12 @@
         "@scure/base"
       ]
     },
+    "@types/node@22.5.4": {
+      "integrity": "sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
     "bip39@3.1.0": {
       "integrity": "sha512-c9kiwdk45Do5GL0vJMe7tS95VjCii65mYAH7DfWl3uW8AVzXKQVUm64i3hzVybBDMp9r7j9iNxR85+ul8MdN/A==",
       "dependencies": [
@@ -128,6 +135,9 @@
     },
     "nostr-wasm@0.1.0": {
       "integrity": "sha512-78BTryCLcLYv96ONU8Ws3Q1JzjlAt+43pWQhIl86xZmWeegYCNLPml7yQ+gG3vR6V5h4XGj+TxO+SS5dsThQIA=="
+    },
+    "undici-types@6.19.8": {
+      "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
     }
   },
   "workspace": {
