@@ -260,6 +260,25 @@ program.command('dentropys-obsidian-publisher')
         console.log(result)
         process.exit()
     })
+
+program.command('llm-reply-bot')
+    .description('Feed in a openai RPC and now the bot will reply when pinged or')
+    .requiredOption('-nsec, --nsec <string>', 'Nostr private key encoded as nsec using NIP19')
+    .requiredOption('-r65, --nip_65_relays <string>', 'A list of nostr relays to query for this thread')
+    .requiredOption('-rdm, --relays_for_dms <string>', 'A list of nostr relays to query for this thread')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .action(async (args, options) => {
+        // Configure nip65 (Relay Metadata)
+        // Configure Profile
+        // Test LLM Connection
+        let result = await dentropysObsidianPublisher(
+            args.relays.split(','),
+            args.nsec,
+            args.sqlite_path
+        )
+        console.log(result)
+        process.exit()
+    })
 // program.command('get-nip65')
 //     .description('nostr-cli -npub <NPUB> -relays <RELAYS>')
 //     .option('-npub, --npub', 'npub of the user\'s Relay List Metadata')
