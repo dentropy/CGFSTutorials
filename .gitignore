@@ -3,3 +3,5 @@ NostrEvents
 *sqlite
 *.db-shm
 *jsonl
+*.sqlite-journal
+event-data.json
