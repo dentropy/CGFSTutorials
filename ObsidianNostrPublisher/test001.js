@@ -67,7 +67,7 @@ function removeYamlFromMarkdown(markdown) {
     return updatedMarkdown;
 }
 
-import { Database } from "bun:sqlite";
+import { Database } from "libsql";
 
 // const db = await new Database("./pkm.sqlite");
 const db = await new Database("./pkm.sqlite");

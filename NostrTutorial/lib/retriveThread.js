@@ -1,4 +1,21 @@
 import { nostrGet } from "./nostrGet.js";
+
+export function RetriveThreadToJSON(result){
+    for(let event of Object.keys(result.events_by_id)){
+        if("reply_to" in result.events_by_id[event]){
+            result.events_by_id[event].reply_to = result.events_by_id[event].reply_to.event_data.id
+        }
+        let reply_list = []
+        console.log(result.events_by_id[event].replies)
+        if(result.events_by_id[event].replies.length >= 1) {
+            for( let reply of result.events_by_id[event].replies){
+                reply_list.push(reply.event_data.id)
+            }
+        }
+        result.events_by_id[event].replies = reply_list
+    }
+    return result
+}
 export async function RetriveThread(relays, event_id){
     let thread = {
         events_by_id: {}

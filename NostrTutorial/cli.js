@@ -8,10 +8,11 @@ import Database from 'libsql';
 import { Relay, nip19, finalizeEvent, verifyEvent } from 'nostr-tools'
 
 import generateNostrAccountsFromMnemonic from './lib/accountsGenerate.js'
-import { RetriveThread } from "./lib/retriveThread.js";
+import { RetriveThread, RetriveThreadToJSON } from "./lib/retriveThread.js";
 import { fakeDMConvo } from "./lib/fakeDMConvo.js";
 import { getNostrConvoAndDecrypt } from './lib/getNostrConvoAndDecrypt.js'
 import { fakeThread } from "./lib/fakeThread.js";
+import { dentropysObsidianPublisher } from "./lib/dentropysObsidianPublisher.js";
 
 program
     .name('nostr-cli')
@@ -241,20 +242,22 @@ program.command('get-thread-events')
     .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
     .action(async (args, options) => {
         let result = await RetriveThread(args.relays.split(','), args.event_id)
-        for(let event of Object.keys(result.events_by_id)){
-            if("reply_to" in result.events_by_id[event]){
-                result.events_by_id[event].reply_to = result.events_by_id[event].reply_to.event_data.id
-            }
-            let reply_list = []
-            console.log(result.events_by_id[event].replies)
-            if(result.events_by_id[event].replies.length >= 1) {
-                for( let reply of result.events_by_id[event].replies){
-                    reply_list.push(reply.event_data.id)
-                }
-            }
-            result.events_by_id[event].replies = reply_list
-        }
-        console.log(JSON.stringify(result, null, 2))
+        console.log(JSON.stringify(RetriveThreadToJSON(result), null, 2))
+        process.exit()
+    })
+
+program.command('dentropys-obsidian-publisher')
+    .description('Take sqlite output of dentropys-obsidian-publisher and publish to nostr using NIP52 wiki\'s')
+    .requiredOption('-sqlite, --sqlite_path <string>', 'The id key in the nostr event\'s JSON')
+    .requiredOption('-nsec, --nsec <string>', 'Nostr private key encoded as nsec using NIP19')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .action(async (args, options) => {
+        let result = await dentropysObsidianPublisher(
+            args.relays.split(','),
+            args.nsec,
+            args.sqlite_path
+        )
+        console.log(result)
         process.exit()
     })
 // program.command('get-nip65')

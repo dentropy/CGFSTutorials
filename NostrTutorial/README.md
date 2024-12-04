@@ -154,6 +154,8 @@ deno -A cli.js fake-thread -nsec0 $NSEC0 -nsec1 $NSEC1 -nsec2 $NPUB0 --relays $R
 **NOT IMPLIMENTED YET**
 ``` bash
 
+source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude')
+
 export EVENT_ID='ee54d3d5ed8f9b02c1fc210a6244f7a17f72c443a582e75cd229eed2ed89a09b'
 export RELAYS='ws://127.0.0.1:7007'
 
@@ -189,9 +191,29 @@ for(const event_id of Object.keys(thread.events_by_id)){
     console.log(thread.events_by_id[event_id].depth_index)
 }
 
+for(const event_id of Object.keys(thread.events_by_id)){
+    console.log(`thread.events_by_id['${event_id}']`)
+}
+
 thread.events_by_id['ee54d3d5ed8f9b02c1fc210a6244f7a17f72c443a582e75cd229eed2ed89a09b']
 thread.events_by_id['61d36ac51a3f32d6c2dba9937a37a6bb7dfc9733c264c106e6606c3980dd9f72']
 thread.events_by_id['36b7afd5a9dabefe16ca509728d3c70f99d38c24bef7ee8d36ae454e13cb71f3']
 thread.events_by_id['ead28b10273eab94bc4e39f87a730f3c6efcfd24c77f0fe3ae337ba9842bc223']
 
+```
+
+
+#### dentropys-obsidian-publisher
+
+
+``` bash
+
+source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude')
+
+export RELAYS='ws://127.0.0.1:7007'
+
+export RELAYS='wss:relay.newatlantis.top,wss://relay.damus.io/,wss://nos.lol/,wss://nostr.wine,relay.primal.net'
+
+
+deno -A cli.js dentropys-obsidian-publisher -relays $RELAYS
 ```
