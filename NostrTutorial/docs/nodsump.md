@@ -150,7 +150,7 @@ FROM events where kind = 30818;
 #### Query by Tag
 
 ``` SQL
-select *, from 
+select * from 
 (
   SELECT
     event_id,
@@ -159,6 +159,49 @@ select *, from
 ) as tags_t,
 json_each(tags_t.tags)
 
+select event_id, key as key_L1, value as value_L1, fullkey as fullkey_L1 from 
+(
+  SELECT
+    event_id,
+    json_extract(event, '$.tags') as tags
+  FROM events
+) as tags_t,
+json_each(tags_t.tags)
+
+
+select * from (
+select event_id, key as key_L1, value as value_L1, fullkey as fullkey_L1 from 
+(
+  SELECT
+    event_id,
+    json_extract(event, '$.tags') as tags
+  FROM events
+) as tags_t,
+json_each(tags_t.tags)
+) as individual_tags_t,
+json_each(individual_tags_t.value_L1)
+
+
+select 
+  event_id,
+  key_L1,
+  value_L1,
+  fullkey_L1,
+  key as key_L2,
+  value as value_L2,
+   fullkey as fullkey_L2 
+from 
+(
+  select event_id, key as key_L1, value as value_L1, fullkey as fullkey_L1 from 
+  (
+    SELECT
+      event_id,
+      json_extract(event, '$.tags') as tags
+    FROM events
+  ) as tags_t,
+  json_each(tags_t.tags)
+) as individual_tags_t,
+json_each(individual_tags_t.value_L1)
 
 ```
 ## SQLITE CLI Settings
