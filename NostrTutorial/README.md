@@ -69,7 +69,7 @@ tail event0.jsonl
 # Could number of lines
 wc -l event0.jsonl
 
-deno -A cli.js load-nosdump-into-sqlite -f event0.jsonl -db ./db.sqlite
+deno -A cli.js load-nosdump-into-sqlite -db ./db.sqlite -f event0.jsonl
 
 deno -A cli.js sql-query -db ./db.sqlite -sql 'SELECT COUNT(*) FROM events;'
 

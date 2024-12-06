@@ -1,5 +1,28 @@
 #### SQL Queries
 
+## Loading into SQLite
+
+``` bash
+
+# Profiles
+nosdump -k 0 wss://relay.damus.io > event0.jsonl
+# Microblogging/Tweets
+nosdump -k 1 wss://relay.damus.io > event1.jsonl
+
+# Look inside the file
+head event0.jsonl
+tail event0.jsonl
+
+# Could number of lines
+wc -l event0.jsonl
+
+deno -A cli.js load-nosdump-into-sqlite -db ./db.sqlite -f event0.jsonl
+
+deno -A cli.js sql-query -db ./db.sqlite -sql 'SELECT COUNT(*) FROM events;'
+
+```
+## Profile Queries
+
 #### Get all the profile JSON data into a separate table
 
 ``` sql
@@ -66,7 +89,42 @@ SELECT j.key, count(j.key) as key_count
 
 ```
 
-#### SQLITE CLI Settings
+## Reaction Queries 
+
+``` bash
+
+# Emoji Reactions
+nosdump -k 7 wss://relay.damus.io > event7.jsonl
+
+wc -l event7.jsonl
+
+deno -A cli.js load-nosdump-into-sqlite -db ./db.sqlite -f event7.jsonl
+
+```
+
+``` sql
+
+-- Get a list of distinct reactions (emoji)
+SELECT distinct json_extract(event, '$.content') as reaction
+FROM events where kind = 7;
+
+-- Take a look at the tags of the reactions
+SELECT event_id, json_extract(event, '$.tags') as reaction
+FROM events where kind = 7;
+
+-- Get most popular reactions
+SELECT count(*) as count, json_extract(event, '$.content') as reaction
+FROM events where kind = 7
+group by reaction
+order by count desc;
+
+-- Get most reaction to post
+-- TODO we need to get the tags extracted separately
+
+
+```
+
+## SQLITE CLI Settings
 
 ``` bash
 

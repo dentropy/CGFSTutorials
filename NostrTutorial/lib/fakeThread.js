@@ -41,9 +41,7 @@ export async function fakeThread(nsec0, nsec1, nsec2, relays, default_relay = ""
     var rootEvent = finalizeEvent({
         kind: 1,
         created_at: Math.floor(Date.now() / 1000),
-        tags: [
-            ["p", accounts[0].pubkey],
-        ],
+        tags: [],
         content: "Root Event",
     }, accounts[0].secret_key);
     await myPool.publish(relays, rootEvent);
@@ -51,9 +49,39 @@ export async function fakeThread(nsec0, nsec1, nsec2, relays, default_relay = ""
     thread.events_by_id[rootEvent.id] = {
         event_data: rootEvent,
         replies: {},
-        depth_index: 0
+        depth_index: 0,
+        responses: {}
     }
     thread.root_event = rootEvent.id
+
+    // Generate reaction to root event
+    var reactionEvent = finalizeEvent({
+        kind: 1,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [
+            ["p", accounts[0].pubkey],
+            ["e", rootEvent.id, default_relay, "root"],
+            ["e", rootEvent.id, default_relay, "reply"]
+        ],
+        content: "+",
+    }, accounts[1].secret_key);
+    await myPool.publish(relays, reactionEvent);
+    await new Promise((r) => setTimeout(() => r(), ms_wait_time));
+
+    // Generate second reaction to root event
+    var reactionEvent = finalizeEvent({
+        kind: 1,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [
+            ["p", accounts[0].pubkey],
+            ["e", rootEvent.id, default_relay, "root"],
+            ["e", rootEvent.id, default_relay, "reply"]
+        ],
+        content: "+",
+    }, accounts[2].secret_key);
+    await myPool.publish(relays, reactionEvent);
+    await new Promise((r) => setTimeout(() => r(), ms_wait_time));
+
 
     // First Level Responses
     var random_text = lorem.generateParagraphs(1);

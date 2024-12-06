@@ -129,6 +129,7 @@ program.command('load-nosdump-into-sqlite')
         let populate_data = `
         CREATE TABLE IF NOT EXISTS events (
             event_id TEXT PRIMARY KEY,
+            kind INTEGER,
             event TEXT
         );
         `
@@ -153,7 +154,7 @@ program.command('load-nosdump-into-sqlite')
         for (const line of file_contents) {
             try {
                 const event = JSON.parse(line)
-                let query = `INSERT INTO events(event_id, event) VALUES ('${event.id}', '${line}');`
+                let query = `INSERT OR IGNORE INTO events(event_id, kind, event) VALUES ('${event.id}', '${event.kind}','${line}');`
                 console.log(query)
                 await db.exec(query);
                 console.log("Added Event")
