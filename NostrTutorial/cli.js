@@ -8,7 +8,7 @@ import Database from 'libsql';
 import { Relay, nip19, finalizeEvent, verifyEvent } from 'nostr-tools'
 
 import generateNostrAccountsFromMnemonic from './lib/accountsGenerate.js'
-import { RetriveThread, RetriveThreadToJSON } from "./lib/retriveThread.js";
+import { getThread, getThreadToJSON } from "./lib/getThread.js";
 import { fakeDMConvo } from "./lib/fakeDMConvo.js";
 import { getNostrConvoAndDecrypt } from './lib/getNostrConvoAndDecrypt.js'
 import { fakeThread } from "./lib/fakeThread.js";
@@ -242,8 +242,8 @@ program.command('get-thread-events')
     .requiredOption('-e, --event_id <string>', 'The id key in the nostr event\'s JSON')
     .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
     .action(async (args, options) => {
-        let result = await RetriveThread(args.relays.split(','), args.event_id)
-        console.log(JSON.stringify(RetriveThreadToJSON(result), null, 2))
+        let result = await getThread(args.relays.split(','), args.event_id)
+        console.log(JSON.stringify(getThreadToJSON(result), null, 2))
         process.exit()
     })
 

@@ -171,7 +171,7 @@ nosdump -e '04429d6207af389fba1f0da8ebcaabc963a157a3d77a871ef1b17891185ecb23' $R
 
 cd NostrTutorials
 cd lib
-deno repl --allow-all --eval-file='./retriveThread.js' 
+deno repl --allow-all --eval-file='./retriveThread.js'
 
 
 ```

@@ -56,7 +56,7 @@ export async function fakeThread(nsec0, nsec1, nsec2, relays, default_relay = ""
 
     // Generate reaction to root event
     var reactionEvent = finalizeEvent({
-        kind: 1,
+        kind: 7,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
             ["p", accounts[0].pubkey],
@@ -70,7 +70,7 @@ export async function fakeThread(nsec0, nsec1, nsec2, relays, default_relay = ""
 
     // Generate second reaction to root event
     var reactionEvent = finalizeEvent({
-        kind: 1,
+        kind: 7,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
             ["p", accounts[0].pubkey],

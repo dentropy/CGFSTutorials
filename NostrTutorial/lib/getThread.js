@@ -1,22 +1,28 @@
 import { nostrGet } from "./nostrGet.js";
 
-export function RetriveThreadToJSON(result) {
+// We should treat reply_to as a dictionary to reuse the same code for complex graph's later on
+  // Well what kind of reply to is the question, leaving it as is is simpler
+// We can't assume we will have a root and reply mentioned in the event
+// If these parts of the tag are not there we can assume the event is a reply to another event
+
+export function getThreadToJSON(result) {
     for (let event of Object.keys(result.events_by_id)) {
         if ("reply_to" in result.events_by_id[event]) {
             result.events_by_id[event].reply_to = result.events_by_id[event].reply_to.event_data.id
         }
-        let reply_list = []
-        if (result.events_by_id[event].replies.length >= 1) {
-            for (let reply of result.events_by_id[event].replies) {
-                reply_list.push(reply.event_data.id)
+        if (Object.keys(result.events_by_id[event].replies).length != 0) {
+            result.events_by_id[event].replies = Object.keys(result.events_by_id[event].replies)
+        }
+        if (Object.keys(result.events_by_id[event].responses).length != 0) {
+            for (const response_kind of Object.keys(result.events_by_id[event].responses)) {
+                result.events_by_id[event].responses[response_kind] = Object.keys(result.events_by_id[event].responses[response_kind])
             }
         }
-        result.events_by_id[event].responses = Object.keys(result.events_by_id[event].responses)
-        result.events_by_id[event].replies = reply_list
     }
     return result
 }
-export async function RetriveThread(relays, event_id) {
+
+export async function getThread(relays, event_id) {
     let thread = {
         events_by_id: {}
     }
@@ -78,18 +84,19 @@ export async function RetriveThread(relays, event_id) {
                     reply_to: thread.events_by_id[event_id],
                     event_data: event,
                     depth_index: depth_index + 1,
-                    replies: [],
+                    replies: {},
                     responses: {}
                 }
             }
             if (event.kind == 1) {
                 await getRelyEvent(relays, event, depth_index + 1)
-                thread.events_by_id[event_id].replies.push(thread.events_by_id[event.id])
+                thread.events_by_id[event_id].replies[event.id] = thread.events_by_id[event.id]
             } else {
-                if (!Object.keys(thread.events_by_id[event_id].responses)) {
-                    thread.events_by_id[event_id].responses[event.kind] = [thread.events_by_id[event.id]]
+                if (thread.events_by_id[event_id].responses[event.kind] == undefined) {
+                    thread.events_by_id[event_id].responses[event.kind] = {}
+                    thread.events_by_id[event_id].responses[event.kind][event.id] = thread.events_by_id[event.id]
                 } else {
-                    thread.events_by_id[event_id].responses[event.kind].push(thread.events_by_id[event.id])
+                    thread.events_by_id[event_id].responses[event.kind][event.id] = thread.events_by_id[event.id]
                 }
             }
         }
@@ -99,8 +106,9 @@ export async function RetriveThread(relays, event_id) {
     let firstEvent = await nostrGet(relays, { ids: [event_id] })
     thread.events_by_id[event_id] = {
         event_data: firstEvent[0],
-        replies: [],
-        depth_index: -1
+        depth_index: -1,
+        replies: {},
+        responses: {}
     }
     if (isRootEvent(firstEvent)) {
         thread.root_event = thread.events_by_id[event_id]
@@ -109,8 +117,9 @@ export async function RetriveThread(relays, event_id) {
         const rootEvent = await nostrGet(relays, { ids: [isRootEvent(event_id)] })
         thread.events_by_id[event_id] = {
             event_data: rootEvent[0],
-            replies: [],
-            depth_index: 0
+            depth_index: 0,
+            replies: {},
+            responses: {}
         }
     }
 
