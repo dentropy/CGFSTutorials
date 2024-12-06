@@ -8,6 +8,7 @@
     "npm:dotenv@^16.4.5": "16.4.5",
     "npm:libsql@~0.5.0-pre.2": "0.5.0-pre.2",
     "npm:lorem-ipsum@^2.0.8": "2.0.8",
+    "npm:multiformats@*": "13.3.1",
     "npm:nostr-tools@^2.10.4": "2.10.4"
   },
   "npm": {
@@ -120,6 +121,9 @@
       "dependencies": [
         "commander@9.5.0"
       ]
+    },
+    "multiformats@13.3.1": {
+      "integrity": "sha512-QxowxTNwJ3r5RMctoGA5p13w5RbRT2QDkoM+yFlqfLiioBp78nhDjnRLvmSBI9+KAqN4VdgOVWM9c0CHd86m3g=="
     },
     "nostr-tools@2.10.4": {
       "integrity": "sha512-biU7sk+jxHgVASfobg2T5ttxOGGSt69wEVBC51sHHOEaKAAdzHBLV/I2l9Rf61UzClhliZwNouYhqIso4a3HYg==",

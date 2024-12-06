@@ -151,12 +151,22 @@ program.command('load-nosdump-into-sqlite')
             process.exit()
         }
         file_contents = file_contents.split("\n")
+        const raw_query = `
+            INSERT OR IGNORE INTO events(event_id, kind, event) 
+            VALUES (@id, @kind, json(@event));
+        `
+        let query = db.prepare(raw_query)
         for (const line of file_contents) {
             try {
                 const event = JSON.parse(line)
-                let query = `INSERT OR IGNORE INTO events(event_id, kind, event) VALUES ('${event.id}', '${event.kind}','${line}');`
+                let data = {
+                    id: event.id,
+                    kind: event.kind,
+                    event: line
+                }
+                console.log(data)
                 console.log(query)
-                await db.exec(query);
+                await query.run(data);
                 console.log("Added Event")
             } catch (error) {
                 console.log(error)
@@ -252,12 +262,24 @@ program.command('dentropys-obsidian-publisher')
     .requiredOption('-sqlite, --sqlite_path <string>', 'The id key in the nostr event\'s JSON')
     .requiredOption('-nsec, --nsec <string>', 'Nostr private key encoded as nsec using NIP19')
     .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .option('-l, --logging', 'enable logging to the sqlite database you are reading from')
     .action(async (args, options) => {
-        let result = await dentropysObsidianPublisher(
-            args.relays.split(','),
-            args.nsec,
-            args.sqlite_path
-        )
+        let result = ""
+        if(Object.keys(args).includes('logging')) {
+            result = await dentropysObsidianPublisher(
+                args.relays.split(','),
+                args.nsec,
+                args.sqlite_path,
+                true
+            )
+        } else {
+            result = await dentropysObsidianPublisher(
+                args.relays.split(','),
+                args.nsec,
+                args.sqlite_path,
+                false
+            )
+        }
         console.log(result)
         process.exit()
     })

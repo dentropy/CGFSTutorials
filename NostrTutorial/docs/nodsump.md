@@ -121,9 +121,46 @@ order by count desc;
 -- Get most reaction to post
 -- TODO we need to get the tags extracted separately
 
+```
+
+#### Get wiki articles
+
+* kind 30818
+* [nips/54.md](https://github.com/nostr-protocol/nips/blob/master/54.md)
+
+``` bash
+
+nosdump -k 30818 wss://relay.damus.io > event30818.jsonl
+nosdump -k 30818 wss://nos.lol > event30818.jsonl
+
+wc -l event30818.jsonl
+
+deno -A cli.js load-nosdump-into-sqlite -db ./db.sqlite -f event30818.jsonl
 
 ```
 
+``` SQL
+
+SELECT * FROM events where kind=30818;
+
+SELECT json_extract(event, '$.tags') as tags
+FROM events where kind = 30818;
+```
+
+#### Query by Tag
+
+``` SQL
+select *, from 
+(
+  SELECT
+    event_id,
+    json_extract(event, '$.tags') as tags
+  FROM events
+) as tags_t,
+json_each(tags_t.tags)
+
+
+```
 ## SQLITE CLI Settings
 
 ``` bash

@@ -5,26 +5,15 @@ import { finalizeEvent, verifyEvent } from 'nostr-tools'
 import { Relay } from 'nostr-tools'
 import Database from "libsql";
 
-// const mnemonic = "curve foster stay broccoli equal icon bamboo champion casino impact will damp"
-// let mnemonic_validation = validateWords(mnemonic)
-// let secret_key = privateKeyFromSeedWords(mnemonic, "", 15)
-// let public_key = getPublicKey(secret_key)
+import { CID } from 'npm:multiformats/cid'
+import * as raw from 'npm:multiformats/codecs/raw'
+import { sha256 } from 'npm:multiformats/hashes/sha2'
 
-// console.log("Using public_key")
-// console.log(public_key)
+export async function dentropysObsidianPublisher(relays, nsec0, sqlite_path, logging=false) {
+    function transformString(str) {
+        return str.toLowerCase().replace(/\d+/g, '-').replace(/[^a-z]/g, '_');
+    }
 
-
-// wss://relay.newatlantis.top')
-
-// let RELAY_URL = 'ws://localhost:7007'
-// const relay = await Relay.connect(RELAY_URL)
-
-
-// function transformString(str) {
-//     return str.toLowerCase().replace(/\d+/g, '-').replace(/[^a-z]/g, '_');
-// }
-
-export async function dentropysObsidianPublisher(relays, nsec0, sqlite_path) {
     function convertString(str) {
         return str.toLowerCase().replace(/[^a-z]/g, '-');
     }
@@ -66,11 +55,19 @@ export async function dentropysObsidianPublisher(relays, nsec0, sqlite_path) {
         return updatedMarkdown;
     }
 
-    // const db = await new Database("./pkm.sqlite");
     const db = await new Database(sqlite_path);
+    if (logging) {
+        let populate_data = `
+        CREATE TABLE IF NOT EXISTS events (
+            event_id TEXT PRIMARY KEY,
+            kind INTEGER,
+            event TEXT
+        );
+        `
+        await db.exec(populate_data);
+    }
     let query = `SELECT * FROM markdown_nodes;`
     // query = `SELECT * FROM markdown_nodes where title like 'Project Update Posts' OR title like 'ETL%' OR title like 'index' order by title DESC LIMIT 10;`
-
     // query = `SELECT *  from markdown_nodes where id in (SELECT to_node_id from markdown_edges where title='index') or title = 'index'; `
 
     let documents = db.prepare(query).all()
@@ -79,25 +76,28 @@ export async function dentropysObsidianPublisher(relays, nsec0, sqlite_path) {
         await new Promise(r => setTimeout(() => r(), 1000));
         console.log("Fetching Document");
         let tags = [
-            ['d', convertString(documents[i].title)],
-            ['#d', convertString(documents[i].title)]
+            ['d', convertString(documents[i].title)]
         ]
         if (convertString(documents[i].title) != transformString(documents[i].title)) {
             tags.push(['d', transformString(documents[i].title)])
-            tags.push(['#d', transformString(documents[i].title)])
         }
         if (transformString(documents[i].title) != fixIndicies(documents[i].title, ",")) {
             tags.push(['d', fixIndicies(documents[i].title, ",")])
-            tags.push(['#d', fixIndicies(documents[i].title, ",")])
         }
-        // console.log("removeYamlFromMarkdown(documents[i].raw_markdown)")
-        // console.log(documents)
-        // console.log(removeYamlFromMarkdown(documents[i].raw_markdown))
+        tags.push(['uuid', documents[i].id])
+
+        const textEncoder = new TextEncoder();
+        const content = removeYamlFromMarkdown(documents[i].raw_markdown)
+        console.log('content')
+        console.log(content)
+        const hash = await sha256.digest(raw.encode(textEncoder.encode(content)))
+        const myCID = CID.create(1, raw.code, hash)
+        tags.push(['CID', String(myCID) ])
         let signedEvent = finalizeEvent({
             kind: 30818,
             created_at: Math.floor(Date.now() / 1000),
             tags: tags,
-            content: removeYamlFromMarkdown(documents[i].raw_markdown),
+            content: content,
         }, nip19.decode(nsec0).data)
         for(const relay_url of relays){
             const relay = await Relay.connect(relay_url)
@@ -129,6 +129,25 @@ export async function dentropysObsidianPublisher(relays, nsec0, sqlite_path) {
         console.log(raw_name_naddr)
         console.log("https://nostrudel.ninja/#/articles/" + raw_name_naddr)
         console.log("\n\n")
+        console.log(JSON.stringify(signedEvent))
+        if (logging){
+            try {
+                const raw_query = `
+            INSERT OR IGNORE INTO events(event_id, kind, event) 
+            VALUES (@id, @kind, json(@event));
+                `
+                let data = {
+                    id: signedEvent.id,
+                    kind: signedEvent.kind,
+                    event: signedEvent
+                }
+                await db.prepare(raw_query).run(data);   
+            } catch (error) {
+                console.log("Error inserting event")
+                console.log(error)
+                process.exit()
+            }
+        }
     }
     console.log("Done")
 }
