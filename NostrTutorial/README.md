@@ -183,8 +183,9 @@ let thread = await RetriveThread(process.env.RELAYS.split(','), process.env.EVEN
 Object.keys(thread)
 Object.keys(thread.events_by_id)
 Object.keys(thread.root_event)
-console.log(thread.root_event.replies)
 Object.keys(thread.root_event.replies)
+console.log(thread.root_event.replies[0])
+Object.keys(thread.root_event.replies[0].reply_to)
 
 for(const event_id of Object.keys(thread.events_by_id)){
     console.log(thread.events_by_id[event_id].event_data.id)
@@ -213,7 +214,7 @@ source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway
 export RELAYS='ws://127.0.0.1:7007'
 
 export RELAYS='wss:relay.newatlantis.top,wss://relay.damus.io/,wss://nos.lol/,wss://nostr.wine,relay.primal.net'
-
+export RELAYS='wss://relay.newatlantis.top'
 
 deno -A cli.js dentropys-obsidian-publisher --relays $RELAYS --nsec $NSEC0 --sqlite_path './pkm.sqlite'
 

@@ -44,7 +44,7 @@ SELECT event_id, json_extract(event, '$.content') as profile_json
 FROM events
 WHERE json_valid(profile_json) = 1;
 
-select * from profile_events;
+select profile_json from profile_events limit 1;
 
 ```
 
@@ -70,7 +70,7 @@ FROM profile_events t, json_each(profile_json) j;
 SELECT event_id, json_extract(profile_json, '$.name')
 FROM profile_events;
 
-SELECT event_id, json_extract(profile_json, '$.area') as special_tag, profile_json
+SELECT event_id, json_extract(profile_json, '$.about') as special_tag, profile_json
 FROM profile_events where special_tag is not null;
 
 
