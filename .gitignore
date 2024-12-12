@@ -5,3 +5,4 @@ NostrEvents
 *jsonl
 *.sqlite-journal
 event-data.json
+NostrTutorial/ScrapedData

@@ -1,4 +1,4 @@
-import { program } from "commander";
+import { Command, Option } from "commander";
 
 import 'dotenv/config'
 import bip39 from "bip39";
@@ -13,6 +13,17 @@ import { fakeDMConvo } from "./lib/fakeDMConvo.js";
 import { getNostrConvoAndDecrypt } from './lib/getNostrConvoAndDecrypt.js'
 import { fakeThread } from "./lib/fakeThread.js";
 import { dentropysObsidianPublisher } from "./lib/dentropysObsidianPublisher.js";
+import { nostrGet } from "./lib/nostrGet.js";
+function myParseInt(value, dummyPrevious) {
+    // parseInt takes a string and a radix
+    const parsedValue = parseInt(value, 10);
+    if (isNaN(parsedValue)) {
+        throw new Error("Invalid Number");
+    }
+    return parsedValue;
+}
+
+const program = new Command();
 
 program
     .name('nostr-cli')
@@ -115,17 +126,9 @@ program.command('send-event')
 
 program.command('load-nosdump-into-sqlite')
     .description('Loads the output of nosdump into a sqlite database for easy querrying')
-    .option('-db, --db_path <string>', 'The file path to a sqlite datebase, will create one if it does not exist')
-    .option('-f, --nosdump_file <string>', 'The output of a nosdump file')
+    .requiredOption('-db, --db_path <string>', 'The file path to a sqlite datebase, will create one if it does not exist')
+    .requiredOption('-f, --nosdump_file <string>', 'The output of a nosdump file')
     .action(async (args, options) => {
-        if (!Object.keys(args).includes('db_path')) {
-            console.log("ERROR: Missing db_path argument")
-            process.exit();
-        }
-        if (!Object.keys(args).includes('nosdump_file')) {
-            console.log("ERROR: Missing nosdump_file argument")
-            process.exit();
-        }
         let populate_data = `
         CREATE TABLE IF NOT EXISTS events (
             event_id TEXT PRIMARY KEY,
@@ -156,6 +159,8 @@ program.command('load-nosdump-into-sqlite')
             VALUES (@id, @kind, json(@event));
         `
         let query = db.prepare(raw_query)
+        let data_to_insert = []
+
         for (const line of file_contents) {
             try {
                 const event = JSON.parse(line)
@@ -164,14 +169,22 @@ program.command('load-nosdump-into-sqlite')
                     kind: event.kind,
                     event: line
                 }
-                console.log(data)
-                console.log(query)
-                await query.run(data);
-                console.log("Added Event")
+                data_to_insert.push(data)
+                // await query.run(data);
             } catch (error) {
-                console.log(error)
+                if (error instanceof SyntaxError) {
+                    // handle syntax error
+                    console.error('Invalid JSON syntax:', error);
+                } else {
+                    console.log(error)
+                }
             }
         }
+        const insertMany = db.transaction((the_data) => {
+            for (const item of the_data) query.run(item);
+        });
+        await insertMany(data_to_insert)
+        console.log("Seems like data inserted sucessfully")
     })
 
 program.command('sql-query')
@@ -265,7 +278,7 @@ program.command('dentropys-obsidian-publisher')
     .option('-l, --logging', 'enable logging to the sqlite database you are reading from')
     .action(async (args, options) => {
         let result = ""
-        if(Object.keys(args).includes('logging')) {
+        if (Object.keys(args).includes('logging')) {
             result = await dentropysObsidianPublisher(
                 args.relays.split(','),
                 args.nsec,
@@ -301,6 +314,56 @@ program.command('llm-reply-bot')
         )
         console.log(result)
         process.exit()
+    })
+
+program.command('replay-nosdump-file')
+    .description('Reads each even in a nosdump file send it\s it to a relay of your choice')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .requiredOption('-f, --nosdump_file <string>', 'The output of a nosdump file')
+    .addOption( new Option('-d, --delay_ms <number>', 'Delay in ms between messages').default(500).argParser(myParseInt) )
+    .addOption( new Option('-o, --offset <number>', 'Delay in ms between messages').default(0).argParser(myParseInt) )
+    .action(async (args, options) => {
+        let file_contents = ''
+        try {
+            file_contents = await fs.readFileSync(args.nosdump_file, 'utf-8')
+        } catch (error) {
+            console.log(`Could not read nosdump_file ${args.nosdump_file} error posted below\n`)
+            console.log(error)
+            process.exit()
+        }
+        file_contents = file_contents.split("\n")
+        const relay = await Relay.connect(args.relays.split(',')[0])
+        let count = 0
+        for (const line of file_contents) {
+            if(count >= args.offset){
+                try {
+                    const event = JSON.parse(line)
+                    await relay.publish(event)
+                    console.log(`Event Count = ${('000000'+count).slice(-6)}   Republished event id=${event.id}`)
+                    count++
+                    await new Promise((r) => setTimeout(() => r(), args.delay_ms));
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        }
+    })
+
+program.command('filter-query')
+    .description('Just query a sqlite database')
+    .requiredOption('-f, --filter_file_path <string>', 'The SQL for the query')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .action(async (args, options) => {
+        let fileContents = ""
+        try {
+            fileContents = fs.readFileSync(args.filter_file_path, 'utf-8')
+            fileContents = JSON.parse(fileContents)
+        } catch (error) {
+            console.log(`Error reading file ${args.filter_file_path} error posted below`)
+            console.log(error)
+        }
+        let result = await nostrGet(args.relays.split(','), fileContents)
+        console.log(result)
     })
 // program.command('get-nip65')
 //     .description('nostr-cli -npub <NPUB> -relays <RELAYS>')
