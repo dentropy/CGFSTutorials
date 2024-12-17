@@ -6,7 +6,9 @@ import fs from 'node:fs'
 import Database from 'libsql';
 import postgres from 'postgres'
 
-import { Relay, nip19, finalizeEvent, verifyEvent } from 'nostr-tools'
+import { Relay, nip19, nip04, finalizeEvent, verifyEvent, getPublicKey } from 'nostr-tools'
+import NDK from "@nostr-dev-kit/ndk";
+import LLMConvo from './lib/llmStuff/LLMConvo.js';
 
 import generateNostrAccountsFromMnemonic from './lib/accountsGenerate.js'
 import { getThread, getThreadToJSON } from "./lib/getThread.js";
@@ -15,6 +17,8 @@ import { getNostrConvoAndDecrypt } from './lib/getNostrConvoAndDecrypt.js'
 import { fakeThread } from "./lib/fakeThread.js";
 import { dentropysObsidianPublisher } from "./lib/dentropysObsidianPublisher.js";
 import { nostrGet } from "./lib/nostrGet.js";
+import { check_NIP65_published, llm_dm_chatbot_response } from "./lib/LLMDMChatbot.js"
+
 function myParseInt(value, dummyPrevious) {
     // parseInt takes a string and a radix
     const parsedValue = parseInt(value, 10);
@@ -557,23 +561,70 @@ program.command('dentropys-obsidian-publisher')
         process.exit()
     })
 
-program.command('llm-reply-bot')
+program.command('llm-dm-bot')
     .description('Feed in a openai RPC and now the bot will reply when pinged or')
     .requiredOption('-nsec, --nsec <string>', 'Nostr private key encoded as nsec using NIP19')
-    .requiredOption('-r65, --nip_65_relays <string>', 'A list of nostr relays to query for this thread')
+    .requiredOption('-r65, --nip_65_relays <string>', '')
     .requiredOption('-rdm, --relays_for_dms <string>', 'A list of nostr relays to query for this thread')
-    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .requiredOption('-url, --BASE_URL <string>', 'OPENAI API HOST')
+    .requiredOption('-api_key, --OPENAI_API_KEY <string>', 'OPENAI_API_KEY')
     .action(async (args, options) => {
         // Configure nip65 (Relay Metadata)
         // Configure Profile
         // Test LLM Connection
-        let result = await dentropysObsidianPublisher(
-            args.relays.split(','),
+        console.log(options)
+        console.log(args)
+        await check_NIP65_published(
+            args.nip_65_relays.split(','),
             args.nsec,
-            args.sqlite_path
+            args.relays_for_dms.split(',')
         )
-        console.log(result)
-        process.exit()
+
+
+        console.log("relays_to_store_dms")
+        console.log(args.relays_to_store_dms)
+        const ndk = new NDK({
+          explicitRelayUrls: args.nip_65_relays.split(','),
+        });
+        
+        await ndk.connect();
+        
+        let unix_time = Math.floor((new Date()).getTime() / 1000);
+        let filter = {
+          "kinds": [4],
+          "#p": getPublicKey(nip19.decode(args.nsec).data),
+          "since": unix_time - 10
+        }
+        console.log(JSON.stringify(filter, null, 2))
+        let sub = await ndk.subscribe(filter);
+        sub.on("event", async (event) => {
+          console.log("Recieved and event")
+          console.log(`content           = ${event.content}`)
+          console.log(`tags              = ${event.tags}`)
+          console.log(`id                = ${event.id}`)
+          console.log(`kind              = ${event.kind}`)
+          console.log(`created_at        = ${event.created_at}`)
+          console.log(`pubkey            = ${event.pubkey}`)
+          if(event.kind == 4){
+            let decrypted_content = await nip04.decrypt(
+              nip19.decode(args.nsec).data,
+              event.pubkey,
+              event.content
+            )
+            console.log(`decrypted_content = ${decrypted_content}`)
+          }
+          console.log("")
+          llm_dm_chatbot_response(
+            args.relays_for_dms.split(','),
+            args.nsec,
+            args.nip_65_relays.split(','),
+            nip19.npubEncode(event.pubkey),
+            args.BASE_URL,
+            args.OPENAI_API_KEY
+          )
+        })
+        
+        // process.exit()
     })
 
 program.command('replay-nosdump-file')
