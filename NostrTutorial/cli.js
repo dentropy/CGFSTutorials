@@ -132,8 +132,18 @@ program.command('load-nosdump-into-sqlite')
         let populate_data = `
         CREATE TABLE IF NOT EXISTS events (
             event_id TEXT PRIMARY KEY,
-            kind INTEGER,
-            event TEXT
+            kind     INTEGER,
+            event    JSON
+        );
+        CREATE TABLE IF NOT EXISTS tags (
+            event_id    TEXT NOT NULL,
+            kind        INTEGER NOT NULL,
+            tag         JSON NOT NULL,
+            tag_index_0 TEXT NOT NULL,
+            tag_index_1 TEXT,
+            tag_index_2 TEXT,
+            tag_index_3 TEXT,
+            PRIMARY KEY (event_id, kind, tag)
         );
         `
         const db = new Database(args.db_path);
@@ -154,12 +164,34 @@ program.command('load-nosdump-into-sqlite')
             process.exit()
         }
         file_contents = file_contents.split("\n")
-        const raw_query = `
+        const raw_event_query =         `
             INSERT OR IGNORE INTO events(event_id, kind, event) 
             VALUES (@id, @kind, json(@event));
         `
-        let query = db.prepare(raw_query)
-        let data_to_insert = []
+        let event_query = db.prepare(raw_event_query)
+        const raw_tag_query = `
+            INSERT OR IGNORE INTO tags (
+                event_id,
+                kind,
+                tag,
+                tag_index_0,
+                tag_index_1,
+                tag_index_2,
+                tag_index_3
+            ) 
+            VALUES (
+                @id,
+                @kind,
+                json(@event),
+                @tag_index_0,
+                @tag_index_1,
+                @tag_index_2,
+                @tag_index_3
+            );
+        `
+        let tag_query = db.prepare(raw_tag_query)
+        let event_data_to_insert = []
+        let tag_data_to_insert = []
 
         for (const line of file_contents) {
             try {
@@ -169,7 +201,22 @@ program.command('load-nosdump-into-sqlite')
                     kind: event.kind,
                     event: line
                 }
-                data_to_insert.push(data)
+                event_data_to_insert.push(data)
+                for (const tag of event.tags){
+                    console.log("TAG")
+                    console.log(tag)
+                    tag_data_to_insert.push(
+                        {
+                            id: event.id,
+                            kind: event.kind,
+                            event: line,
+                            tag_index_0: tag[0],
+                            tag_index_1: tag[1],
+                            tag_index_2: tag[2],
+                            tag_index_3: tag[3]
+                        }
+                    )
+                }
                 // await query.run(data);
             } catch (error) {
                 if (error instanceof SyntaxError) {
@@ -180,10 +227,20 @@ program.command('load-nosdump-into-sqlite')
                 }
             }
         }
-        const insertMany = db.transaction((the_data) => {
-            for (const item of the_data) query.run(item);
+        const insertManyEvents = db.transaction((the_data) => {
+            for (const item of the_data) event_query.run(item);
         });
-        await insertMany(data_to_insert)
+        await insertManyEvents(event_data_to_insert)
+        const insertManyTags = db.transaction((the_data) => {
+            for (const item of the_data) {
+                console.log("ITEM")
+                console.log(item)
+                let tmp_result = tag_query.run(item)
+                console.log(tmp_result)
+            }
+        });
+        await insertManyTags(tag_data_to_insert)
+        // console.log(tag_data_to_insert)
         console.log("Seems like data inserted sucessfully")
     })
 
