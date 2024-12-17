@@ -8,7 +8,6 @@ import postgres from 'postgres'
 
 import { Relay, nip19, nip04, finalizeEvent, verifyEvent, getPublicKey } from 'nostr-tools'
 import NDK from "@nostr-dev-kit/ndk";
-import LLMConvo from './lib/llmStuff/LLMConvo.js';
 
 import generateNostrAccountsFromMnemonic from './lib/accountsGenerate.js'
 import { getThread, getThreadToJSON } from "./lib/getThread.js";
@@ -18,6 +17,7 @@ import { fakeThread } from "./lib/fakeThread.js";
 import { dentropysObsidianPublisher } from "./lib/dentropysObsidianPublisher.js";
 import { nostrGet } from "./lib/nostrGet.js";
 import { check_NIP65_published, llm_dm_chatbot_response } from "./lib/LLMDMChatbot.js"
+import { llm_respond_to_thread } from "./lib/LLMThreadChatbot.js"
 
 function myParseInt(value, dummyPrevious) {
     // parseInt takes a string and a radix
@@ -579,12 +579,12 @@ program.command('llm-dm-bot')
             args.nsec,
             args.relays_for_dms.split(',')
         )
-
-
+        let npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
+        console.log(`${npub}`)
         console.log("relays_to_store_dms")
         console.log(args.relays_to_store_dms)
         const ndk = new NDK({
-          explicitRelayUrls: args.nip_65_relays.split(','),
+          explicitRelayUrls: args.relays.split(','),
         });
         
         await ndk.connect();
@@ -623,8 +623,66 @@ program.command('llm-dm-bot')
             args.OPENAI_API_KEY
           )
         })
+    })
+
+program.command('llm-thread-bot')
+    .description('Feed in a openai RPC and now the bot will reply when pinged or')
+    .requiredOption('-nsec, --nsec <string>', 'Nostr private key encoded as nsec using NIP19')
+    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .requiredOption('-url, --BASE_URL <string>', 'OPENAI API HOST')
+    .requiredOption('-api_key, --OPENAI_API_KEY <string>', 'OPENAI_API_KEY')
+    .action(async (args, options) => {
+        // Configure nip65 (Relay Metadata)
+        // Configure Profile
+        // Test LLM Connection
+        console.log(args)
+        let npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
+        console.log(`${npub}`)
+        const ndk = new NDK({
+          explicitRelayUrls: args.relays.split(','),
+        });
         
-        // process.exit()
+        await ndk.connect();
+        
+        let unix_time = Math.floor((new Date()).getTime() / 1000);
+        let filter = {
+          "kinds": [1],
+          "#p": getPublicKey(nip19.decode(args.nsec).data),
+          "since": unix_time - 10
+        }
+        console.log(JSON.stringify(filter, null, 2))
+        let sub = await ndk.subscribe(filter);
+        sub.on("event", async (event) => {
+            console.log("Recieved and event")
+            console.log(`content           = ${event.content}`)
+            console.log(`tags              = ${event.tags}`)
+            console.log(`id                = ${event.id}`)
+            console.log(`kind              = ${event.kind}`)
+            console.log(`created_at        = ${event.created_at}`)
+            console.log(`pubkey            = ${event.pubkey}`)
+            let raw_event = {
+                content: event.content,
+                tags: event.tags,
+                id: event.id,
+                kind: event.king,
+                created_at: event.created_at,
+                pubkey: event.pubkey
+            }
+            console.log(JSON.stringify(raw_event, null, 2))
+            console.log("")
+            console.log("PAUL_WAS_HERE")
+            console.log(getPublicKey(nip19.decode(args.nsec).data))
+            console.log(event.pubkey)
+            if( getPublicKey(nip19.decode(args.nsec).data) != event.pubkey) {
+                llm_respond_to_thread(
+                    args.relays.split(','),
+                    args.nsec,
+                    raw_event.id,
+                    args.BASE_URL,
+                    args.OPENAI_API_KEY
+                )
+            }
+        })
     })
 
 program.command('replay-nosdump-file')
