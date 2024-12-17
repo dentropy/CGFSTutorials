@@ -4,6 +4,7 @@ import 'dotenv/config'
 import bip39 from "bip39";
 import fs from 'node:fs'
 import Database from 'libsql';
+import postgres from 'postgres'
 
 import { Relay, nip19, finalizeEvent, verifyEvent } from 'nostr-tools'
 
@@ -133,12 +134,12 @@ program.command('load-nosdump-into-sqlite')
         CREATE TABLE IF NOT EXISTS events (
             event_id TEXT PRIMARY KEY,
             kind     INTEGER,
-            event    JSON
+            event    JSONB
         );
         CREATE TABLE IF NOT EXISTS tags (
             event_id    TEXT NOT NULL,
             kind        INTEGER NOT NULL,
-            tag         JSON NOT NULL,
+            tag         JSONB NOT NULL,
             tag_index_0 TEXT NOT NULL,
             tag_index_1 TEXT,
             tag_index_2 TEXT,
@@ -164,7 +165,7 @@ program.command('load-nosdump-into-sqlite')
             process.exit()
         }
         file_contents = file_contents.split("\n")
-        const raw_event_query =         `
+        const raw_event_query = `
             INSERT OR IGNORE INTO events(event_id, kind, event) 
             VALUES (@id, @kind, json(@event));
         `
@@ -202,7 +203,7 @@ program.command('load-nosdump-into-sqlite')
                     event: line
                 }
                 event_data_to_insert.push(data)
-                for (const tag of event.tags){
+                for (const tag of event.tags) {
                     console.log("TAG")
                     console.log(tag)
                     tag_data_to_insert.push(
@@ -240,6 +241,208 @@ program.command('load-nosdump-into-sqlite')
             }
         });
         await insertManyTags(tag_data_to_insert)
+        // console.log(tag_data_to_insert)
+        console.log("Seems like data inserted sucessfully")
+    })
+
+
+program.command('load-nosdump-into-postgres')
+    .description('Loads the output of nosdump into a sqlite database for easy querrying')
+    .requiredOption('-db, --db_url <string>', 'The file path to a sqlite datebase, will create one if it does not exist')
+    .requiredOption('-f, --nosdump_file <string>', 'The output of a nosdump file')
+    .action(async (args, options) => {
+        let sql = ""
+        try {
+            console.log("args.db_url")
+            console.log(args.db_url)
+            sql = postgres(args.db_url, {
+                transform: {
+                    undefined: null
+                }
+            })
+        } catch (error) {
+            console.log("Got error loading psql connection string, try sql")
+            process.exit()
+        }
+        let create_tables_query_events = await sql`
+        CREATE TABLE IF NOT EXISTS events (
+            event_id TEXT PRIMARY KEY,
+            kind     INTEGER,
+            event    JSONB
+        );
+        `
+        let create_tables_query_tags = await sql`
+        CREATE TABLE IF NOT EXISTS tags (
+            event_id    TEXT NOT NULL,
+            kind        INTEGER NOT NULL,
+            tag_index   INTEGER NOT NULL,
+            tag         JSONB NOT NULL,
+            tag_value_index_0 TEXT NOT NULL,
+            tag_value_index_1 TEXT,
+            tag_value_index_2 TEXT,
+            tag_value_index_3 TEXT,
+            PRIMARY KEY (event_id, kind, tag_index)
+        );`
+        // const db = new Database(args.db_path);
+        // try {
+        //     await db.exec(populate_data);
+        // } catch (error) {
+        //     console.log(`Could not open sqlite datebase at path ${args.db_path} error posted below\n`)
+        //     console.log(error)
+        //     process.exit()
+        // }
+
+        let file_contents = ''
+        try {
+            file_contents = await fs.readFileSync(args.nosdump_file, 'utf-8')
+        } catch (error) {
+            console.log(`Could not read nosdump_file ${args.nosdump_file} error posted below\n`)
+            console.log(error)
+            process.exit()
+        }
+        file_contents = file_contents.split("\n")
+        // const raw_event_query =         `
+        //     INSERT OR IGNORE INTO events(event_id, kind, event) 
+        //     VALUES (@id, @kind, json(@event));
+        // `
+        // let event_query = db.prepare(raw_event_query)
+        // const raw_tag_query = `
+        //     INSERT OR IGNORE INTO tags (
+        //         event_id,
+        //         kind,
+        //         tag,
+        //         tag_index_0,
+        //         tag_index_1,
+        //         tag_index_2,
+        //         tag_index_3
+        //     ) 
+        //     VALUES (
+        //         @id,
+        //         @kind,
+        //         json(@event),
+        //         @tag_index_0,
+        //         @tag_index_1,
+        //         @tag_index_2,
+        //         @tag_index_3
+        //     );
+        // `
+        // let tag_query = db.prepare(raw_tag_query)
+        let event_data_to_insert = []
+        let tag_data_to_insert = []
+        let total_events = 0
+        let total_tags = 0
+        for (const line of file_contents) {
+            try {
+                const event = JSON.parse(line)
+                total_events+=1
+                let data = {
+                    event_id: event.id,
+                    kind: event.kind,
+                    event: line
+                }
+                event_data_to_insert.push(data)
+                if (event_data_to_insert.length == 3000) {
+                    console.log("INSERTING_EVENTS")
+                    let result_001 = await sql`
+                    INSERT INTO events 
+                    ${sql(event_data_to_insert,
+                        'event_id',
+                        'kind',
+                        'event'
+                    )}
+                    ON CONFLICT (event_id)
+                    DO NOTHING;
+                `
+                    event_data_to_insert = []
+                }
+                for (const tag_index in event.tags) {
+                    try {
+                        total_tags+=1
+                        let tag_object = {
+                            event_id: event.id,
+                            kind: event.kind,
+                            tag_index: tag_index,
+                            tag: line,
+                            tag_value_index_0: event.tags[tag_index][0],
+                            tag_value_index_1: event.tags[tag_index][1],
+                            tag_value_index_2: event.tags[tag_index][2],
+                            tag_value_index_3: event.tags[tag_index][3]
+                        }
+                        tag_data_to_insert.push(tag_object)
+                        if (tag_data_to_insert.length >= 5000) {
+                            console.log("INSERTING_TAGS")
+                            await sql`
+                            INSERT INTO tags ${sql(tag_data_to_insert,
+                                'event_id',
+                                'kind',
+                                'tag_index',
+                                'tag',
+                                'tag_value_index_0',
+                                'tag_value_index_1',
+                                'tag_value_index_2',
+                                'tag_value_index_3',
+                            )}
+                        ON CONFLICT (event_id, kind, tag_index)
+                        DO NOTHING;
+                        `
+                            tag_data_to_insert = []
+                        }
+                    } catch (error) {
+                        console.log("Error processing tag")
+                        console.log(event.tags[tag_index])
+                        console.log(error)
+                    }
+                }
+                // await query.run(data);
+            } catch (error) {
+                if (error instanceof SyntaxError) {
+                    // handle syntax error
+                    console.log('Invalid JSON syntax:');
+                } else {
+                    console.log(error)
+                }
+            }
+        }
+        // const insertManyEvents = db.transaction((the_data) => {
+        //     for (const item of the_data) event_query.run(item);
+        // });
+        // await insertManyEvents(event_data_to_insert)
+        // const insertManyTags = db.transaction((the_data) => {
+        //     for (const item of the_data) {
+        //         console.log("ITEM")
+        //         console.log(item)
+        //         let tmp_result = tag_query.run(item)
+        //         console.log(tmp_result)
+        //     }
+        // });
+        // await insertManyTags(tag_data_to_insert)
+        console.log(`total_events = ${total_events.toLocaleString()}`)
+        console.log(`total_tags   = ${total_tags.toLocaleString()}`)
+        let result_001 = await sql`
+            INSERT INTO events 
+            ${sql(event_data_to_insert,
+            'event_id',
+            'kind',
+            'event'
+        )}
+            ON CONFLICT (event_id)
+            DO NOTHING;
+        `
+        await sql`
+        INSERT INTO tags ${sql(tag_data_to_insert,
+            'event_id',
+            'kind',
+            'tag_index',
+            'tag',
+            'tag_value_index_0',
+            'tag_value_index_1',
+            'tag_value_index_2',
+            'tag_value_index_3',
+        )}
+    ON CONFLICT (event_id, kind, tag_index)
+    DO NOTHING;
+    `
+
         // console.log(tag_data_to_insert)
         console.log("Seems like data inserted sucessfully")
     })
@@ -377,8 +580,8 @@ program.command('replay-nosdump-file')
     .description('Reads each even in a nosdump file send it\s it to a relay of your choice')
     .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
     .requiredOption('-f, --nosdump_file <string>', 'The output of a nosdump file')
-    .addOption( new Option('-d, --delay_ms <number>', 'Delay in ms between messages').default(500).argParser(myParseInt) )
-    .addOption( new Option('-o, --offset <number>', 'Delay in ms between messages').default(0).argParser(myParseInt) )
+    .addOption(new Option('-d, --delay_ms <number>', 'Delay in ms between messages').default(500).argParser(myParseInt))
+    .addOption(new Option('-o, --offset <number>', 'Delay in ms between messages').default(0).argParser(myParseInt))
     .action(async (args, options) => {
         let file_contents = ''
         try {
@@ -392,11 +595,11 @@ program.command('replay-nosdump-file')
         const relay = await Relay.connect(args.relays.split(',')[0])
         let count = 0
         for (const line of file_contents) {
-            if(count >= args.offset){
+            if (count >= args.offset) {
                 try {
                     const event = JSON.parse(line)
                     await relay.publish(event)
-                    console.log(`Event Count = ${('000000'+count).slice(-6)}   Republished event id=${event.id}`)
+                    console.log(`Event Count = ${('000000' + count).slice(-6)}   Republished event id=${event.id}`)
                     count++
                     await new Promise((r) => setTimeout(() => r(), args.delay_ms));
                 } catch (error) {
