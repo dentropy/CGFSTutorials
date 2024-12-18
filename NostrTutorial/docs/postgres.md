@@ -57,3 +57,64 @@ SELECT COUNT(*) from events;
 SELECT COUNT(*) from tags;
 
 ```
+
+#### Profile Queries
+
+``` SQL
+
+select * from events;
+
+drop table profile_events ;
+
+CREATE TABLE IF NOT EXISTS profile_events (
+    event_id TEXT PRIMARY KEY,
+    profile_json JSONB
+);
+
+
+select event_id, profile_json from (
+select event_id, profile_json::jsonb as profile_json from (
+	SELECT event_id, (event -> 'content') as profile_json
+	FROM events
+	WHERE kind = 0
+) as events_table
+) as events_json_table;
+
+SELECT event_id, pg_typeof(event) as profile_json
+FROM events
+WHERE kind = 0;
+
+SELECT event_id, pg_typeof((event -> 'content')::text::JSONB) as profile_json
+FROM events
+WHERE kind = 0;
+
+SELECT event_id, json_extract_path_text(event::JSON, 'content')::JSON as profile_json
+FROM events
+WHERE kind = 0;
+
+
+SELECT event_id, (event -> 'content') as profile_json
+FROM events
+WHERE kind = 0;
+
+SELECT ('"{\"key\":\"value\"}"'::jsonb)->>'key' AS extracted_key;
+
+INSERT into profile_events
+SELECT event_id, event -> 'content' as profile_json
+FROM events
+WHERE kind = 0;
+
+select * from profile_events;
+
+select event_id, profile_json -> 'name' from profile_events;
+
+
+SELECT keys ->> 'i'
+FROM (
+  SELECT json_agg(keys) AS keys FROM (
+    SELECT array_agg(DISTINCT key) AS keys
+    FROM jsonb_array_elements_text(jsonb_column_name)
+  ) AS subquery
+) t;
+
+```
