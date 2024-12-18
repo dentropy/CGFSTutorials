@@ -71,27 +71,6 @@ CREATE TABLE IF NOT EXISTS profile_events (
     profile_json JSONB
 );
 
-select event_id, profile_json::JSON->'name' from
-(
-SELECT event_id, json_extract_path_text(event::JSON, 'content') as profile_json
-FROM events
-WHERE kind = 0
-) as events_as_json_t
-
-select event_id, profile_json::JSON from
-(
-SELECT event_id, json_extract_path_text(event::JSON, 'content') as profile_json
-FROM events
-WHERE kind = 0
-) as events_as_json_t
-
-select event_id, profile_json FROM
-(
-SELECT event_id, json_extract_path_text(event::JSON, 'content')::JSON as profile_json
-FROM events
-WHERE kind = 0
-) as event_content_t;
-
 select event_id, profile_json::jsonb from (
 SELECT 
 	event_id, json_extract_path_text(event::JSON, 'content') as profile_json
@@ -100,11 +79,6 @@ WHERE kind = 0
 limit 1000000
 ) as profile_event_json
 where  is_valid_json(profile_json) = true;
-
-select '{"HELLO":"WORLD}"'::TEXT;
-select pg_typeof('{"HELLO":"WORLD"}'::TEXT);
-select '{"HELLO":"WORLD"}'::TEXT::JSON;
-select pg_typeof('{"HELLO":"WORLD"}'::TEXT::JSON);
 
 create or replace function is_valid_json(p_json text)
   returns boolean
@@ -120,15 +94,6 @@ $$
 language plpgsql
 immutable;
 
-SELECT (event->'content')::text
-from events
-limit 10000;
-
-SELECT jsonb_typeof((event->'content')::jsonb)
-from events;
-
-WHERE jsonb_typeof(event::jsonb) IS NOT NULL;
-
 INSERT into profile_events
 select event_id, profile_json::jsonb from (
 SELECT
@@ -142,3 +107,19 @@ ON CONFLICT (event_id)
 DO NOTHING;
 
 ```
+
+``` SQL
+
+select distinct profile_json->'name' from profile_events where profile_json->'name' is not null order by profile_json->'name' ASC;
+
+select jsonb_object_keys(profile_json) from profile_events;
+
+```
+
+
+#### Sources
+
+* [How to verify a string is valid JSON in PostgreSQL? - Stack Overflow](https://stackoverflow.com/questions/30187554/how-to-verify-a-string-is-valid-json-in-postgresql)
+    * Take that ChatGPT
+* [postgresql - How can I get all keys from a JSON column in Postgres? - Stack Overflow](https://stackoverflow.com/questions/36141388/how-can-i-get-all-keys-from-a-json-column-in-postgres)
+    * ChatGPT Failed Again
