@@ -71,50 +71,74 @@ CREATE TABLE IF NOT EXISTS profile_events (
     profile_json JSONB
 );
 
-
-select event_id, profile_json from (
-select event_id, profile_json::jsonb as profile_json from (
-	SELECT event_id, (event -> 'content') as profile_json
-	FROM events
-	WHERE kind = 0
-) as events_table
-) as events_json_table;
-
-SELECT event_id, pg_typeof(event) as profile_json
+select event_id, profile_json::JSON->'name' from
+(
+SELECT event_id, json_extract_path_text(event::JSON, 'content') as profile_json
 FROM events
-WHERE kind = 0;
+WHERE kind = 0
+) as events_as_json_t
 
-SELECT event_id, pg_typeof((event -> 'content')::text::JSONB) as profile_json
+select event_id, profile_json::JSON from
+(
+SELECT event_id, json_extract_path_text(event::JSON, 'content') as profile_json
 FROM events
-WHERE kind = 0;
+WHERE kind = 0
+) as events_as_json_t
 
+select event_id, profile_json FROM
+(
 SELECT event_id, json_extract_path_text(event::JSON, 'content')::JSON as profile_json
 FROM events
-WHERE kind = 0;
+WHERE kind = 0
+) as event_content_t;
 
-
-SELECT event_id, (event -> 'content') as profile_json
+select event_id, profile_json::jsonb from (
+SELECT 
+	event_id, json_extract_path_text(event::JSON, 'content') as profile_json
 FROM events
-WHERE kind = 0;
+WHERE kind = 0
+limit 1000000
+) as profile_event_json
+where  is_valid_json(profile_json) = true;
 
-SELECT ('"{\"key\":\"value\"}"'::jsonb)->>'key' AS extracted_key;
+select '{"HELLO":"WORLD}"'::TEXT;
+select pg_typeof('{"HELLO":"WORLD"}'::TEXT);
+select '{"HELLO":"WORLD"}'::TEXT::JSON;
+select pg_typeof('{"HELLO":"WORLD"}'::TEXT::JSON);
+
+create or replace function is_valid_json(p_json text)
+  returns boolean
+as
+$$
+begin
+  return (p_json::json is not null);
+exception 
+  when others then
+     return false;  
+end;
+$$
+language plpgsql
+immutable;
+
+SELECT (event->'content')::text
+from events
+limit 10000;
+
+SELECT jsonb_typeof((event->'content')::jsonb)
+from events;
+
+WHERE jsonb_typeof(event::jsonb) IS NOT NULL;
 
 INSERT into profile_events
-SELECT event_id, event -> 'content' as profile_json
+select event_id, profile_json::jsonb from (
+SELECT
+	event_id, json_extract_path_text(event::JSON, 'content') as profile_json
 FROM events
-WHERE kind = 0;
-
-select * from profile_events;
-
-select event_id, profile_json -> 'name' from profile_events;
-
-
-SELECT keys ->> 'i'
-FROM (
-  SELECT json_agg(keys) AS keys FROM (
-    SELECT array_agg(DISTINCT key) AS keys
-    FROM jsonb_array_elements_text(jsonb_column_name)
-  ) AS subquery
-) t;
+WHERE kind = 0
+limit 1000000
+) as profile_event_json
+where  is_valid_json(profile_json) = true
+ON CONFLICT (event_id)
+DO NOTHING;
 
 ```
