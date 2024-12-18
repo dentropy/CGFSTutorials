@@ -579,18 +579,18 @@ program.command('llm-dm-bot')
             args.nsec,
             args.relays_for_dms.split(',')
         )
-        let npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
+        const npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
         console.log(`${npub}`)
         console.log("relays_to_store_dms")
         console.log(args.relays_to_store_dms)
         const ndk = new NDK({
-          explicitRelayUrls: args.relays.split(','),
+          explicitRelayUrls: args.relays_for_dms.split(','),
         });
         
         await ndk.connect();
         
-        let unix_time = Math.floor((new Date()).getTime() / 1000);
-        let filter = {
+        const unix_time = Math.floor((new Date()).getTime() / 1000);
+        const filter = {
           "kinds": [4],
           "#p": getPublicKey(nip19.decode(args.nsec).data),
           "since": unix_time - 10

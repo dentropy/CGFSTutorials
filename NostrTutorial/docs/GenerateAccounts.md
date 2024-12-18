@@ -20,6 +20,13 @@ export MNEMONIC='soap vault ahead turkey runway erosion february snow modify cop
 echo $MNEMONIC
 source <(deno -A cli.js generate-accounts-env)
 
+
+deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude' > .env
+cat .env
+source .env
+echo $NPUB0
+
+
 source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude')
 
 echo $MNEMONIC

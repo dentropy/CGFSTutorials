@@ -1,5 +1,11 @@
 # Getting Started with Nostr
 
+#### Getting Started Links
+
+- [Nostr Connect - Chrome Web Store](https://chromewebstore.google.com/detail/nostr-connect/ampjiinddmggbhpebhaegmjkbbeofoaj?hl=en%2C)
+- [Nostr Connect – Get this Extension for 🦊 Firefox (en-US)](https://addons.mozilla.org/en-US/firefox/addon/nostr-connect/)
+- [Nostr Profile Manager](https://metadata.nostr.com/#)
+
 #### Clients
 
 - [Primal](https://primal.net/home)
@@ -13,13 +19,9 @@
 - [Filter Console](https://nostrudel.ninja/#/tools/console)
 - [Nostr Profile and Relay Manager](https://metadata.nostr.com/)
 - [NIP19 Nostr Army Knife](https://nak.nostr.com/)
-
-
 - [Get NIP-05 verified](https://nostr-how.vercel.app/en/guides/get-verified)
-- [Nostr Connect - Chrome Web Store](https://chromewebstore.google.com/detail/nostr-connect/ampjiinddmggbhpebhaegmjkbbeofoaj?hl=en%2C)
-- [Nostr Profile Manager](https://metadata.nostr.com/#)
 - [CodyTseng/nostr-relay-tray: a nostr relay for desktop](https://github.com/CodyTseng/nostr-relay-tray)
-- [awesome-nostr | nostr.net - awesome-nostr is a collection of projects and resources built on nostr to help developers and users find new things](https://nostr.net/)
+- [awesome-nostr](https://nostr.net/)
 
 #### Example Events
 
@@ -29,7 +31,7 @@
 #### Sections
 
 * [Generate Accounts](./docs/GenerateAccounts.md)
-* [Using Nosdump](./docs/nodsump.md)
+* [Scrape Nostr Using Nosdump](./docs/nodsump.md)
   * [Index using postgres](./docs/postgres.md)
   * [Index using sqlite](./docs/sqlite.md)
 * [Encrypted Direct Messages](./docs/EncryptedDirectMessages.md)

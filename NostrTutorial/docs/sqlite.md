@@ -1,6 +1,18 @@
+
+#### Load Data
+
+``` bash
+
+deno -A cli.js load-nosdump-into-sqlite -db ./ScrapedData/db.sqlite -f ScrapedData/event0.jsonl
+
+deno -A cli.js sql-query -db ./ScrapedData/db.sqlite -sql 'SELECT COUNT(*) FROM events;'
+
+```
+
 ## Profile Queries
 
 #### Get all the profile JSON data into a separate table
+
 
 ``` sql
 

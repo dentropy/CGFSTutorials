@@ -1,10 +1,13 @@
 #### Testing LLM Connection
 
 ``` bash
-export BASE_URL='https://ai.newatlantis.top'
+
+export BASE_URL='https://ai.newatlantis.top/api'
 export OPENAI_API_KEY="sk-ENTROPY"
 
 curl -H "Authorization: Bearer $OPENAI_API_KEY" $BASE_URL/api/models
+
+curl -H "Authorization: Bearer $OPENAI_API_KEY" $BASE_URL/api/models | jq
 
 curl -X POST $BASE_URL/api/chat/completions \
 -H "Authorization: Bearer $OPENAI_API_KEY" \
@@ -31,6 +34,9 @@ source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway
 
 export NIP_65_RELAYS='ws://127.0.0.1:7007'
 export RELAYS='ws://127.0.0.1:7007,wss://relay.newatlantis.top'
+
+export NIP_65_RELAYS='wss://relay.newatlantis.top'
+export RELAYS='wss://relay.newatlantis.top'
 
 
 export BASE_URL='https://ai.newatlantis.top/api'
