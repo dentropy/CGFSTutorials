@@ -287,15 +287,6 @@ program.command('load-nosdump-into-postgres')
             tag_value_index_3 TEXT,
             PRIMARY KEY (event_id, kind, tag_index)
         );`
-        // const db = new Database(args.db_path);
-        // try {
-        //     await db.exec(populate_data);
-        // } catch (error) {
-        //     console.log(`Could not open sqlite datebase at path ${args.db_path} error posted below\n`)
-        //     console.log(error)
-        //     process.exit()
-        // }
-
         let file_contents = ''
         try {
             file_contents = await fs.readFileSync(args.nosdump_file, 'utf-8')
@@ -305,32 +296,6 @@ program.command('load-nosdump-into-postgres')
             process.exit()
         }
         file_contents = file_contents.split("\n")
-        // const raw_event_query =         `
-        //     INSERT OR IGNORE INTO events(event_id, kind, event) 
-        //     VALUES (@id, @kind, json(@event));
-        // `
-        // let event_query = db.prepare(raw_event_query)
-        // const raw_tag_query = `
-        //     INSERT OR IGNORE INTO tags (
-        //         event_id,
-        //         kind,
-        //         tag,
-        //         tag_index_0,
-        //         tag_index_1,
-        //         tag_index_2,
-        //         tag_index_3
-        //     ) 
-        //     VALUES (
-        //         @id,
-        //         @kind,
-        //         json(@event),
-        //         @tag_index_0,
-        //         @tag_index_1,
-        //         @tag_index_2,
-        //         @tag_index_3
-        //     );
-        // `
-        // let tag_query = db.prepare(raw_tag_query)
         let event_data_to_insert = []
         let tag_data_to_insert = []
         let total_events = 0
@@ -342,7 +307,7 @@ program.command('load-nosdump-into-postgres')
                 let data = {
                     event_id: event.id,
                     kind: event.kind,
-                    event: line
+                    event: event
                 }
                 event_data_to_insert.push(data)
                 if (event_data_to_insert.length == 3000) {
@@ -362,11 +327,11 @@ program.command('load-nosdump-into-postgres')
                 for (const tag_index in event.tags) {
                     try {
                         total_tags+=1
-                        let tag_object = {
+                        const tag_object = {
                             event_id: event.id,
                             kind: event.kind,
                             tag_index: tag_index,
-                            tag: line,
+                            tag: event,
                             tag_value_index_0: event.tags[tag_index][0],
                             tag_value_index_1: event.tags[tag_index][1],
                             tag_value_index_2: event.tags[tag_index][2],
@@ -446,9 +411,8 @@ program.command('load-nosdump-into-postgres')
     ON CONFLICT (event_id, kind, tag_index)
     DO NOTHING;
     `
-
-        // console.log(tag_data_to_insert)
-        console.log("Seems like data inserted sucessfully")
+    console.log("Seems like data inserted sucessfully")
+    process.exit()
     })
 
 program.command('sql-query')
