@@ -5,9 +5,9 @@ Inputs
   * NOSTR_RELAYS
 */
 import 'dotenv/config'
-import { getNostrConvoAndDecrypt } from "./getNostrConvoAndDecrypt.js";
-import LLMConvo from './llmStuff/LLMConvo.js';
-import { nostrGet } from "./nostrGet.js";
+import { getNostrConvoAndDecrypt } from "../getNostrConvoAndDecrypt.js";
+import LLMConvo from './LLMConvo.js';
+import { nostrGet } from "../nostrGet.js";
 import { finalizeEvent, getPublicKey, nip04, nip19 } from "nostr-tools";
 import { SimplePool } from "nostr-tools/pool";
 import { Relay } from 'nostr-tools/relay'

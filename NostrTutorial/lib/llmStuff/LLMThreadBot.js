@@ -1,8 +1,8 @@
 import NDK from "@nostr-dev-kit/ndk";
 import { Relay, nip19, nip04, finalizeEvent, verifyEvent, getPublicKey } from 'nostr-tools'
-import { llm_dm_chatbot_response } from "../LLMDMChatbot.js";
-import { check_NIP65_published } from "../LLMDMChatbot.js";
-import { llm_respond_to_thread } from "../LLMThreadChatbot.js";
+import { llm_dm_chatbot_response } from "./LLMDMChatbot.js";
+import { check_NIP65_published } from "./LLMDMChatbot.js";
+import { llm_respond_to_thread } from "./LLMThreadChatbot.js";
 import Ajv from 'ajv'
 
 export const LLMDMThreadJSONSchema = {
@@ -68,12 +68,6 @@ export async function LLMThreadBot(args) {
         let sub = await ndk.subscribe(filter);
         sub.on("event", async (event) => {
             console.log("Recieved and event")
-            console.log(`content           = ${event.content}`)
-            console.log(`tags              = ${event.tags}`)
-            console.log(`id                = ${event.id}`)
-            console.log(`kind              = ${event.kind}`)
-            console.log(`created_at        = ${event.created_at}`)
-            console.log(`pubkey            = ${event.pubkey}`)
             let raw_event = {
                 content: event.content,
                 tags: event.tags,
@@ -82,11 +76,8 @@ export async function LLMThreadBot(args) {
                 created_at: event.created_at,
                 pubkey: event.pubkey
             }
+            console.log("Raw Event")
             console.log(JSON.stringify(raw_event, null, 2))
-            console.log("")
-            console.log("PAUL_WAS_HERE")
-            console.log(getPublicKey(nip19.decode(args.nsec).data))
-            console.log(event.pubkey)
             if( getPublicKey(nip19.decode(args.nsec).data) != event.pubkey) {
                 llm_respond_to_thread(
                     args.relays.split(','),

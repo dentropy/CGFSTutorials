@@ -1,7 +1,7 @@
 import NDK from "@nostr-dev-kit/ndk";
 import { nip19, nip04, getPublicKey } from 'nostr-tools'
-import { llm_dm_chatbot_response } from "../LLMDMChatbot.js";
-import { check_NIP65_published } from "../LLMDMChatbot.js";
+import { llm_dm_chatbot_response } from "./LLMDMChatbot.js";
+import { check_NIP65_published } from "./LLMDMChatbot.js";
 import Ajv from 'ajv'
 
 export const LLMDMBotJSONSchema = {
