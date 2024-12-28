@@ -7,9 +7,9 @@ export OPENAI_API_KEY="sk-ENTROPY"
 
 curl -H "Authorization: Bearer $OPENAI_API_KEY" $BASE_URL/api/models
 
-curl -H "Authorization: Bearer $OPENAI_API_KEY" $BASE_URL/api/models | jq
+curl -H "Authorization: Bearer $OPENAI_API_KEY" $BASE_URL/models | jq
 
-curl -X POST $BASE_URL/api/chat/completions \
+curl -X POST $BASE_URL/chat/completions \
 -H "Authorization: Bearer $OPENAI_API_KEY" \
 -H "Content-Type: application/json" \
 -d '{
@@ -63,6 +63,19 @@ export BASE_URL='https://ai.newatlantis.top/api'
 export OPENAI_API_KEY="sk-ENTROPY"
 export BASE_URL='http://127.0.0.1:11434'
 
-deno -A cli.js llm-thread-bot --nsec $NSEC0 -r $RELAYS --BASE_URL $BASE_URL --OPENAI_API_KEY $OPENAI_API_KEY
+
+deno -A cli.js llm-thread-bot \
+--nsec $NSEC0 \
+-r $RELAYS \
+--BASE_URL $BASE_URL \
+--OPENAI_API_KEY $OPENAI_API_KEY
+
+
+deno -A cli.js llm-dm-bot \
+--nsec $NSEC0 \
+--nip_65_relays $RELAYS \
+-rdm $RELAYS \
+--BASE_URL $BASE_URL \
+--OPENAI_API_KEY $OPENAI_API_KEY
 
 ```

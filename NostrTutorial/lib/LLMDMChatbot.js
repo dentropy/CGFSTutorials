@@ -26,6 +26,8 @@ export async function check_NIP65_published(
   console.log("nostr_filter")
   console.log(nostr_filter)
   let events = await nostrGet(nip_65_relays, nostr_filter);
+  console.log("THE_EVENTS")
+  console.log(events)
   if (events.length == 0) {
     let relay_event_tags = []
     for (const relay_url of relays_to_store_dms) {

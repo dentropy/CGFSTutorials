@@ -48,6 +48,7 @@
 source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude')
 
 export RELAYS='ws://127.0.0.1:7007'
+export RELAYS='ws://127.0.0.1:6969'
 export RELAYS='wss://relay.newatlantis.top'
 echo $RELAYS
 

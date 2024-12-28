@@ -18,6 +18,8 @@ import { dentropysObsidianPublisher } from "./lib/dentropysObsidianPublisher.js"
 import { nostrGet } from "./lib/nostrGet.js";
 import { check_NIP65_published, llm_dm_chatbot_response } from "./lib/LLMDMChatbot.js"
 import { llm_respond_to_thread } from "./lib/LLMThreadChatbot.js"
+import { DMBot } from "./lib/llmStuff/DMBot.js";
+import { ThreadBot } from "./lib/llmStuff/ThreadBot.js";
 
 function myParseInt(value, dummyPrevious) {
     // parseInt takes a string and a radix
@@ -55,8 +57,8 @@ program.command('generate-accounts-env')
             let accounts = generateNostrAccountsFromMnemonic(mnemonic)
             console.log(`export MNEMONIC='${mnemonic}'`)
             for (let i = 0; i < accounts.length; i++) {
-                console.log(`export NSEC${i}='${accounts[0].nsec}'`)
-                console.log(`export NPUB${i}='${accounts[0].npub}'`)
+                console.log(`export NSEC${i}='${accounts[i].nsec}'`)
+                console.log(`export NPUB${i}='${accounts[i].npub}'`)
             }
         } else {
             console.log('Mnemonic is invalid')
@@ -532,61 +534,8 @@ program.command('llm-dm-bot')
     .requiredOption('-rdm, --relays_for_dms <string>', 'A list of nostr relays to query for this thread')
     .requiredOption('-url, --BASE_URL <string>', 'OPENAI API HOST')
     .requiredOption('-api_key, --OPENAI_API_KEY <string>', 'OPENAI_API_KEY')
-    .action(async (args, options) => {
-        // Configure nip65 (Relay Metadata)
-        // Configure Profile
-        // Test LLM Connection
-        console.log(options)
-        console.log(args)
-        await check_NIP65_published(
-            args.nip_65_relays.split(','),
-            args.nsec,
-            args.relays_for_dms.split(',')
-        )
-        const npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
-        console.log(`${npub}`)
-        console.log("relays_to_store_dms")
-        console.log(args.relays_to_store_dms)
-        const ndk = new NDK({
-          explicitRelayUrls: args.relays_for_dms.split(','),
-        });
-        
-        await ndk.connect();
-        
-        const unix_time = Math.floor((new Date()).getTime() / 1000);
-        const filter = {
-          "kinds": [4],
-          "#p": getPublicKey(nip19.decode(args.nsec).data),
-          "since": unix_time - 10
-        }
-        console.log(JSON.stringify(filter, null, 2))
-        let sub = await ndk.subscribe(filter);
-        sub.on("event", async (event) => {
-          console.log("Recieved and event")
-          console.log(`content           = ${event.content}`)
-          console.log(`tags              = ${event.tags}`)
-          console.log(`id                = ${event.id}`)
-          console.log(`kind              = ${event.kind}`)
-          console.log(`created_at        = ${event.created_at}`)
-          console.log(`pubkey            = ${event.pubkey}`)
-          if(event.kind == 4){
-            let decrypted_content = await nip04.decrypt(
-              nip19.decode(args.nsec).data,
-              event.pubkey,
-              event.content
-            )
-            console.log(`decrypted_content = ${decrypted_content}`)
-          }
-          console.log("")
-          llm_dm_chatbot_response(
-            args.relays_for_dms.split(','),
-            args.nsec,
-            args.nip_65_relays.split(','),
-            nip19.npubEncode(event.pubkey),
-            args.BASE_URL,
-            args.OPENAI_API_KEY
-          )
-        })
+    .action( (args, options) => {
+        DMBot(args, options)
     })
 
 program.command('llm-thread-bot')
@@ -596,57 +545,7 @@ program.command('llm-thread-bot')
     .requiredOption('-url, --BASE_URL <string>', 'OPENAI API HOST')
     .requiredOption('-api_key, --OPENAI_API_KEY <string>', 'OPENAI_API_KEY')
     .action(async (args, options) => {
-        // Configure nip65 (Relay Metadata)
-        // Configure Profile
-        // Test LLM Connection
-        console.log(args)
-        let npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
-        console.log(`${npub}`)
-        const ndk = new NDK({
-          explicitRelayUrls: args.relays.split(','),
-        });
-        
-        await ndk.connect();
-        
-        let unix_time = Math.floor((new Date()).getTime() / 1000);
-        let filter = {
-          "kinds": [1],
-          "#p": getPublicKey(nip19.decode(args.nsec).data),
-          "since": unix_time - 10
-        }
-        console.log(JSON.stringify(filter, null, 2))
-        let sub = await ndk.subscribe(filter);
-        sub.on("event", async (event) => {
-            console.log("Recieved and event")
-            console.log(`content           = ${event.content}`)
-            console.log(`tags              = ${event.tags}`)
-            console.log(`id                = ${event.id}`)
-            console.log(`kind              = ${event.kind}`)
-            console.log(`created_at        = ${event.created_at}`)
-            console.log(`pubkey            = ${event.pubkey}`)
-            let raw_event = {
-                content: event.content,
-                tags: event.tags,
-                id: event.id,
-                kind: event.king,
-                created_at: event.created_at,
-                pubkey: event.pubkey
-            }
-            console.log(JSON.stringify(raw_event, null, 2))
-            console.log("")
-            console.log("PAUL_WAS_HERE")
-            console.log(getPublicKey(nip19.decode(args.nsec).data))
-            console.log(event.pubkey)
-            if( getPublicKey(nip19.decode(args.nsec).data) != event.pubkey) {
-                llm_respond_to_thread(
-                    args.relays.split(','),
-                    args.nsec,
-                    raw_event.id,
-                    args.BASE_URL,
-                    args.OPENAI_API_KEY
-                )
-            }
-        })
+        ThreadBot(args, options)
     })
 
 program.command('replay-nosdump-file')
@@ -683,9 +582,9 @@ program.command('replay-nosdump-file')
     })
 
 program.command('filter-query')
-    .description('Just query a sqlite database')
-    .requiredOption('-f, --filter_file_path <string>', 'The SQL for the query')
-    .requiredOption('-r, --relays <string>', 'A list of nostr relays to query for this thread')
+    .description('Read filter via JSON file and queyr a relay')
+    .requiredOption('-f, --filter_file_path <string>', 'The JSON of the filter')
+    .requiredOption('-r, --relays <string>', 'A list of relays separated via commas')
     .action(async (args, options) => {
         let fileContents = ""
         try {
@@ -695,6 +594,8 @@ program.command('filter-query')
             console.log(`Error reading file ${args.filter_file_path} error posted below`)
             console.log(error)
         }
+        console.log("The filter is,")
+        console.log(JSON.stringify(fileContents))
         let result = await nostrGet(args.relays.split(','), fileContents)
         console.log(result)
     })
