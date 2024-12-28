@@ -3,14 +3,55 @@ import { Relay, nip19, nip04, finalizeEvent, verifyEvent, getPublicKey } from 'n
 import { llm_dm_chatbot_response } from "../LLMDMChatbot.js";
 import { check_NIP65_published } from "../LLMDMChatbot.js";
 import { llm_respond_to_thread } from "../LLMThreadChatbot.js";
+import Ajv from 'ajv'
 
-export async function LLMThreadBot(args, options) {
-    // Configure nip65 (Relay Metadata)
-        // Configure Profile
-        // Test LLM Connection
-        console.log(args)
-        let npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
-        console.log(`${npub}`)
+export const LLMDMThreadJSONSchema = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Generated schema for Root",
+    "type": "object",
+    "properties": {
+      "nsec": {
+        "type": "string"
+      },
+      "relays": {
+        "type": "string"
+      },
+      "BASE_URL": {
+        "type": "string"
+      },
+      "OPENAI_API_KEY": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "nsec",
+      "relays",
+      "BASE_URL",
+      "OPENAI_API_KEY"
+    ]
+  }
+
+export async function LLMThreadBot(args) {
+        // TODO Configure nip65 (Relay Metadata)
+        // TODO Configure Profile
+        // TODO Test LLM Connection
+
+        // Argument Validation
+        console.log("Arguments recieved by LLMThreadBot")
+        console.log(JSON.stringify(args, null, 2))
+        const ajv = new Ajv()
+        const args_validator = ajv.validate(LLMDMThreadJSONSchema, args)
+        if (!args_validator) {
+          console.log("We got an error running LLMDMThreadJSONSchema, invalid input arguments")
+          console.log(ajv.errors)
+          console.log("Please make the input conform to the following JSONSchema")
+          console.log(JSON.stringify(LLMDMThreadJSONSchema, null, 2))
+          return ajv.errors
+        }
+
+
+        const npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data))
+        console.log(`Bot npub = ${npub}`)
         const ndk = new NDK({
           explicitRelayUrls: args.relays.split(','),
         });

@@ -31,6 +31,7 @@
 #### Sections
 
 * [Generate Accounts](./docs/GenerateAccounts.md)
+* [Query Relay using Filter](./docs/QueryRelayUsingFiler.md)
 * [Scrape Nostr Using Nosdump](./docs/nodsump.md)
   * [Index using postgres](./docs/postgres.md)
   * [Index using sqlite](./docs/sqlite.md)

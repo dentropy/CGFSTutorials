@@ -14,6 +14,7 @@ import { Relay } from 'nostr-tools/relay'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
 
 
+// TODO this should be rewritten to support npub, npub, public_key buffer, public key array, private_key buffer, private_key array
 export async function check_NIP65_published(
   nip_65_relays,
   nsec,

@@ -1,23 +1,65 @@
 import NDK from "@nostr-dev-kit/ndk";
-import { Relay, nip19, nip04, finalizeEvent, verifyEvent, getPublicKey } from 'nostr-tools'
+import { nip19, nip04, getPublicKey } from 'nostr-tools'
 import { llm_dm_chatbot_response } from "../LLMDMChatbot.js";
 import { check_NIP65_published } from "../LLMDMChatbot.js";
+import Ajv from 'ajv'
 
-export async function LLMDMBot(args, options) {
-  // Configure nip65 (Relay Metadata)
-  // Configure Profile
-  // Test LLM Connection
-  // console.log(options);
-  // console.log(args);
-  console.log(Object.keys(args))
-  console.log(args)
+export const LLMDMBotJSONSchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "object",
+  "properties": {
+    "nsec": {
+      "type": "string"
+    },
+    "nip_65_relays": {
+      "type": "string"
+    },
+    "relays_for_dms": {
+      "type": "string"
+    },
+    "BASE_URL": {
+      "type": "string"
+    },
+    "OPENAI_API_KEY": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nsec",
+    "nip_65_relays",
+    "relays_for_dms",
+    "BASE_URL",
+    "OPENAI_API_KEY"
+  ]
+}
+
+export async function LLMDMBot(args) {
+  // TODO Configure nip65 (Relay Metadata)
+  // TODO Configure Profile
+  // TODO Test LLM Connection
+
+  // Argument Validation
+  console.log("Arguments recieved by LLMThreadBot")
+  console.log(JSON.stringify(args, null, 2))
+  const ajv = new Ajv()
+  const args_validator = ajv.validate(LLMDMBotJSONSchema, args)
+  if (!args_validator) {
+    console.log("We got an error running LLMDMBot, invalid input arguments")
+    console.log(ajv.errors)
+    console.log("Please make the input conform to the following JSONSchema")
+    console.log(JSON.stringify(LLMDMBotJSONSchema, null, 2))
+    return ajv.errors
+  }
+
   await check_NIP65_published(
     args.nip_65_relays.split(","),
     args.nsec,
     args.relays_for_dms.split(","),
   );
+  
   const npub = nip19.npubEncode(getPublicKey(nip19.decode(args.nsec).data));
-  console.log(`${npub}`);
+  console.log(`Bot npub = ${npub}`)
   console.log("relays_to_store_dms");
   console.log(args.relays_to_store_dms);
   const ndk = new NDK({
