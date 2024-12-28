@@ -18,8 +18,8 @@ import { dentropysObsidianPublisher } from "./lib/dentropysObsidianPublisher.js"
 import { nostrGet } from "./lib/nostrGet.js";
 import { check_NIP65_published, llm_dm_chatbot_response } from "./lib/LLMDMChatbot.js"
 import { llm_respond_to_thread } from "./lib/LLMThreadChatbot.js"
-import { DMBot } from "./lib/llmStuff/DMBot.js";
-import { ThreadBot } from "./lib/llmStuff/ThreadBot.js";
+import { LLMDMBot } from "./lib/llmStuff/LLMDMBot.js";
+import { LLMThreadBot } from "./lib/llmStuff/LLMThreadBot.js";
 
 function myParseInt(value, dummyPrevious) {
     // parseInt takes a string and a radix
@@ -535,7 +535,7 @@ program.command('llm-dm-bot')
     .requiredOption('-url, --BASE_URL <string>', 'OPENAI API HOST')
     .requiredOption('-api_key, --OPENAI_API_KEY <string>', 'OPENAI_API_KEY')
     .action( (args, options) => {
-        DMBot(args, options)
+        LLMDMBot(args, options)
     })
 
 program.command('llm-thread-bot')
@@ -545,7 +545,7 @@ program.command('llm-thread-bot')
     .requiredOption('-url, --BASE_URL <string>', 'OPENAI API HOST')
     .requiredOption('-api_key, --OPENAI_API_KEY <string>', 'OPENAI_API_KEY')
     .action(async (args, options) => {
-        ThreadBot(args, options)
+        LLMThreadBot(args, options)
     })
 
 program.command('replay-nosdump-file')

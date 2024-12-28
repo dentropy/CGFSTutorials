@@ -3,7 +3,7 @@ import { Relay, nip19, nip04, finalizeEvent, verifyEvent, getPublicKey } from 'n
 import { llm_dm_chatbot_response } from "../LLMDMChatbot.js";
 import { check_NIP65_published } from "../LLMDMChatbot.js";
 
-export async function DMBot(args, options) {
+export async function LLMDMBot(args, options) {
   // Configure nip65 (Relay Metadata)
   // Configure Profile
   // Test LLM Connection

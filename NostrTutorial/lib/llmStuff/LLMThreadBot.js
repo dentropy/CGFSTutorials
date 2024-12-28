@@ -4,7 +4,7 @@ import { llm_dm_chatbot_response } from "../LLMDMChatbot.js";
 import { check_NIP65_published } from "../LLMDMChatbot.js";
 import { llm_respond_to_thread } from "../LLMThreadChatbot.js";
 
-export async function ThreadBot(args, options) {
+export async function LLMThreadBot(args, options) {
     // Configure nip65 (Relay Metadata)
         // Configure Profile
         // Test LLM Connection
