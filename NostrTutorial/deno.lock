@@ -1,6 +1,8 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@inro/slash-command-parser@*": "0.0.2",
+    "jsr:@inro/slash-command-parser@^0.0.2": "0.0.2",
     "npm:@noble/hashes@^1.6.1": "1.6.1",
     "npm:@nostr-dev-kit/ndk@^2.10.7": "2.10.7",
     "npm:@types/node@*": "22.5.4",
@@ -14,6 +16,11 @@
     "npm:multiformats@*": "13.3.1",
     "npm:nostr-tools@^2.10.4": "2.10.4",
     "npm:postgres@^3.4.5": "3.4.5"
+  },
+  "jsr": {
+    "@inro/slash-command-parser@0.0.2": {
+      "integrity": "978a8d869b75f7fd16f32bca377ba82399a0d6a77e56adbfba6e2b1abe7b2996"
+    }
   },
   "npm": {
     "@libsql/darwin-arm64@0.5.0-pre.2": {
@@ -348,6 +355,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@inro/slash-command-parser@^0.0.2",
       "npm:@noble/hashes@^1.6.1",
       "npm:@nostr-dev-kit/ndk@^2.10.7",
       "npm:ajv@^8.17.1",
