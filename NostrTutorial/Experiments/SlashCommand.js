@@ -28,10 +28,11 @@ const test_slash_commands = [
   "/llm list-models",
   "/llm select-model: llama3.2",
   "/llm select-model: llama3.2 msg-offset: 3",
+  " test then /llm /test",
 ];
 
-for(const command_string of test_slash_commands){
-    console.log(`\n${command_string}`)
-    const result = parse(command_string)
-    console.log(result);
+for (const command_string of test_slash_commands) {
+  console.log(`\n${command_string}`);
+  const result = parse(command_string);
+  console.log(result);
 }
