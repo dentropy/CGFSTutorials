@@ -17,15 +17,17 @@
 import parse from "jsr:@inro/slash-command-parser";
 
 const test_slash_commands = [
-  "/reset",
   "/help",
-  "/help reset",
-  "/help llm",
-  "/llm reset",
+  "/reset",
+  "/llm help",
+  "/llm help examples",
+  "/llm help reset",
+  "/llm help list-models",
+  "/llm help select-model",
+  "/llm help msg-offset",
   "/llm list-models",
-  "/llm select-model llama3.2",
-  "/llm msg-offset 3",
-  "/llm select-model: llama3.1 msg-offset: 3"
+  "/llm select-model: llama3.2",
+  "/llm select-model: llama3.2 msg-offset: 3",
 ];
 
 for(const command_string of test_slash_commands){
