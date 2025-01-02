@@ -11,7 +11,7 @@ import { nostrGet } from "../nostrGet.js";
 import { finalizeEvent, getPublicKey, nip04, nip19 } from "nostr-tools";
 import { SimplePool } from "nostr-tools/pool";
 import { Relay } from 'nostr-tools/relay'
-import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
+import { LLMSlashCommandConvoParser } from './LLMSlashCommandParser.js'
 
 
 // TODO this should be rewritten to support npub, npub, public_key buffer, public key array, private_key buffer, private_key array
@@ -64,6 +64,10 @@ export async function llm_dm_chatbot_response(relays, nsec, nip_65_relays, npub,
     nsec,
     npub,
   );
+
+  convo = LLMSlashCommandConvoParser(convo)
+  console.log("OUTPUT_CONVO")
+  console.log(convo)
   let llm_response = await LLMConvo(BASE_URL, OPENAI_API_KEY, convo, nsec)
 
   // Get the users's NIP65 relays we need to send the response to
