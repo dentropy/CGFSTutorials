@@ -27,8 +27,8 @@ export async function check_NIP65_published(
   console.log("nostr_filter")
   console.log(nostr_filter)
   let events = await nostrGet(nip_65_relays, nostr_filter);
-  console.log("THE_EVENTS")
-  console.log(events)
+  // console.log("THE_EVENTS")
+  // console.log(events)
   if (events.length == 0) {
     let relay_event_tags = []
     for (const relay_url of relays_to_store_dms) {
@@ -65,10 +65,15 @@ export async function llm_dm_chatbot_response(relays, nsec, nip_65_relays, npub,
     npub,
   );
 
-  convo = LLMSlashCommandConvoParser(convo)
+  convo = LLMSlashCommandConvoParser(convo, ["llama3.2:latest", "llama2-uncensored:latest"])
   console.log("OUTPUT_CONVO")
   console.log(convo)
-  let llm_response = await LLMConvo(BASE_URL, OPENAI_API_KEY, convo, nsec)
+  let llm_response = "GOT ERROR SOMEHOW"
+  if(typeof(convo) == typeof("")) {
+    llm_response = convo
+  } else {
+    llm_response = await LLMConvo(BASE_URL, OPENAI_API_KEY, convo.parsed_convo, nsec)
+  }
 
   // Get the users's NIP65 relays we need to send the response to
   let nostr_filter = {
@@ -95,26 +100,14 @@ export async function llm_dm_chatbot_response(relays, nsec, nip_65_relays, npub,
     }
   }
 
-  console.log("user_nip65_relays")
-  console.log(user_nip65_relays)
-  console.log("signed_event")
-  console.log(signedEvent)
-  console.log("events")
-  console.log(events)
-
   // Create a new message with the response
   const myPool = new SimplePool()
-  var encrypted_text = await nip04.encrypt(
+  const encrypted_text = await nip04.encrypt(
     nip19.decode(nsec).data,
     nip19.decode(npub).data,
     llm_response,
   )
-  let decrypted_test = await nip04.decrypt(
-    nip19.decode(nsec).data,
-    nip19.decode(npub).data,
-    encrypted_text
-  )
-  var signedEvent = finalizeEvent({
+  const signedEvent = finalizeEvent({
     kind: 4,
     created_at: Math.floor(Date.now() / 1000),
     tags: [

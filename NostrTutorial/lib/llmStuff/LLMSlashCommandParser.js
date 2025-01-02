@@ -2,19 +2,28 @@ import parse from "jsr:@inro/slash-command-parser";
 
 export function LLMSlashCommandConvoParser(convo, models_supported) {
   let parsed_convo = [];
-  // Check if we need to run slash command logic
+  let model_selected = models_supported[0];
+
+//   console.log("THE_CONVO");
+//   console.log(convo);
+
   // Parse /reset or /llm reset
   for (const event of convo) {
+    console.log("THE_EVENT");
+    console.log(event);
     if (
       event.decrypted_content.toLowerCase().replace(/\n/g, "").trim()[0] == "/"
     ) {
       let command_data = {};
       try {
         command_data = parse(event.decrypted_content).split("\n");
+        console.log("THE_COMMAND_DATA");
+        console.log(command_data);
       } catch (error) {
         console.log("Error in LLMSlashCommandConvoParser reset");
         console.log(error);
         parsed_convo.push(event);
+        continue;
       }
       if (command_data.command.toLowerCase() == "llm") {
         if (command_data.subCommands[0] == "reset") {
@@ -27,19 +36,30 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
         parsed_convo.push(event);
       }
     }
+    parsed_convo.push(event);
   }
-  // The events below only matter for most recent event
+
+  // Parse the most recent event
+  console.log("parsed_convo_001");
+  console.log(parsed_convo);
+  const latest_event = parsed_convo[parsed_convo.length - 1].decrypted_content
+    .toLowerCase();
   if (
-    parsed_convo[parsed_convo.length - 1].decrypted_content.toLowerCase()
+    latest_event
       .replace(/\n/g, "").trim()[0] == "/"
   ) {
     let command_data = {};
     try {
-      command_data = parse(event.decrypted_content).split("\n");
+      command_data = parse(latest_event.split("\n")[0]);
+      console.log("THE_command_data_2");
+      console.log(command_data);
     } catch (error) {
       console.log("Error in LLMSlashCommandConvoParser recent message");
       console.log(error);
-      parsed_convo.push(event);
+      return {
+        parsed_convo: parsed_convo,
+        model_selected: model_selected,
+      };
     }
     // Parse Help
     const help_response =
@@ -75,13 +95,14 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
         }
       }
       // Parse select-model
-      let model_selected = models_supported[0]
       if (Object.keys(command_data.options).includes("select-model")) {
         // Check if model exists
         if (!models_supported.includes(command_data.options["select-model"])) {
           return `Invalid Option ${command_option} make sure it is from this list \n${
             JSON.stringify(models_supported)
           }\nOr run "\\llm help" to learn more`;
+        } else {
+          model_selected = command_data.options["select-model"];
         }
       }
       // Parse msg-offset
@@ -103,7 +124,7 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
   }
   return {
     parsed_convo: parsed_convo,
-    model_selected: model_selected
+    model_selected: model_selected,
   };
 }
 
