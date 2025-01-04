@@ -18,7 +18,7 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
   let model_selected = models_supported[0];
 
   // Parse /reset or /llm reset
-  for (let event of convo) {
+  for (const event of convo) {
     if (
       event.decrypted_content.toLowerCase()
         .replace(/\n/g, "")
@@ -69,7 +69,7 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
       if( formatted_latest_event.length == 0){
         formatted_latest_event = ""
       } else {
-        formatted_latest_event = event.decrypted_content.join("\n")
+        formatted_latest_event = formatted_latest_event.join("\n")
       }
       parsed_convo[parsed_convo.length - 1].decrypted_content = formatted_latest_event
     } catch (error) {
