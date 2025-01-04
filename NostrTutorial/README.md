@@ -56,3 +56,13 @@ echo $RELAYS
 deno -A cli.js send-event -nsec $NSEC0 -f './event-data.json' --relays $RELAYS
 
 ```
+
+## Running Tests
+
+``` bash
+
+deno test
+
+deno test --allow-all
+
+```

@@ -26,7 +26,7 @@ const test_slash_commands = [
   // "/llm help select-model",
   // "/llm help msg-offset",
   "/llm list-models",
-  "/llm run select-model: llama3.2",
+  "/llm run select-model: llama3.2:latest",
   "/llm run select-model: llama3.2 msg-offset: 3",
   " test then /llm /test",
 ];

@@ -3,6 +3,9 @@
   "specifiers": {
     "jsr:@inro/slash-command-parser@*": "0.0.2",
     "jsr:@inro/slash-command-parser@^0.0.2": "0.0.2",
+    "jsr:@std/assert@*": "1.0.8",
+    "jsr:@std/async@*": "1.0.9",
+    "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@noble/hashes@^1.6.1": "1.6.1",
     "npm:@nostr-dev-kit/ndk@^2.10.7": "2.10.7",
     "npm:@types/node@*": "22.5.4",
@@ -11,6 +14,8 @@
     "npm:bip39@^3.1.0": "3.1.0",
     "npm:commander@^12.1.0": "12.1.0",
     "npm:dotenv@^16.4.5": "16.4.5",
+    "npm:handlebars@*": "4.7.8",
+    "npm:handlebars@^4.7.8": "4.7.8",
     "npm:libsql@~0.5.0-pre.2": "0.5.0-pre.2",
     "npm:lorem-ipsum@^2.0.8": "2.0.8",
     "npm:multiformats@*": "13.3.1",
@@ -20,6 +25,18 @@
   "jsr": {
     "@inro/slash-command-parser@0.0.2": {
       "integrity": "978a8d869b75f7fd16f32bca377ba82399a0d6a77e56adbfba6e2b1abe7b2996"
+    },
+    "@std/assert@1.0.8": {
+      "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/async@1.0.9": {
+      "integrity": "c6472fd0623b3f3daae023cdf7ca5535e1b721dfbf376562c0c12b3fb4867f91"
+    },
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     }
   },
   "npm": {
@@ -233,6 +250,16 @@
     "fast-uri@3.0.1": {
       "integrity": "sha512-MWipKbbYiYI0UC7cl8m/i/IWTqfC8YXsqjzybjddLsFjStroQzsHXkc73JutMvBiXmOvapk+axIl79ig5t55Bw=="
     },
+    "handlebars@4.7.8": {
+      "integrity": "sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==",
+      "dependencies": [
+        "minimist",
+        "neo-async",
+        "source-map",
+        "uglify-js",
+        "wordwrap"
+      ]
+    },
     "is-typedarray@1.0.0": {
       "integrity": "sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA=="
     },
@@ -265,6 +292,9 @@
         "commander@9.5.0"
       ]
     },
+    "minimist@1.2.8": {
+      "integrity": "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="
+    },
     "ms@2.0.0": {
       "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="
     },
@@ -273,6 +303,9 @@
     },
     "multiformats@13.3.1": {
       "integrity": "sha512-QxowxTNwJ3r5RMctoGA5p13w5RbRT2QDkoM+yFlqfLiioBp78nhDjnRLvmSBI9+KAqN4VdgOVWM9c0CHd86m3g=="
+    },
+    "neo-async@2.6.2": {
+      "integrity": "sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw=="
     },
     "next-tick@1.1.0": {
       "integrity": "sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ=="
@@ -301,6 +334,9 @@
     "require-from-string@2.0.2": {
       "integrity": "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw=="
     },
+    "source-map@0.6.1": {
+      "integrity": "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="
+    },
     "tseep@1.3.1": {
       "integrity": "sha512-ZPtfk1tQnZVyr7BPtbJ93qaAh2lZuIOpTMjhrYa4XctT8xe7t4SAW9LIxrySDuYMsfNNayE51E/WNGrNVgVicQ=="
     },
@@ -318,6 +354,9 @@
     },
     "typescript-lru-cache@2.0.0": {
       "integrity": "sha512-Jp57Qyy8wXeMkdNuZiglE6v2Cypg13eDA1chHwDG6kq51X7gk4K7P7HaDdzZKCxkegXkVHNcPD0n5aW6OZH3aA=="
+    },
+    "uglify-js@3.19.3": {
+      "integrity": "sha512-v3Xu+yuwBXisp6QYTcH4UbH+xYJXqnq2m/LtQVWKWzYc1iehYnLixoQDN9FH6/j9/oybfd6W9Ghwkl8+UMKTKQ=="
     },
     "undici-types@6.19.8": {
       "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
@@ -349,6 +388,9 @@
         "yaeti"
       ]
     },
+    "wordwrap@1.0.0": {
+      "integrity": "sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q=="
+    },
     "yaeti@0.0.6": {
       "integrity": "sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug=="
     }
@@ -363,6 +405,7 @@
       "npm:bip39@^3.1.0",
       "npm:commander@^12.1.0",
       "npm:dotenv@^16.4.5",
+      "npm:handlebars@^4.7.8",
       "npm:libsql@~0.5.0-pre.2",
       "npm:lorem-ipsum@^2.0.8",
       "npm:nostr-tools@^2.10.4",
