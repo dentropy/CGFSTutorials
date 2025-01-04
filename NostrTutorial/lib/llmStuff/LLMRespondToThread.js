@@ -14,14 +14,20 @@ import { LLMSlashCommandConvoParser } from './LLMSlashCommandConvoParser.js'
 
 // TODO check for NIP65 integration
 export async function llm_respond_to_thread(relays, nsec, event_id, BASE_URL, OPENAI_API_KEY) {
-    const convo = await RetriveThread(relays, event_id)
-    for(const convo_item of convo){
-        convo_item.decrypted_content = RemoveNIP19FromContent(convo_item.content)
-    }
+    let convo = await RetriveThread(relays, event_id)
+    convo.forEach((element, index) => { 
+        convo[index].decrypted_content = RemoveNIP19FromContent(element.content)
+    });
+    console.log("THE_CONVO_GOES_HERE")
+    console.log(convo)
+    convo = LLMSlashCommandConvoParser(convo, ["llama3.2:latest", "llama2-uncensored:latest"])
+    let selected_llm_model = convo.model_selected
+    convo = convo.parsed_convo
     console.log("LLM_Formated_Conversation")
     console.log(JSON.stringify(convo, null, 2))
     // Create a new message with the response
     const myPool = new SimplePool()
+    console.log(convo[convo.length - 1])
     if(convo[convo.length - 1].decrypted_content.toLowerCase().replace(/\n/g, "").trim() == "help"){
         console.log("HELP_MESSAGE_ACTIVATED")
         const signedEvent = finalizeEvent({
@@ -38,7 +44,7 @@ export async function llm_respond_to_thread(relays, nsec, event_id, BASE_URL, OP
         console.log("We should have replied")
         return 
     }
-    const llm_response = await LLMConvo(BASE_URL, OPENAI_API_KEY, convo, nsec)
+    const llm_response = await LLMConvo(BASE_URL, OPENAI_API_KEY, convo, nsec) // selected_llm_model
     // We need to get all the e and p tags
     const signedEvent = finalizeEvent({
         kind: 1,

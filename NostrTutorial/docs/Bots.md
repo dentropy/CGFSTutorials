@@ -64,6 +64,8 @@ export BASE_URL='https://ai.newatlantis.top/api'
 export OPENAI_API_KEY="sk-ENTROPY"
 export BASE_URL='http://127.0.0.1:11434'
 
+curl -H "Authorization: Bearer $OPENAI_API_KEY" $BASE_URL/models | jq
+
 # REMEMBER TO CHECK/SET ENVIRONMENT VARIABLES ARE SET, THEY ARE LISTED ABOVE 
 deno -A cli.js llm-bot \
 --nsec $NSEC0 \

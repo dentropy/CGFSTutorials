@@ -17,6 +17,8 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
   let parsed_convo = [];
   let model_selected = models_supported[0];
 
+  console.log("CONVO_SHOULD_GO_HERE")
+  console.log(convo)
   // Parse /reset or /llm reset
   for (const event of convo) {
     if (
