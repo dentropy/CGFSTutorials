@@ -1,8 +1,9 @@
 import {
   help_response,
   LLMSlashCommandConvoParser,
+  msg_offset_error,
   reset_response,
-  select_model_error
+  select_model_error,
 } from "./LLMSlashCommandParser.js";
 import { assertEquals } from "jsr:@std/assert";
 import { delay } from "jsr:@std/async";
@@ -249,26 +250,123 @@ Deno.test("slash-command-prase '/llm reset with spaces'", () => {
   assertEquals(return_value, parsed_command);
 });
 
-// select-model test
 Deno.test("slash-command-prase '/llm run select-model:llama3.2-uncensored:FAILURE'", () => {
+  const models_supported = ["llama3.2:latest", "llama3.2-uncensored:latest"];
+  const example_convo = [
+    {
+      decrypted_content: "What is 2+2",
+    },
+    {
+      decrypted_content: "/llm run select-model: llama3.2-uncensored:FAILURE",
+    },
+  ];
+  const parsed_command = LLMSlashCommandConvoParser(
+    example_convo,
+    models_supported,
+  );
+  const select_model_template = Handlebars.compile(select_model_error);
+  const temoplate_response = select_model_template({
+    "select-model": "llama3.2-uncensored:FAILURE",
+    "models_supported": JSON.stringify(models_supported),
+  });
+  assertEquals(temoplate_response, parsed_command);
+});
+
+Deno.test("slash-command-prase '/llm run select-model:llama3.2-uncensored:FAILURE'", () => {
+  const models_supported = ["llama3.2:latest", "llama3.2-uncensored:latest"];
+  const example_convo = [
+    {
+      decrypted_content: "What is 2+2",
+    },
+    {
+      decrypted_content:
+        "   /llm run select-model: llama3.2-uncensored:FAILURE   ",
+    },
+  ];
+  const parsed_command = LLMSlashCommandConvoParser(
+    example_convo,
+    models_supported,
+  );
+  const select_model_template = Handlebars.compile(select_model_error);
+  const temoplate_response = select_model_template({
+    "select-model": "llama3.2-uncensored:FAILURE",
+    "models_supported": JSON.stringify(models_supported),
+  });
+  assertEquals(temoplate_response, parsed_command);
+});
+
+// msg-offset test
+Deno.test("slash-command-prase '/llm run msg-offset: 2'", () => {
+  const models_supported = ["llama3.2:latest", "llama3.2-uncensored:latest"];
+  const example_convo = [
+    {
+      decrypted_content: "001 Luke was a Farmer",
+    },
+    {
+      decrypted_content: "002 Mary was a Scientist",
+    },
+    {
+      decrypted_content: "003 Mark likes Wool Socks",
+    },
+    {
+      decrypted_content: "   /llm run msg-offset: 2  ",
+    },
+  ];
+  const parsed_command = LLMSlashCommandConvoParser(
+    example_convo,
+    models_supported,
+  );
+  const the_result = {
+    model_selected: "llama3.2:latest",
+    parsed_convo: [
+      {
+        decrypted_content: "002 Mary was a Scientist",
+      },
+      {
+        decrypted_content: "003 Mark likes Wool Socks",
+      },
+      {
+        decrypted_content: "",
+      },
+    ],
+  };
+  assertEquals(the_result, parsed_command);
+});
+
+Deno.test("slash-command-prase '/llm run msg-offset: 2'", () => {
     const models_supported = ["llama3.2:latest", "llama3.2-uncensored:latest"];
     const example_convo = [
       {
-        decrypted_content: "What is 2+2",
+        decrypted_content: "001 Luke was a Farmer",
       },
       {
-        decrypted_content: "/llm run select-model: llama3.2-uncensored:FAILURE",
+        decrypted_content: "002 Mary was a Scientist",
+      },
+      {
+        decrypted_content: "003 Mark likes Wool Socks",
+      },
+      {
+        decrypted_content: "   /llm run msg-offset: 2 select-model:llama3.2-uncensored:latest ",
       },
     ];
     const parsed_command = LLMSlashCommandConvoParser(
       example_convo,
       models_supported,
     );
-    const select_model_template = Handlebars.compile(select_model_error);
-    const temoplate_response = select_model_template({
-      "select-model": "llama3.2-uncensored:FAILURE",
-      "models_supported": JSON.stringify(models_supported)
-    });
-    assertEquals(temoplate_response, parsed_command);
+    const the_result = {
+      model_selected: "llama3.2:latest",
+      parsed_convo: [
+        {
+          decrypted_content: "002 Mary was a Scientist",
+        },
+        {
+          decrypted_content: "003 Mark likes Wool Socks",
+        },
+        {
+          decrypted_content: "",
+        },
+      ],
+    };
+    assertEquals(the_result, parsed_command);
   });
-// msg-offset test
+  

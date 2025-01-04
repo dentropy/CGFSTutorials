@@ -11,14 +11,14 @@ export const select_model_error =
 {{models_supported}}
 }\nOr run "\\llm help" to learn more`;
 
+export const msg_offset_error = `For msg-offset please input a valid number`
+
 export function LLMSlashCommandConvoParser(convo, models_supported) {
   let parsed_convo = [];
   let model_selected = models_supported[0];
 
   // Parse /reset or /llm reset
-  for (const event of convo) {
-    console.log("THE_EVENT");
-    console.log(event);
+  for (let event of convo) {
     if (
       event.decrypted_content.toLowerCase()
         .replace(/\n/g, "")
@@ -35,8 +35,6 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
         parsed_convo.push(event);
         continue;
       }
-      console.log("command_data");
-      console.log(command_data);
       if (command_data.command.toLowerCase() == "llm") {
         if (command_data.subCommands[0] == "reset") {
           parsed_convo = [];
@@ -54,8 +52,6 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
   }
 
   // Parse the most recent event
-  // console.log("parsed_convo_001");
-  // console.log(parsed_convo);
   if (parsed_convo.length == 0) {
     return reset_response;
   }
@@ -66,12 +62,16 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
   ) {
     let command_data = {};
     try {
-      // console.log("latest_event")
-      // console.log(latest_event)
-      // console.log(latest_event.split("\n")[0])
-      command_data = parse(latest_event.split("\n")[0]);
-      // console.log("THE_command_data_2");
-      // console.log(command_data);
+      command_data = parse(latest_event.split("\n")[0].trim());
+      let formatted_latest_event = parsed_convo[parsed_convo.length - 1].decrypted_content
+      formatted_latest_event = formatted_latest_event.split("\n")
+      formatted_latest_event = formatted_latest_event.slice(1)
+      if( formatted_latest_event.length == 0){
+        formatted_latest_event = ""
+      } else {
+        formatted_latest_event = event.decrypted_content.join("\n")
+      }
+      parsed_convo[parsed_convo.length - 1].decrypted_content = formatted_latest_event
     } catch (error) {
       console.log("Error in LLMSlashCommandConvoParser recent message");
       console.log(error);
@@ -101,7 +101,6 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
       // Check for invalid Options
       const valid_options = ["select-model", "msg-offset"];
       for (const command_option of Object.keys(command_data.options)) {
-        console.log(command_option);
         if (!valid_options.includes(command_option.toLowerCase())) {
           return `Invalid Option ${command_option} make sure it is from this list \n${
             JSON.stringify(valid_options)
@@ -111,9 +110,6 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
       // Parse select-model
       if (Object.keys(command_data.options).includes("select-model")) {
         // Check if model exists
-        console.log("PAUL_WAS_HERE_12");
-        console.log(command_data);
-        console.log(command_data.options["select-model"]);
         if (!models_supported.includes(command_data.options["select-model"])) {
           const select_model_template = Handlebars.compile(select_model_error);
           return select_model_template({
@@ -129,15 +125,15 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
         // Verify Offset is valid
         const offset = parseInt(command_data.options["msg-offset"]);
         if (offset == isNaN) {
-          return `For msg-offset please enter a number`;
+          return msg_offset_error;
         }
         if (offset >= parsed_convo.length) {
           return `For msg-offset This thread is only ${parsed_convo.length} events in length, your offset ${offset}`;
         }
-        if (offset >= 0) {
-          return `For msg-offset please input a valid number`;
+        if (offset <= 0) {
+          return msg_offset_error;
         }
-        parsed_convo = parsed_convo.slice(-offset);
+        parsed_convo = parsed_convo.slice(-(offset + 1));
       }
     }
   }
