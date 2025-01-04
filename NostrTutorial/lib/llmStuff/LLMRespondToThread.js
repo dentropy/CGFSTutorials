@@ -18,8 +18,6 @@ export async function llm_respond_to_thread(relays, nsec, event_id, BASE_URL, OP
     convo.forEach((element, index) => { 
         convo[index].decrypted_content = RemoveNIP19FromContent(element.content)
     });
-    console.log("THE_CONVO_GOES_HERE")
-    console.log(convo)
     convo = LLMSlashCommandConvoParser(convo, ["llama3.2:latest", "llama2-uncensored:latest"])
     let selected_llm_model = convo.model_selected
     convo = convo.parsed_convo

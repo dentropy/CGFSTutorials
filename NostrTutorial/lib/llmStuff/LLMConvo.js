@@ -3,6 +3,8 @@ import { nip19, getPublicKey } from "nostr-tools";
 export default async function LLMConvo(BASE_URL, OPENAI_API_KEY, messages, nsec) {
     const ai_assistent_account = getPublicKey(nip19.decode(nsec).data)
     const llm_messages = []
+    console.log("MY_MESSAGES")
+    console.log(messages)
     for (const message of messages) {
         if (message.pubkey == ai_assistent_account) {
             llm_messages.push({
