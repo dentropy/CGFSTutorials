@@ -38,9 +38,12 @@ wc -l ./ScrapedData/event0.jsonl
 
 export RELAYS='ws://127.0.0.1:7007'
 export RELAYS='ws://127.0.0.1:3003'
+export RELAYS='ws://127.0.0.1:4036/relay'
 export RELAYS='wss://relay.newatlantis.top'
 echo $RELAYS
 
 deno -A cli.js replay-nosdump-file -f ./ScrapedData/event0.jsonl --relays $RELAYS
+
+nosdump -k 1 $RELAYS >> ScrapedData/scraped_ecents.jsonl
 
 ```

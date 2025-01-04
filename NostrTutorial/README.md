@@ -31,6 +31,7 @@
 #### Sections
 
 * [Generate Accounts](./docs/GenerateAccounts.md)
+* [Run a local Nostr Relay](./docs/RunNostrRelay.md)
 * [Query Relay using Filter](./docs/QueryRelayUsingFiler.md)
 * [Scrape Nostr Using Nosdump](./docs/nodsump.md)
   * [Index using postgres](./docs/postgres.md)
@@ -49,6 +50,7 @@
 source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude')
 
 export RELAYS='ws://127.0.0.1:7007'
+export RELAYS='ws://127.0.0.1:4036/relay'
 export RELAYS='ws://127.0.0.1:6969'
 export RELAYS='wss://relay.newatlantis.top'
 echo $RELAYS
