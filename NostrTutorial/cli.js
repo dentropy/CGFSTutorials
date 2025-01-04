@@ -17,7 +17,7 @@ import { fakeThread } from "./lib/fakeThread.js";
 import { dentropysObsidianPublisher } from "./lib/dentropysObsidianPublisher.js";
 import { nostrGet } from "./lib/nostrGet.js";
 import { check_NIP65_published, llm_dm_chatbot_response } from "./lib/llmStuff/LLMDMChatbot.js"
-import { llm_respond_to_thread } from "./lib/llmStuff/LLMThreadChatbot.js"
+// import { llm_respond_to_thread } from "./lib/llmStuff/LLMSlashCommandConvoParser.js"
 import { LLMDMBot } from "./lib/llmStuff/LLMDMBot.js";
 import { LLMThreadBot } from "./lib/llmStuff/LLMThreadBot.js";
 

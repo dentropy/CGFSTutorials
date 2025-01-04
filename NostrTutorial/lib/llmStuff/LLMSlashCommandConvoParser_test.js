@@ -4,7 +4,7 @@ import {
   msg_offset_error,
   reset_response,
   select_model_error,
-} from "./LLMSlashCommandParser.js";
+} from "./LLMSlashCommandConvoParser.js";
 import { assertEquals } from "jsr:@std/assert";
 import { delay } from "jsr:@std/async";
 import Handlebars from "npm:handlebars";

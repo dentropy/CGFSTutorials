@@ -2,7 +2,7 @@ import NDK from "@nostr-dev-kit/ndk";
 import { Relay, nip19, nip04, finalizeEvent, verifyEvent, getPublicKey } from 'nostr-tools'
 import { llm_dm_chatbot_response } from "./LLMDMChatbot.js";
 import { check_NIP65_published } from "./LLMDMChatbot.js";
-import { llm_respond_to_thread } from "./LLMThreadChatbot.js";
+import { llm_respond_to_thread } from "./LLMRespondToThread.js";
 import Ajv from 'ajv'
 
 export const LLMDMThreadJSONSchema = {

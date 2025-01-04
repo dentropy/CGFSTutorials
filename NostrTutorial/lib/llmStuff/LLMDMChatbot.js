@@ -11,7 +11,7 @@ import { nostrGet } from "../nostrGet.js";
 import { finalizeEvent, getPublicKey, nip04, nip19 } from "nostr-tools";
 import { SimplePool } from "nostr-tools/pool";
 import { Relay } from 'nostr-tools/relay'
-import { LLMSlashCommandConvoParser } from './LLMSlashCommandParser.js'
+import { LLMSlashCommandConvoParser } from './LLMSlashCommandConvoParser.js'
 
 
 // TODO this should be rewritten to support npub, npub, public_key buffer, public key array, private_key buffer, private_key array
