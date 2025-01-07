@@ -17,6 +17,7 @@
 #### Tooling
 
 - [Filter Console](https://nostrudel.ninja/#/tools/console)
+- [NostrTool - Generate Accounts](https://nostrtool.com/)
 - [Nostr Profile and Relay Manager](https://metadata.nostr.com/)
 - [NIP19 Nostr Army Knife](https://nak.nostr.com/)
 - [Get NIP-05 verified](https://nostr-how.vercel.app/en/guides/get-verified)
@@ -49,10 +50,10 @@
 
 source <(deno -A cli.js generate-accounts-env -m 'soap vault ahead turkey runway erosion february snow modify copy nephew rude')
 
-export RELAYS='ws://127.0.0.1:7007'
-export RELAYS='ws://127.0.0.1:4036/relay'
 export RELAYS='ws://127.0.0.1:6969'
-export RELAYS='wss://relay.newatlantis.top'
+export RELAYS='wss://social.mememaps.net/relay'
+export RELAYS='ws://127.0.0.1:4036/relay'
+
 echo $RELAYS
 
 deno -A cli.js send-event -nsec $NSEC0 -f './event-data.json' --relays $RELAYS
