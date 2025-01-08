@@ -6,3 +6,5 @@ NostrEvents
 *.sqlite-journal
 event-data.json
 NostrTutorial/ScrapedData
+*sqlite3-shm
+*sqlite3-wal

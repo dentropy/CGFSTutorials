@@ -1,8 +1,22 @@
 // Thank you Stack Overflow
 // [javascript - How to handle streaming data using fetch? - Stack Overflow](https://stackoverflow.com/questions/62121310/how-to-handle-streaming-data-using-fetch)
 
+import {
+  finalizeEvent,
+  getPublicKey,
+  nip04,
+  nip19,
+  Relay,
+  verifyEvent,
+} from "nostr-tools";
+
 console.log(`BASE_URL=${process.env.BASE_URL}`);
 console.log(`OPENAI_API_KEY=${process.env.OPENAI_API_KEY}`);
+console.log(`NSEC=${process.env.NSEC1}`);
+console.log(`RELAYS=${process.env.RELAYS}`);
+const nsec = process.env.NSEC1;
+const npub = nip19.npubEncode(getPublicKey(nip19.decode(nsec).data));
+console.log(`Bot npub = ${npub}`);
 
 let body = {
   model: "llama3.2:latest",
@@ -14,6 +28,8 @@ let body = {
   ],
   stream: true,
 };
+
+const relay = await Relay.connect(process.env.RELAYS.split(",")[0]);
 
 async function readAllChunks(readableStream) {
   const reader = readableStream.getReader();
@@ -34,8 +50,14 @@ async function readAllChunks(readableStream) {
       if (mah_result.choices[0].finish_reason == null) {
         chunks.push(mah_result.choices[0].delta.content);
       }
-      // console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-      console.clear();
+      let signedEvent = finalizeEvent({
+        kind: 1,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: chunks.join(""),
+      }, nip19.decode(nsec).data);
+      relay.publish(signedEvent);
+      console.log(signedEvent);
       console.log(chunks.join(""));
     }
   }
@@ -49,7 +71,7 @@ fetch(process.env.BASE_URL + "/chat/completions", {
   },
   body: JSON.stringify(body),
 })
-  .then(async (response) => {
+  .then((response) => {
     // const reader = response.body.getReader();
     readAllChunks(response.body);
   });
