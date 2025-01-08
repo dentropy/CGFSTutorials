@@ -2,7 +2,7 @@ import parse from "jsr:@inro/slash-command-parser";
 import Handlebars from "npm:handlebars";
 
 export const help_response =
-  "Please enter one of the following slash commands\nhelp\n/reset\n/llm to get more information on each of the commands for this bot";
+  "Please enter one of the following slash commands\nhelp\n/reset\n/llm to get more information on each of the commands for this bot\nExample Commands include\n/llm list-models\n/llm run select-model: llama3.2:latest\n/llm run select-model: llama2-uncensored:latest\n/llm run msg-offset: 2";
 
 export const reset_response = "Resetting the stuff";
 
@@ -83,6 +83,9 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
       return help_response;
     }
     // DO NOT MOVE THE CODE BELOW UP
+    if(command_data.subCommands.length == 0){
+      return help_response;
+    }
     if (
       command_data.command.toLocaleLowerCase() == "llm" &&
       command_data.subCommands[0].toLocaleLowerCase() == "help"
@@ -139,6 +142,8 @@ export function LLMSlashCommandConvoParser(convo, models_supported) {
       }
     }
   }
+  console.log("parsed_convo_final")
+  console.log(parsed_convo)
   return {
     parsed_convo: parsed_convo,
     model_selected: model_selected,
