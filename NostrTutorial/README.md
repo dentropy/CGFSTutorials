@@ -1,5 +1,17 @@
 # Getting Started with Nostr
 
+#### What is NOSTR?
+
+NOSTR(Notest and Other Stuff Transmitted through Relays) is a Decentralized Soverign Social Media Protocol that works as an alternative to stuff like TikTok, Reddit, Telegram, Mastodon and the like.
+
+NOSTR is different from other social media platforms and protocols because of its separation between Account and Application. This allows the user to use the same account across multiple applications.
+
+Traditional social medias use of Comments, Posts, and Messages while NOSTR uses a composable and extendable social media format called events. 
+
+#### DESCRIPTION
+
+This repo works as a introduction to Nostr, 
+
 #### Getting Started Links
 
 - [Nostr Connect - Chrome Web Store](https://chromewebstore.google.com/detail/nostr-connect/ampjiinddmggbhpebhaegmjkbbeofoaj?hl=en%2C)
