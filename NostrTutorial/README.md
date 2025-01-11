@@ -2,15 +2,23 @@
 
 #### What is NOSTR?
 
-NOSTR(Notest and Other Stuff Transmitted through Relays) is a Decentralized Soverign Social Media Protocol that works as an alternative to stuff like TikTok, Reddit, Telegram, Mastodon and the like.
+NOSTR(Notes and Other Stuff Transmitted through Relays) is a Decentralized Soverign Social Media Protocol that works as an alternative to stuff like TikTok, Reddit, Telegram, Mastodon and the like.
 
 NOSTR is different from other social media platforms and protocols because of its separation between Account and Application. This allows the user to use the same account across multiple applications.
 
-Traditional social medias use of Comments, Posts, and Messages while NOSTR uses a composable and extendable social media format called events. 
+Traditional social medias use of Comments, Posts, and Messages while NOSTR uses a composable and extendable social media format called events.
+
+NOSTR uses Public Pribate Key Cryptography as the root for Identities which allows secure encrypted messaging between users.
 
 #### DESCRIPTION
 
-This repo works as a introduction to Nostr, 
+This repo works as a introduction to NOSTR(Described Below) including links to NOSTR related Applications, Tools for Development. This tool includes a NOSTR a CLI tool and Documentation for interacting with Nostr including,
+
+* Creating Accounts
+* Sending Events
+* Scraping, and Querrying Scraped Events
+* Publisher tool for Markdown Notes ([Obsidian](https://obsidian.md/)) to NOSTR via [obsidian-publisher](https://github.com/dentropy/obsidian-publisher)
+* A bot that allows LLM use on NOSTR
 
 #### Getting Started Links
 
