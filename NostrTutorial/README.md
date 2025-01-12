@@ -4,11 +4,13 @@
 
 NOSTR(Notes and Other Stuff Transmitted through Relays) is a Decentralized Soverign Social Media Protocol that works as an alternative to stuff like TikTok, Reddit, Discord, Telegram, X, Mastodon and the like.
 
-NOSTR is different from other social media platforms and protocols because of its separation between Account and Client. This allows the user to use the same account across multiple applications. This is equivilent using the same account across TikTok, Reddit, Discord, Telegram, X, and Mastodon.
+NOSTR is different from other social media platforms and protocols because of its separation between User Account and Client. This allows the user to use the same account across multiple applications. This is equivilent using the same account across TikTok, Reddit, Discord, Telegram, X, and Mastodon.
 
-Traditional social media uses Comments, Posts, and Messages while NOSTR uses a composable and extendable social media format called events. A Event can hold the equivilent of a X Post, a Discord Message, a Multimedia post like TokTok, a feature length article like SubStack, or event stuff like Calendar Events.
+Traditional social media uses Comments, Posts, and Messages while NOSTR uses a composable and extendable social media format called events. NOSTR Event's come in all shapes and sizes, from Multimedia Posts like Instagram and Tik Tok, to Microblogging like X and Mastodon, to custom reactions like on Discord and Telegram, Long form content like Blogs and Substack, and even more nuanced stuff like Calendar Events, Wiki Pages, Follow Lists modular and pluggable.
 
-NOSTR uses Public Private Key Cryptography as the root of Accounts/Identities which allows secure encrypted messaging between users just like Signal, and Whatsapp. This is like using a SSH key to send Messages.
+NOSTR uses Public Private Key Cryptography as the root of Accounts/Identities which allows secure encrypted messaging between users just like Signal, and Whatsapp. This is like using a SSH key or Crypto Wallet to send Messages(Events).
+
+NOSTR has deep integration with the Bitcoin Lightning network via [NIP57 Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md). Zaps are micro transactions users can attach to their Posts which include real Bitcoin with them. PLEASE NOTE, NOSTR ACCOUNTS ARE NOT BITCOING LIGHTING WALLETS AND CAN NOT RECIEVE ANY CRYPTO. [NIP57 Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md) are just a Metadata standard for a special kind of NOSTR event. Or in simple words, The `Other Stuff` in the name NOSTR(Notes and Other Stuff Transmitted Through Relays) means that individuals can broadcast their lnurl(Lightning Network URL) as part of their profile which can be used by people on the public internet not only send them Lightning Bitcoin but querry transactions sent to their Bitcoin Lightning Network Wallet. Bitcoin Lightning Network transaction data is sent in Events which can be querried the same way traditional reactions are on NOSTR.
 
 #### Description
 
