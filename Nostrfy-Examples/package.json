@@ -13,6 +13,7 @@
     "@electric-sql/pglite": "^0.3.4",
     "@nostrify/db": "npm:@jsr/nostrify__db@^0.39.4-alpha.1",
     "@nostrify/nostrify": "npm:@jsr/nostrify__nostrify@^0.46.3",
+    "@nostrify/seed": "npm:@jsr/nostrify__seed@^0.42.0",
     "@soapbox/kysely-pglite": "npm:@jsr/soapbox__kysely-pglite@^1.1.0",
     "nostr-tools": "^2.15.0"
   }
