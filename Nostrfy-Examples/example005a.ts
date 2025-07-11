@@ -1,32 +1,4 @@
-import { NPostgres } from "@nostrify/db";
-import { Expression, Kysely, OperationNode, sql } from "kysely";
-import { PGlite } from "@electric-sql/pglite";
-import { PgliteDialect } from "@soapbox/kysely-pglite";
-
-let raw_db = new PGlite("./pgdata");
-const db = new Kysely({
-    dialect: new PgliteDialect({
-        database: raw_db,
-    }),
-});
-
-let create_table_query = `
-CREATE TABLE IF NOT EXISTS public.nip05s (
-  name TEXT NOT NULL,
-  domain TEXT NOT NULL,
-  pubkey BPCHAR NOT NULL,
-  relays JSONB,
-  inserted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);`;
-let create_table_result = await raw_db.query(create_table_query);
-
-let npubs = [
-    "npub1wf7w8mrzqs3uvd8wsp774462d3rtttzwetuhpmzjccgn63emy4ls5qsxhy",
-    "npub1jk9h2jsa8hjmtm9qlcca942473gnyhuynz5rmgve0dlu6hpeazxqc3lqz7",
-    "npub1utx00neqgqln72j22kej3ux7803c2k986henvvha4thuwfkper4s7r50e8",
-    "npub1235tem4hfn34edqh8hxfja9amty73998f0eagnuu4zm423s9e8ksdg0ht5",
-];
-
+import * as NIP05 from "nostr-tools/nip05";
 let nip05s = [
     "_@walletofsatoshi.com", // "webmaster@walletofsatoshi.com",
     "sersleepy@primal.net",
@@ -34,10 +6,26 @@ let nip05s = [
     "GrapheneOS@grapheneos-social.mostr.pub",
 ];
 
-// Resolve NIP05's
+import { Expression, Kysely, OperationNode, sql } from "kysely";
+import { PGlite } from "@electric-sql/pglite";
+import { PgliteDialect } from "@soapbox/kysely-pglite";
+let raw_db = new PGlite("./pgdata");
+const db = new Kysely({
+    dialect: new PgliteDialect({
+        database: raw_db,
+    }),
+});
 
-import * as NIP05 from "nostr-tools/nip05";
-console.log(Object.keys(NIP05));
+let create_nip05s_table_query = `
+CREATE TABLE IF NOT EXISTS public.nip05s (
+  nip05 TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  domain TEXT NOT NULL,
+  pubkey BPCHAR NOT NULL,
+  relays JSONB,
+  inserted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);`;
+let create_nip05s_table_result = await raw_db.query(create_nip05s_table_query);
 
 // Validate the NIP05 Internet Identifiers are valid
 for (const nip05 of nip05s) {
@@ -72,21 +60,19 @@ class JsonValue<T> implements Expression<T> {
 for (const nip05 of nip05s) {
     const match = nip05.match(NIP05.NIP05_REGEX);
     const [, name = "_", domain] = match;
-    let nip05_result = await NIP05.queryProfile(nip05);
-    // try {
-    //     let nip05_result = await NIP05.queryProfile(nip05);
-    //     console.log(nip05);
-    //     console.log(nip05_result);
-    // } catch (error) {
-    //     console.log(`Unable to get nip05=${nip05}`)
-    //     console.log(error)
-    // }
-    console.log("PAUL_WAS_HERE");
+    let nip05_result;
+    try {
+        nip05_result = await NIP05.queryProfile(nip05);
+    } catch (error) {
+        console.log(`Unable to get nip05=${nip05}`);
+        console.log(error);
+    }
     console.log(nip05_result);
     try {
         await db
             .insertInto("nip05s")
             .values({
+                nip05: nip05,
                 name: name,
                 domain: domain,
                 pubkey: nip05_result.pubkey,
@@ -94,7 +80,12 @@ for (const nip05 of nip05s) {
             })
             .execute();
     } catch (error) {
-        console.log(`Unable to save nip05=${nip05}`);
-        console.log(error);
+        if (error.toString().includes( "error: duplicate key value violates unique constraint")) {
+            console.log(`nip05=${nip05} is already saved`);
+        } else {
+            console.log(`Unable to save nip05=${nip05}`);
+            console.log(error);
+            console.log(error.toString())
+        }
     }
 }
