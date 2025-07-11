@@ -1,0 +1,262 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:@electric-sql/pglite@~0.3.4": "0.3.4",
+    "npm:@jsr/nostrify__db@~0.39.4-alpha.1": "0.39.4-alpha.1",
+    "npm:@jsr/nostrify__nostrify@~0.46.3": "0.46.3",
+    "npm:@jsr/nostrify__seed@0.42": "0.42.0",
+    "npm:@jsr/soapbox__kysely-pglite@^1.1.0": "1.1.0",
+    "npm:nostr-tools@^2.15.0": "2.15.0"
+  },
+  "npm": {
+    "@electric-sql/pglite@0.3.4": {
+      "integrity": "sha512-h5hoL2GuxcWN8Q3+jtesIRem14iIvAZVEsTeUF6eO9RiUb6ar73QVIEW9t+Ud58iXAcAE2dFMtWqw3W2Oo4LDw=="
+    },
+    "@jsr/noble__curves@1.9.0": {
+      "integrity": "sha512-Ir+1GEhsi2/R3NeAt8Z4gz3dzjB95FozDnNXi+VlGHt3pJhRxnpl0VOdoLHBgBkZIZ+zDe9+2iry8IPp/3yO6w==",
+      "dependencies": [
+        "@jsr/noble__hashes"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/noble__curves/1.9.0.tgz"
+    },
+    "@jsr/noble__hashes@1.8.0": {
+      "integrity": "sha512-Q82YZQ/e1LLXXyrwt4X5nle+ys9B0zuZaG8NzHvhmtw0nX5V4KzYnlu3vP9sBCiAbZluB82X3k7Q8kjhI5eC2g==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/noble__hashes/1.8.0.tgz"
+    },
+    "@jsr/nostrify__db@0.39.4-alpha.1": {
+      "integrity": "sha512-njpPXICzfrd+rgK4ANY8vIdidiJSxDTgGjFXzytveIGf8Kne35OzfK+/7zHo7VcBKLqNWkuy8s9O3Lbys1wSig==",
+      "dependencies": [
+        "@jsr/nostrify__nostrify@0.39.1",
+        "@jsr/nostrify__types",
+        "kysely@0.27.6",
+        "nostr-tools"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/nostrify__db/0.39.4-alpha.1.tgz"
+    },
+    "@jsr/nostrify__nostrify@0.39.1": {
+      "integrity": "sha512-IRHg5t6PxKx3ARgr+N6o09l6l4tM638CG3RbryaO4PKLEgeISToGqr46c/Vfw/+/jpMCQfFSVS02oS8CeSmLQQ==",
+      "dependencies": [
+        "@jsr/nostrify__types",
+        "@jsr/std__crypto",
+        "@jsr/std__encoding",
+        "@scure/base@1.2.6",
+        "@scure/bip32@1.7.0",
+        "@scure/bip39@1.6.0",
+        "lru-cache",
+        "nostr-tools",
+        "websocket-ts",
+        "zod"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/nostrify__nostrify/0.39.1.tgz"
+    },
+    "@jsr/nostrify__nostrify@0.42.1": {
+      "integrity": "sha512-wWsgnLcLHj18suMIUUWw86ClZsOsj6B6WqV9SRCGrbvxucyYgopnvgrUjF8pzhTtfBbSl/4Xh1ZL6I4F/MsNLA==",
+      "dependencies": [
+        "@jsr/nostrify__types",
+        "@jsr/scure__base",
+        "@jsr/scure__bip32",
+        "@jsr/scure__bip39",
+        "@jsr/std__crypto",
+        "@jsr/std__encoding",
+        "lru-cache",
+        "nostr-tools",
+        "websocket-ts",
+        "zod"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/nostrify__nostrify/0.42.1.tgz"
+    },
+    "@jsr/nostrify__nostrify@0.46.3": {
+      "integrity": "sha512-zJpOrD8bbrJroLRJjESAJZX/ZKFCaGfoz5fSfLP+gIcTiPo8JpzlrFBF6mvaDI/Mdd+1WTBwlCcW9On8rUVH7w==",
+      "dependencies": [
+        "@jsr/nostrify__types",
+        "@jsr/scure__base",
+        "@jsr/std__encoding",
+        "lru-cache",
+        "nostr-tools",
+        "websocket-ts",
+        "zod"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/nostrify__nostrify/0.46.3.tgz"
+    },
+    "@jsr/nostrify__seed@0.42.0": {
+      "integrity": "sha512-dNZZWLBGbHce8LPUs20pDe0Uo7oqLaORzc62xPCK5FVOTsHUN1NHBvro1NB2PY5Ut7mDpZgel9R7OF4iFlrLHQ==",
+      "dependencies": [
+        "@jsr/nostrify__nostrify@0.42.1",
+        "@jsr/scure__bip32",
+        "@jsr/scure__bip39"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/nostrify__seed/0.42.0.tgz"
+    },
+    "@jsr/nostrify__types@0.36.0": {
+      "integrity": "sha512-kDjFf1nJMhZafULtH2GW+TWjs85J0aDxYYLpwBDQugDVsFqG2kLbxnoE2NtMJCIMNk1vUaipUHeil//4fY/d2w==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/nostrify__types/0.36.0.tgz"
+    },
+    "@jsr/scure__base@1.2.6": {
+      "integrity": "sha512-oZvJweJ4VMgVHJdsp8wwcG7t1U8aZLe0h8f4oNSFfavGqOKhpmi0b9mZ8vXLtGzBGiqVjK8Mon1NVMzTJincLQ==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/scure__base/1.2.6.tgz"
+    },
+    "@jsr/scure__bip32@1.7.0": {
+      "integrity": "sha512-HXTaxR3mmNwC/H4UUFClAtdAAp2b4Bnv1829JZ3J2zeH5uevLmluF57fsAYQ6yEvOysF01rJrucNYye07SuwRA==",
+      "dependencies": [
+        "@jsr/noble__curves",
+        "@jsr/noble__hashes",
+        "@jsr/scure__base"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/scure__bip32/1.7.0.tgz"
+    },
+    "@jsr/scure__bip39@1.6.0": {
+      "integrity": "sha512-oGbe5MN6zPH2rQRM0sLuUjZznejZZ4m4I6cnkodGOMhQuQKzwFpmsfEB4kTLac1SmbbVHApEHf+UzcwwqpyzoQ==",
+      "dependencies": [
+        "@jsr/noble__hashes",
+        "@jsr/scure__base"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/scure__bip39/1.6.0.tgz"
+    },
+    "@jsr/soapbox__kysely-pglite@1.1.0": {
+      "integrity": "sha512-9WUHpXEAlN50yvZbeikuUh0chn42ZeFIBPlJExVTPh/I+2mpFE2V4lNaKShJzzZoiJQe8OKL47k+Nn01Iafmzg==",
+      "dependencies": [
+        "kysely@0.28.2"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/soapbox__kysely-pglite/1.1.0.tgz"
+    },
+    "@jsr/std__assert@0.224.0": {
+      "integrity": "sha512-RB0p0ydybgKSfTba6kHWytfpEJ0CBPi+byxZikLYa51L9uLINW52/j6n4KuiLFoh2cdFfpNZSNMY/dzQPW90DQ==",
+      "dependencies": [
+        "@jsr/std__fmt",
+        "@jsr/std__internal"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__assert/0.224.0.tgz"
+    },
+    "@jsr/std__crypto@0.224.0": {
+      "integrity": "sha512-qzZWI8VnH215FS7hmQsAeNafjLMkmSl1OOvexorVUEf1Zl9omHSN87MwIjtmyVXGLtpGRLzIhKXbeup1xO69Zw==",
+      "dependencies": [
+        "@jsr/std__assert",
+        "@jsr/std__encoding"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__crypto/0.224.0.tgz"
+    },
+    "@jsr/std__encoding@0.224.3": {
+      "integrity": "sha512-zAuX2QV1zwJ5RSmrnDGVerAtN3pBXpYYNlGzhERW9AiQ1UJd2/xruyB3i5NdTWy2OK2pjETswOj+0+prYTPlxQ==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__encoding/0.224.3.tgz"
+    },
+    "@jsr/std__fmt@0.224.0": {
+      "integrity": "sha512-lyrH5LesMB897QW0NIbZlGp72Ucopj2hMZW2wqB0NyZhuXfLH2sPBIUpCSf87kRKTGnx90JV905w4iTp0TD+Sg==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__fmt/0.224.0.tgz"
+    },
+    "@jsr/std__internal@0.224.0": {
+      "integrity": "sha512-inYzKOGAFK2tyy1D4NfwlbPiqEcSaXfOms3Tm4Y+1LmKSYOeB9wjqWHF4y/BJuYj8XUv61F7eaHaIw6NIlhBWg==",
+      "dependencies": [
+        "@jsr/std__fmt"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__internal/0.224.0.tgz"
+    },
+    "@noble/ciphers@0.5.3": {
+      "integrity": "sha512-B0+6IIHiqEs3BPMT0hcRmHvEj2QHOLu+uwt+tqDDeVd0oyVzh7BPrDcPjRnV1PV/5LaknXJJQvOuRGR0zQJz+w=="
+    },
+    "@noble/curves@1.1.0": {
+      "integrity": "sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA==",
+      "dependencies": [
+        "@noble/hashes@1.3.1"
+      ]
+    },
+    "@noble/curves@1.2.0": {
+      "integrity": "sha512-oYclrNgRaM9SsBUBVbb8M6DTV7ZHRTKugureoYEncY5c65HOmRzvSiTE3y5CYaPYJA/GVkrhXEoF0M3Ya9PMnw==",
+      "dependencies": [
+        "@noble/hashes@1.3.2"
+      ]
+    },
+    "@noble/curves@1.9.2": {
+      "integrity": "sha512-HxngEd2XUcg9xi20JkwlLCtYwfoFw4JGkuZpT+WlsPD4gB/cxkvTD8fSsoAnphGZhFdZYKeQIPCuFlWPm1uE0g==",
+      "dependencies": [
+        "@noble/hashes@1.8.0"
+      ]
+    },
+    "@noble/hashes@1.3.1": {
+      "integrity": "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="
+    },
+    "@noble/hashes@1.3.2": {
+      "integrity": "sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ=="
+    },
+    "@noble/hashes@1.8.0": {
+      "integrity": "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="
+    },
+    "@scure/base@1.1.1": {
+      "integrity": "sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA=="
+    },
+    "@scure/base@1.2.6": {
+      "integrity": "sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg=="
+    },
+    "@scure/bip32@1.3.1": {
+      "integrity": "sha512-osvveYtyzdEVbt3OfwwXFr4P2iVBL5u1Q3q4ONBfDY/UpOuXmOlbgwc1xECEboY8wIays8Yt6onaWMUdUbfl0A==",
+      "dependencies": [
+        "@noble/curves@1.1.0",
+        "@noble/hashes@1.3.2",
+        "@scure/base@1.1.1"
+      ]
+    },
+    "@scure/bip32@1.7.0": {
+      "integrity": "sha512-E4FFX/N3f4B80AKWp5dP6ow+flD1LQZo/w8UnLGYZO674jS6YnYeepycOOksv+vLPSpgN35wgKgy+ybfTb2SMw==",
+      "dependencies": [
+        "@noble/curves@1.9.2",
+        "@noble/hashes@1.8.0",
+        "@scure/base@1.2.6"
+      ]
+    },
+    "@scure/bip39@1.2.1": {
+      "integrity": "sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==",
+      "dependencies": [
+        "@noble/hashes@1.3.2",
+        "@scure/base@1.1.1"
+      ]
+    },
+    "@scure/bip39@1.6.0": {
+      "integrity": "sha512-+lF0BbLiJNwVlev4eKelw1WWLaiKXw7sSl8T6FvBlWkdX+94aGJ4o8XjUdlyhTCjd8c+B3KT3JfS8P0bLRNU6A==",
+      "dependencies": [
+        "@noble/hashes@1.8.0",
+        "@scure/base@1.2.6"
+      ]
+    },
+    "kysely@0.27.6": {
+      "integrity": "sha512-FIyV/64EkKhJmjgC0g2hygpBv5RNWVPyNCqSAD7eTCv6eFWNIi4PN1UvdSJGicN/o35bnevgis4Y0UDC0qi8jQ=="
+    },
+    "kysely@0.28.2": {
+      "integrity": "sha512-4YAVLoF0Sf0UTqlhgQMFU9iQECdah7n+13ANkiuVfRvlK+uI0Etbgd7bVP36dKlG+NXWbhGua8vnGt+sdhvT7A=="
+    },
+    "lru-cache@10.4.3": {
+      "integrity": "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="
+    },
+    "nostr-tools@2.15.0": {
+      "integrity": "sha512-Jj/+UFbu3JbTAWP4ipPFNuyD4W5eVRBNAP+kmnoRCYp3bLmTrlQ0Qhs5O1xSQJTFpjdZqoS0zZOUKdxUdjc+pw==",
+      "dependencies": [
+        "@noble/ciphers",
+        "@noble/curves@1.2.0",
+        "@noble/hashes@1.3.1",
+        "@scure/base@1.1.1",
+        "@scure/bip32@1.3.1",
+        "@scure/bip39@1.2.1",
+        "nostr-wasm"
+      ]
+    },
+    "nostr-wasm@0.1.0": {
+      "integrity": "sha512-78BTryCLcLYv96ONU8Ws3Q1JzjlAt+43pWQhIl86xZmWeegYCNLPml7yQ+gG3vR6V5h4XGj+TxO+SS5dsThQIA=="
+    },
+    "websocket-ts@2.2.1": {
+      "integrity": "sha512-YKPDfxlK5qOheLZ2bTIiktZO1bpfGdNCPJmTEaPW7G9UXI1GKjDdeacOrsULUS000OPNxDVOyAuKLuIWPqWM0Q=="
+    },
+    "zod@3.25.76": {
+      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@electric-sql/pglite@~0.3.4",
+        "npm:@jsr/nostrify__db@~0.39.4-alpha.1",
+        "npm:@jsr/nostrify__nostrify@~0.46.3",
+        "npm:@jsr/nostrify__seed@0.42",
+        "npm:@jsr/soapbox__kysely-pglite@^1.1.0",
+        "npm:nostr-tools@^2.15.0"
+      ]
+    }
+  }
+}

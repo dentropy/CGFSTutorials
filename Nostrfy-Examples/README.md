@@ -6,10 +6,10 @@ git clone git@gitlab.com:dentropy/CGFSTutorials.git
 cd CGFSTutorials
 cd Nostrfy-Examples
 
-npm install
+deno install
 
-node test001.js
-node test002.js
+deno -A test001.ts
+deno -A test002.ts
 ....
 
 ```

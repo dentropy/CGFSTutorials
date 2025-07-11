@@ -1,5 +1,5 @@
 import { NPostgres } from '@nostrify/db';
-import { Kysely } from 'kysely';
+import { Kysely } from 'npm:kysely';
 import { PGlite } from '@electric-sql/pglite';
 import { PgliteDialect } from '@soapbox/kysely-pglite';
 

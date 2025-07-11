@@ -1,4 +1,4 @@
-import { Kysely, sql } from 'kysely';
+import { Kysely, sql } from 'npm:kysely';
 import { PGlite } from '@electric-sql/pglite';
 import { PgliteDialect } from '@soapbox/kysely-pglite';
 
