@@ -6,9 +6,19 @@ import { NRelay1 } from "@nostrify/nostrify";
 // let relay_url = "wss://bostr.bitcointxoko.com"
 // let filter = { authors: ["b0147668855b944988d0c5e4a9afa4d679613889aae47f9a8fae87092f572f1d"] }
 
-let relay_url = "wss://purplepag.es/"
-let filter = { ids : ["946964cff01678d9a7ce2380e47403bde175b2f7b70f1b99529d59f16f21027f"]}
+let relay_url = "ws://ditto.local/relay"
+// let relay_url = "ws://piprelay.local/"
+// let filter = { ids : ["a3047df90093f21808d58d0b4d2412062d613ebb2f8971665b96739193e7568c"]}
 
+let filter = {
+    "authors": [
+        "647487849444836198cecaeeeb651b6dd193628c2dcca1da0ef9a0b66011c878"
+    ],
+    "kinds": [
+        0
+    ]
+}
+console.log(filter)
 
 const relay = new NRelay1(relay_url);
 
