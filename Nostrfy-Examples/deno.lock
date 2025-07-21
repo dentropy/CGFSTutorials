@@ -2,15 +2,20 @@
   "version": "5",
   "specifiers": {
     "npm:@electric-sql/pglite@~0.3.4": "0.3.4",
+    "npm:@faker-js/faker@^9.9.0": "9.9.0",
     "npm:@jsr/nostrify__db@~0.39.4-alpha.1": "0.39.4-alpha.1",
     "npm:@jsr/nostrify__nostrify@~0.46.3": "0.46.3",
     "npm:@jsr/nostrify__seed@0.42": "0.42.0",
     "npm:@jsr/soapbox__kysely-pglite@^1.1.0": "1.1.0",
+    "npm:@noble/hashes@^1.8.0": "1.8.0",
     "npm:nostr-tools@^2.15.0": "2.15.0"
   },
   "npm": {
     "@electric-sql/pglite@0.3.4": {
       "integrity": "sha512-h5hoL2GuxcWN8Q3+jtesIRem14iIvAZVEsTeUF6eO9RiUb6ar73QVIEW9t+Ud58iXAcAE2dFMtWqw3W2Oo4LDw=="
+    },
+    "@faker-js/faker@9.9.0": {
+      "integrity": "sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA=="
     },
     "@jsr/noble__curves@1.9.0": {
       "integrity": "sha512-Ir+1GEhsi2/R3NeAt8Z4gz3dzjB95FozDnNXi+VlGHt3pJhRxnpl0VOdoLHBgBkZIZ+zDe9+2iry8IPp/3yO6w==",
@@ -251,10 +256,12 @@
     "packageJson": {
       "dependencies": [
         "npm:@electric-sql/pglite@~0.3.4",
+        "npm:@faker-js/faker@^9.9.0",
         "npm:@jsr/nostrify__db@~0.39.4-alpha.1",
         "npm:@jsr/nostrify__nostrify@~0.46.3",
         "npm:@jsr/nostrify__seed@0.42",
         "npm:@jsr/soapbox__kysely-pglite@^1.1.0",
+        "npm:@noble/hashes@^1.8.0",
         "npm:nostr-tools@^2.15.0"
       ]
     }

@@ -11,6 +11,8 @@
   "description": "",
   "dependencies": {
     "@electric-sql/pglite": "^0.3.4",
+    "@faker-js/faker": "^9.9.0",
+    "@noble/hashes": "^1.8.0",
     "@nostrify/db": "npm:@jsr/nostrify__db@^0.39.4-alpha.1",
     "@nostrify/nostrify": "npm:@jsr/nostrify__nostrify@^0.46.3",
     "@nostrify/seed": "npm:@jsr/nostrify__seed@^0.42.0",

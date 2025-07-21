@@ -2,7 +2,7 @@ import { NRelay1 } from "@nostrify/nostrify";
 import { NSchema as n } from '@nostrify/nostrify';
 import { verifyEvent } from 'nostr-tools';
 
-const relay = new NRelay1("wss://relay.mostr.pub");
+const relay = new NRelay1("wss://relay.mememaps.net");
 
 let filter = { kinds: [1], limit: 5 }
 

@@ -18,15 +18,20 @@ console.log(event)
 // let relay_url = "ws://localhost:7007" // rs-nostr
 // let relay_url = "ws://localhost:4869" // sqlitenode
 // let relay_url = "ws://localhost:7777" // strfry
-// let relay_url = "ws://localhost:9090" // Paul's Relay
+// let relay_url = "ws://localhost:9090" // mmrelay
 
 // let relay_url = "ws://ditto.local/relay"
 // let relay_url = "ws://khatru.local/"
 // let relay_url = "ws://piprelay.local/"
 // let relay_url = "ws://sqlitenode.local/"
 // let relay_url = "ws://rsrelay.local/"
-// let relay_url = "ws://strfry.local/"
+let relay_url = "ws://strfry.local/"
 
+
+// let relay_url = "wss://relay.mememaps.net/"
+// let relay_url = "wss://t.mememap.net/"
+
+console.log(`relay_url=${relay_url}`)
 const relay = new NRelay1(relay_url)
 relay.event(event)
 
