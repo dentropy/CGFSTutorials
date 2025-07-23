@@ -12,6 +12,26 @@ Deno.test(function addTest() {
   assertEquals(add(2, 3), 5);
 });
 
+Deno.test("Check if we can connect to nostr relay", async () => {
+  const relay = new NRelay1(env.RELAY_URLS.split(",")[0]);
+  let relay_works = false;
+  async function checkResponse() {
+    for await (const msg of relay.req([{}])) {
+      if (msg[0] === "EVENT") {
+        relay_works = true;
+      }
+      if (msg[0] === "EOSE") break; // Sends a `CLOSE` message to the relay.
+    }
+    await relay.close()
+  }
+  checkResponse();
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  if (!relay_works) {
+    throw new Error(
+      "Unable to connect to relay",
+    );
+  }
+});
 Deno.test("Claim a NIP05 and check Bot response", async () => {
   const sk: Uint8Array = generateSecretKey(); // `sk` is a Uint8Array
   const pk: string = getPublicKey(sk); // `pk` is a hex string
@@ -55,10 +75,10 @@ Deno.test("Claim a NIP05 and check Bot response", async () => {
   await relay.close();
   if (!we_found_nip05) {
     throw new Error(
-      "publishBasicEvent: Could not verify the response from the bot"
-    )
+      "publishBasicEvent: Could not verify the response from the bot",
+    );
   }
-})
+});
 
 Deno.test("Claim a NIP05, check Bot response, try and claim same username with separate account", async () => {
   const sk: Uint8Array = generateSecretKey(); // `sk` is a Uint8Array
@@ -102,8 +122,8 @@ Deno.test("Claim a NIP05, check Bot response, try and claim same username with s
   await new Promise((resolve) => setTimeout(resolve, 1000));
   if (!we_found_nip05) {
     throw new Error(
-      "publishBasicEvent: Could not verify the response from the bot"
-    )
+      "publishBasicEvent: Could not verify the response from the bot",
+    );
   }
 
   const sk2: Uint8Array = generateSecretKey(); // `sk` is a Uint8Array
@@ -123,11 +143,11 @@ Deno.test("Claim a NIP05, check Bot response, try and claim same username with s
   });
   await relay.event(event2);
   const response_filter2 = {
-    kinds: [ 30360 ],
+    kinds: [30360],
     "#L": ["nip05.domain"],
     "#l": ["test.local".toLowerCase()],
     "#d": [username.toLowerCase()],
-  }
+  };
   let responseCount = 0;
   await new Promise((resolve) => setTimeout(resolve, 2000));
   async function checkResponse2() {
@@ -141,10 +161,10 @@ Deno.test("Claim a NIP05, check Bot response, try and claim same username with s
   }
   checkResponse2();
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  await relay.close()
+  await relay.close();
   if (responseCount != 1) {
     throw new Error(
       `responseCount=${responseCount} when it should equal 1`,
-    )
+    );
   }
 });
