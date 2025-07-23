@@ -11,17 +11,23 @@ import { NRelay1 } from "@nostrify/nostrify";
 // let filter = { ids : ["a3047df90093f21808d58d0b4d2412062d613ebb2f8971665b96739193e7568c"]}
 
 
-let relay_url = "ws://t.mememap.net:9090"
+let relay_url = "ws://localhost:3334"
 let filter = {
-    "kinds": [
-        4
-    ],
-    "authors": [
-        "d35259105cf117e0e174c4d4077ff49fe9520f79851801d72a85c0b34c56d6ff"
-    ],
-    "p": [
-        "363f59b0007031a8cd6e3326586853418be4480761df97f8aa1577429c67dcad"
-    ]
+  // kinds: [ 30360 ],
+  // "#L": [ "nip05.domain" ],
+  // "#l": [ "test.local", "nip05.domain" ],
+  //  "#d": [ "ariel.herzog" ]
+  ids: [ "7e1c7787dc66dba0a6ceacfee73add7034050b114011b0d59dff42caa5b77116" ]
+}
+
+filter = {
+  kinds: [ 30360 ],
+  "#L": [ "nip05.domain" ],
+  "#l": [ "test.local" ],
+  "#p": [
+    "26238847de103cbb8f9678838df7c5bef5013504eb3774301402611aceff3544"
+  ],
+  "#d": [ "claudine81" ]
 }
 
 // let filter = {
