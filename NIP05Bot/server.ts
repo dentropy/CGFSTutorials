@@ -140,7 +140,9 @@ async function resolveNostrDotJson(c: any){
     }
   }
   let relays = getFirstItemsWithMatch(result.tags, "r")
-  relays.shift()
+  if(relays != undefined) {
+      relays.shift()
+  }
   return c.json({
     names: {
       [query.name[0].toLowerCase()] : pubkey
@@ -324,7 +326,7 @@ async function produceKind30360(event) {
       ["e", event.id],
     ],
   };
-  if (getFirstItemsWithMatch(event.tags, "r") != 0) {
+  if (getFirstItemsWithMatch(event.tags, "r") != undefined) {
     event_data.tags.push(getFirstItemsWithMatch(event.tags, "r"));
   }
   const auth_event = await signer.signEvent(event_data);
