@@ -20,7 +20,35 @@ console.log(`relays_urls   = ${JSON.stringify(env.RELAY_URLS.split(","))}`);
 
 const signer = new NSecSigner(nip19.decode(env.NSEC).data);
 
+async function publishProfileAndNIP65(signer) {
+  const unix_time: number = Math.floor((new Date()).getTime() / 1000);
+  let profile_event_data = {
+    created_at: unix_time,
+    content: JSON.stringify(env.PROFILE_JSON),
+    kind: 0,
+    tags: [],
+  }
+  const profile_event = await signer.signEvent(profile_event_data)
+  let relay_url_list = ["r"]
+  for (const relay_url of env.RELAY_URLS.split(",")) {
+    relay_url_list.push(relay_url)
+  } 
+  const nip65_data = {
+    created_at: unix_time,
+    content: "",
+    kind: 0,
+    tags: [
+      relay_url_list
+    ],
+  }
+  const nip65_event = await signer.signEvent(nip65_data)
+  await my_pool.event(profile_event, { relays: env.PROFILE_PUBLISH_RELAYS.split(",") })
+  await my_pool.event(nip65_event, { relays: env.PROFILE_PUBLISH_RELAYS.split(",") })
+  console.log(`Sucessfully published profile and nip-65 events\nnip65_event_id=${nip65_event.id}\nprofile_event_id=${profile_event.id}`)
+}
+
 async function main() {
+  publishProfileAndNIP65(signer)
   const unix_time: number = Math.floor((new Date()).getTime() / 1000);
   const filter: object = {
     kinds: [3036],

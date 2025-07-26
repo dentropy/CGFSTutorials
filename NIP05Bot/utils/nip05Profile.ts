@@ -1,22 +1,4 @@
-# NIP05 Bot
-
-#### Install and Run
-
-``` bash
-deno install
-cp .env.example .env
-# Edit .env to have nsec
-# Edit utils/nip05Profile.ts with your profile details
-# Delete old PROFILE_JSON in .env and regenerate it to replace profile
-echo $(deno -A utils/nip05Profile.ts) >> .env
-deno run -A server.ts
-deno test -A
-```
-
-#### Example Profile JSON
-
-``` json
-{
+const nip05Data = {
   "name": "NIP05 Bot",
   "display_name": "NIP05 Bot",
   "nip05": "nip05bot@test.local",
@@ -25,4 +7,5 @@ deno test -A
   "banner": "https://blossom.mememaps.net/ef9123cc50d61869ccebde3b376d6b653dbcf75da15bdd255136f6783afe6521.jpeg",
   "website": "https://id.test.local"
 }
-```
+
+console.log(`\nPROFILE_JSON=${JSON.stringify(nip05Data)}`)
