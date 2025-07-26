@@ -25,7 +25,7 @@ Deno.test("Check if we can connect to nostr relay", async () => {
   }
   checkResponse();
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  await relay.close()
+  await relay.close();
   if (!relay_works) {
     throw new Error(
       "Unable to connect to relay",

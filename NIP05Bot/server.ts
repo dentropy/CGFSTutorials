@@ -14,7 +14,9 @@ export const my_pool = new NPool({
 });
 
 let npub = nip19.npubEncode(getPublicKey(nip19.decode(env.NSEC).data));
-console.log(`Server npub = ${npub}`);
+console.log(`Server npub   = ${npub}`);
+console.log(`Server pubkey = ${getPublicKey(nip19.decode(env.NSEC).data)}`)
+console.log(`relays_urls   = ${JSON.stringify(env.RELAY_URLS.split(","))}`);
 
 const signer = new NSecSigner(nip19.decode(env.NSEC).data);
 
@@ -48,12 +50,8 @@ import { Hono } from "@hono/hono";
 const app = new Hono();
 const port = env.PORT ? parseInt(env.PORT) : 8080;
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
-
-app.get("/nostr.json", async (c) => {
-  const id = c.req.param("id");
+async function resolveNostrDotJson(c: any){
+    const id = c.req.param("id");
   console.log("ID");
   let query = c.req.queries();
   if (!("name" in query)) {
@@ -105,6 +103,18 @@ app.get("/nostr.json", async (c) => {
       [pubkey] : relays
     },
   });
+}
+app.get("/", (c) => {
+  return c.text("Hello Hono!");
+});
+
+
+app.get("/nostr.json", async (c) => {
+  return resolveNostrDotJson(c)
+});
+
+app.get(".well-known/nostr.json", async (c) => {
+  return resolveNostrDotJson(c)
 });
 
 Deno.serve({ port }, app.fetch);
