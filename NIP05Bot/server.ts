@@ -22,9 +22,11 @@ const signer = new NSecSigner(nip19.decode(env.NSEC).data);
 
 async function publishProfileAndNIP65(signer) {
   const unix_time: number = Math.floor((new Date()).getTime() / 1000);
+  let profile_json = JSON.parse(env.PROFILE_JSON)
+  profile_json.nip05 = `${env.USERNAME}@${env.DOMAIN_NAME}`
   let profile_event_data = {
     created_at: unix_time,
-    content: JSON.stringify(env.PROFILE_JSON),
+    content: JSON.stringify(profile_json),
     kind: 0,
     tags: [],
   }
@@ -45,6 +47,21 @@ async function publishProfileAndNIP65(signer) {
   await my_pool.event(profile_event, { relays: env.PROFILE_PUBLISH_RELAYS.split(",") })
   await my_pool.event(nip65_event, { relays: env.PROFILE_PUBLISH_RELAYS.split(",") })
   console.log(`Sucessfully published profile and nip-65 events\nnip65_event_id=${nip65_event.id}\nprofile_event_id=${profile_event.id}`)
+  const personal_nip05 = {
+    created_at: unix_time,
+    content: "",
+    kind: 3036,
+    tags: [
+      relay_url_list,
+      ["L", "nip05.domain"],
+      ["l", env.DOMAIN_NAME.toLocaleLowerCase(), "nip05.domain"],
+      ["p", await signer.getPublicKey()],
+      ["d", env.USERNAME.toLocaleLowerCase()],
+    ],
+  }
+  const personal_nip05_event = await signer.signEvent(personal_nip05)
+  console.log(personal_nip05_event)
+  produceKind30360(personal_nip05_event);
 }
 
 async function main() {
@@ -122,7 +139,8 @@ async function resolveNostrDotJson(c: any){
         pubkey = pubkey[1]
     }
   }
-  const relays = getFirstItemsWithMatch(result.tags, "r")
+  let relays = getFirstItemsWithMatch(result.tags, "r")
+  relays.shift()
   return c.json({
     names: {
       [query.name[0].toLowerCase()] : pubkey
@@ -306,7 +324,7 @@ async function produceKind30360(event) {
       ["e", event.id],
     ],
   };
-  if (countOccurrences(event.tags, "r")) {
+  if (getFirstItemsWithMatch(event.tags, "r") != 0) {
     event_data.tags.push(getFirstItemsWithMatch(event.tags, "r"));
   }
   const auth_event = await signer.signEvent(event_data);
