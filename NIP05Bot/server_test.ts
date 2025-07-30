@@ -43,7 +43,7 @@ Deno.test("Claim a NIP05 and check Bot response", async () => {
     content: "Hello, world!",
     tags: [
       ["L", "nip05.domain"],
-      ["l", "test.local".toLowerCase(), "nip05.domain"],
+      ["l", env.DOMAIN_NAME.toLowerCase(), "nip05.domain"],
       ["p", pk],
       ["d", username.toLowerCase()],
     ],
@@ -55,7 +55,7 @@ Deno.test("Claim a NIP05 and check Bot response", async () => {
   const response_filter = {
     kinds: [30360],
     "#L": ["nip05.domain"],
-    "#l": ["test.local".toLowerCase()],
+    "#l": [env.DOMAIN_NAME.toLowerCase()],
     "#p": [pk],
     "#d": [username.toLowerCase()],
   };
@@ -91,7 +91,7 @@ Deno.test("Claim a NIP05, check Bot response, try and claim same username with s
     content: "Hello, world!",
     tags: [
       ["L", "nip05.domain"],
-      ["l", "test.local".toLowerCase(), "nip05.domain"],
+      ["l", env.DOMAIN_NAME.toLowerCase(), "nip05.domain"],
       ["p", pk],
       ["d", username.toLowerCase()],
     ],
@@ -103,7 +103,7 @@ Deno.test("Claim a NIP05, check Bot response, try and claim same username with s
   const response_filter = {
     kinds: [30360],
     "#L": ["nip05.domain"],
-    "#l": ["test.local".toLowerCase()],
+    "#l": [env.DOMAIN_NAME.toLowerCase()],
     "#p": [pk],
     "#d": [username.toLowerCase()],
   };
@@ -135,7 +135,7 @@ Deno.test("Claim a NIP05, check Bot response, try and claim same username with s
     content: "Hello, world!",
     tags: [
       ["L", "nip05.domain"],
-      ["l", "test.local".toLowerCase(), "nip05.domain"],
+      ["l", env.DOMAIN_NAME.toLowerCase(), "nip05.domain"],
       ["p", pk2],
       ["d", username.toLowerCase()],
     ],
@@ -145,7 +145,7 @@ Deno.test("Claim a NIP05, check Bot response, try and claim same username with s
   const response_filter2 = {
     kinds: [30360],
     "#L": ["nip05.domain"],
-    "#l": ["test.local".toLowerCase()],
+    "#l": [env.DOMAIN_NAME.toLowerCase()],
     "#d": [username.toLowerCase()],
   };
   let responseCount = 0;

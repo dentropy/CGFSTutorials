@@ -25,11 +25,10 @@ console.log(event)
 // let relay_url = "ws://piprelay.local/"
 // let relay_url = "ws://sqlitenode.local/"
 // let relay_url = "ws://rsrelay.local/"
-let relay_url = "ws://strfry.local/"
-
+// let relay_url = "ws://strfry.local/"
 
 // let relay_url = "wss://relay.mememaps.net/"
-// let relay_url = "wss://t.mememap.net/"
+let relay_url = "wss://t.mememap.net/"
 
 console.log(`relay_url=${relay_url}`)
 const relay = new NRelay1(relay_url)
