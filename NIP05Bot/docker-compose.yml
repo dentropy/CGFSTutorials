@@ -2,6 +2,8 @@ version: '3.8'
 services:
   nip05-bot:
     image: nip05bot
+    hostname: nip05bot
+    container_name: nip05bot
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,3 +16,9 @@ services:
     environment:
       - DENO_ENV=production
     restart: unless-stopped
+    networks:
+      - nostr-daemon
+
+networks:
+  nostr-daemon:
+    external: true
