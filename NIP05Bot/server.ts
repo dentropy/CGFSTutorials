@@ -107,7 +107,7 @@ async function resolveNostrDotJson(c: any){
     limit: 1,
     kinds: [30360],
     "#L": ["nip05.domain"],
-    "#l": ["test.local".toLowerCase()],
+    "#l": [env.DOMAIN_NAME.toLowerCase()],
     "#d": [query.name[0].toLowerCase()],
   };
   console.log(response_filter);
