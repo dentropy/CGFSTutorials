@@ -15,4 +15,4 @@ EXPOSE 8000
 EXPOSE 8080
 
 # Run the Deno application
-CMD ["deno", "run", "-A", "server.js"]
+CMD ["deno", "run", "-A", "server.ts"]
