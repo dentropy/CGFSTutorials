@@ -1,5 +1,5 @@
 # Use the official Deno image from Docker Hub
-FROM denoland/deno:1.46.3
+FROM denoland/deno:2.4.2
 
 # Set working directory inside the container
 WORKDIR /app
@@ -12,6 +12,7 @@ RUN deno cache server.js
 
 # Expose the port the app runs on (assuming default Deno port 8000)
 EXPOSE 8000
+EXPOSE 8080
 
 # Run the Deno application
-CMD ["deno", "run", "--allow-net", "--allow-env", "server.js"]
+CMD ["deno", "run", "-A", "server.js"]
