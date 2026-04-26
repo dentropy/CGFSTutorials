@@ -4,7 +4,7 @@ import { encode, decode, code } from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as dagPB from '@ipld/dag-pb'
 
-const filePath = './helloworld';
+const filePath = './HelloWorld.txt';
 let value = await fs.readFileSync(filePath)
 let data = await encode(value)
 const hash = await sha256.digest(data)
